@@ -350,6 +350,7 @@ const S = {
   selectedDate: todayKey(),
   residents: [],
   attendance: {},
+  absentReasons: {},
   meals: {},
   loaded: false,
   page: 0,
@@ -399,6 +400,10 @@ function loadAll(){
     if (a) S.attendance = JSON.parse(a);
   } catch(e) {}
   try {
+    const ar = lsGet("absentReasons");
+    if (ar) S.absentReasons = JSON.parse(ar);
+  } catch(e) {}
+  try {
     const m = lsGet("meals");
     if (m) S.meals = JSON.parse(m);
   } catch(e) {}
@@ -409,6 +414,7 @@ function loadAll(){
 
 function saveResidents(){ debouncedPersist("residents", S.residents); }
 function saveAttendance(){ debouncedPersist("attendance", S.attendance); }
+function saveAbsentReasons(){ debouncedPersist("absentReasons", S.absentReasons); }
 function saveMeals(){ debouncedPersist("meals", S.meals); }
 
 /* ---------- Actions ---------- */
@@ -422,6 +428,25 @@ function setStatus(id, status){
   day[id] = day[id] === status ? undefined : status;
   S.attendance = { ...S.attendance, [S.selectedDate]: day };
   saveAttendance();
+  render();
+}
+function setFloorAll(floor, status){
+  const day = { ...(S.attendance[S.selectedDate] || {}) };
+  S.residents.filter(r => r.floor === floor).forEach(r => {
+    if (status === null) delete day[r.id];
+    else day[r.id] = status;
+  });
+  S.attendance = { ...S.attendance, [S.selectedDate]: day };
+  saveAttendance();
+  render();
+}
+const ABSENT_REASONS = ["병원", "개인사정", "건강상 이유"];
+function setAbsentReason(id, reason){
+  const day = { ...(S.absentReasons[S.selectedDate] || {}) };
+  if (reason && reason.trim()) day[id] = reason;
+  else delete day[id];
+  S.absentReasons = { ...S.absentReasons, [S.selectedDate]: day };
+  saveAbsentReasons();
   render();
 }
 function setMealCount(floor, count){
@@ -470,7 +495,55 @@ function resetVehicles(){
   saveResidents();
   render();
 }
-function updateSearch(v){ S.search = v; render(); }
+function resyncRoster(){
+  if (!confirm("어르신 명단(이름·층·차량·야간반)을 앱 기본 명단 기준으로 다시 맞출까요?\n\n· 출석·조식 기록은 그대로 유지돼요\n· 이름으로 매칭해서 층/차량/야간을 기본값대로 되돌려요\n· 기본 명단에 있는데 빠진 어르신은 다시 추가돼요")) return;
+
+  const defByName = {};
+  DEFAULT_RESIDENTS.forEach(d => {
+    defByName[d.name] = { floor: d.floor, vehicle: OLD_VEHICLE_MAP[d.vehicle] || d.vehicle, night: !!d.night };
+  });
+
+  // 1) 기존 명단을 기본값 기준으로 층/차량/야간 재설정 (요일 스케줄은 유지)
+  const seen = {};
+  let merged = S.residents.map(r => {
+    const def = defByName[r.name];
+    if (!def) return r; // 기본 명단에 없는 사람(직접 추가한 분)은 그대로 둠
+    seen[r.name] = true;
+    return { ...r, floor: def.floor, vehicle: def.vehicle, night: def.night };
+  });
+
+  // 2) 기본 명단엔 있는데 현재 명단에서 빠진 어르신은 다시 추가
+  DEFAULT_RESIDENTS.forEach(d => {
+    if (!seen[d.name]) {
+      merged.push({
+        id: d.id,
+        name: d.name,
+        floor: d.floor,
+        vehicle: OLD_VEHICLE_MAP[d.vehicle] || d.vehicle,
+        night: !!d.night,
+      });
+    }
+  });
+
+  S.residents = migrateVehicleNames(applyScheduleOverrides(merged));
+  saveResidents();
+  render();
+  alert("명단을 기본값 기준으로 다시 맞췄어요. 하원관리 탭에서 주간/야간 구분을 확인해보세요.");
+}
+function updateSearch(v){
+  S.search = v;
+  const searchable = (S.tab === "slides" || S.tab === "floor2" || S.tab === "floor3" || S.tab === "vehicle");
+  const container = document.getElementById("searchResults");
+  // 검색 결과 영역만 갱신 (전체 render를 안 해서 한글 조합이 깨지지 않음)
+  if (searchable && container) {
+    container.innerHTML = v.trim() ? renderSearchResults() : "";
+    // 검색어가 있을 땐 아래 원래 콘텐츠(층 목록 등)를 숨김
+    let sib = container.nextElementSibling;
+    while (sib) { sib.style.display = v.trim() ? "none" : ""; sib = sib.nextElementSibling; }
+    return;
+  }
+  render();
+}
 function clearSearch(){ S.search = ""; S._searchFocused = false; render(); }
 function openStatusList(status){ S.statusModal = status; render(); }
 function closeStatusList(){ S.statusModal = null; render(); }
@@ -486,8 +559,12 @@ function doResetDay(){
   const newMeals = { ...S.meals };
   delete newMeals[S.selectedDate];
   S.meals = newMeals;
+  const newReasons = { ...S.absentReasons };
+  delete newReasons[S.selectedDate];
+  S.absentReasons = newReasons;
   saveAttendance();
   saveMeals();
+  saveAbsentReasons();
   render();
 }
 function cancelResetDay(){
@@ -562,15 +639,17 @@ function exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, ab
   rows.push([]);
   FLOORS.forEach(f => rows.push([f + " 조식", todayMeals[f] || 0]));
   rows.push([]);
+  const reasons = S.absentReasons[dateKey] || {};
   rows.push(["결석자", absentNames.length ? absentNames.join(", ") : "없음"]);
   rows.push(["등원예정자", expectedNames.length ? expectedNames.join(", ") : "없음"]);
   rows.push([]);
-  rows.push(["이름", "층", "상태", "하원차량"]);
+  rows.push(["이름", "층", "상태", "결석사유", "하원차량"]);
   S.residents.forEach(r => {
     rows.push([
       r.name,
       r.floor,
       todayAttendance[r.id] ? STATUS[todayAttendance[r.id]].label : "미체크",
+      todayAttendance[r.id] === "absent" ? (reasons[r.id] || "") : "",
       r.vehicle,
     ]);
   });
@@ -595,7 +674,11 @@ function exportToExcel(){
     const todayMeals = S.meals[dateKey] || {};
     const counts = computeCounts();
 
-    const absentNames = S.residents.filter(r => todayAttendance[r.id] === "absent").map(r => r.name);
+    const dayReasons = S.absentReasons[dateKey] || {};
+    const absentNames = S.residents.filter(r => todayAttendance[r.id] === "absent").map(r => {
+      const rs = dayReasons[r.id];
+      return rs ? `${r.name}(${rs})` : r.name;
+    });
     const expectedNames = S.residents.filter(r => todayAttendance[r.id] === "expected").map(r => r.name);
 
     exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, absentNames, expectedNames);
@@ -608,6 +691,28 @@ function exportToExcel(){
 /* ---------- Render helpers ---------- */
 function esc(str){
   return String(str).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function renderReasonBox(id){
+  const reasons = S.absentReasons[S.selectedDate] || {};
+  const current = reasons[id] || "";
+  const chips = ABSENT_REASONS.map(rs => {
+    const active = current === rs;
+    return `<button onclick="setAbsentReason('${id}', ${active ? "''" : `'${rs}'`})" style="padding:5px 11px;border-radius:8px;border:1.5px solid ${active ? "#D39282" : "#E3D5D0"};background:${active ? "#D39282" : "#fff"};color:${active ? "#fff" : "#B08575"};font-size:12px;font-weight:700;">${rs}</button>`;
+  }).join("");
+  const isPreset = ABSENT_REASONS.includes(current);
+  const customVal = isPreset ? "" : current;
+  return `
+    <div style="background:#FBF3F0;border:1.5px solid #F0DED8;border-top:none;border-radius:0 0 12px 12px;padding:9px 12px;margin-top:-2px;">
+      <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:11px;font-weight:800;color:#B08575;margin-right:2px;">사유</span>
+        ${chips}
+      </div>
+      <input value="${esc(customVal)}" placeholder="직접 입력 (선택)"
+        onchange="setAbsentReason('${id}', this.value)"
+        style="width:100%;margin-top:7px;padding:7px 10px;border-radius:8px;border:1.5px solid #F0DED8;font-size:13px;background:#fff;color:#5A5852;outline:none;box-sizing:border-box;" />
+    </div>
+  `;
 }
 
 function renderHeader(){
@@ -712,20 +817,30 @@ function renderFloorTab(floor){
           ${schedule.join("·")}
         </div>
       ` : "";
+      const reasonBox = current === "absent" ? renderReasonBox(r.id) : "";
       return `
-        <div class="resident-row" style="border-color:${borderColor};background:${bg};${isCustom && !scheduledToday ? "opacity:0.6;" : ""}">
-          <div style="flex-shrink:0;min-width:52px;">
-            <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
-            ${scheduleBadge}
+        <div style="margin-bottom:6px;">
+          <div class="resident-row" style="border-color:${borderColor};background:${bg};${isCustom && !scheduledToday ? "opacity:0.6;" : ""}margin-bottom:0;">
+            <div style="flex-shrink:0;min-width:52px;">
+              <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
+              ${scheduleBadge}
+            </div>
+            <div class="status-group">${btns}</div>
           </div>
-          <div class="status-group">${btns}</div>
+          ${reasonBox}
         </div>
       `;
     }).join("");
   }
   return `
     ${renderMealCounter(floor)}
-    <div class="floor-title">${floor} · ${list.length}명</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-left:4px;">
+      <div class="floor-title" style="margin:0;">${floor} · ${list.length}명</div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="setFloorAll('${floor}','present')" style="padding:7px 12px;border-radius:9px;border:none;background:#6B8A7A;color:#fff;font-size:12px;font-weight:800;">전체 출석</button>
+        <button onclick="setFloorAll('${floor}',null)" style="padding:7px 12px;border-radius:9px;border:1.5px solid #DEDBD3;background:#fff;color:#8C8A84;font-size:12px;font-weight:700;">전체 해제</button>
+      </div>
+    </div>
     ${rows}
   `;
 }
@@ -853,7 +968,7 @@ function renderRosterTab(){
 
   return `
     <button class="roster-add-btn" onclick="toggleAddForm()"><span>➕</span><span>어르신 등록</span></button>
-    <button onclick="resetVehicles()" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border-radius:14px;border:1.5px solid #DEDBD3;background:#fff;color:#7A6238;font-weight:700;font-size:13px;margin-bottom:14px;"><span>🚌</span><span>하원 차량 기본값으로 되돌리기</span></button>
+    <button onclick="resyncRoster()" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px;border-radius:14px;border:none;background:#5C4463;color:#fff;font-weight:800;font-size:13px;margin-bottom:14px;"><span>🔄</span><span>명단 기본값으로 다시 맞추기 (주간/야간 복구)</span></button>
     ${addForm}
     ${items}
   `;
@@ -989,12 +1104,15 @@ function renderSearchResults(){
       `;
     }).join("");
     return `
-      <div class="resident-row" style="border-color:${borderColor};background:${bg};">
-        <div style="flex-shrink:0;min-width:64px;">
-          <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
-          <div style="font-size:10px;font-weight:700;color:#9E9C96;margin-top:1px;">${r.floor}${r.night ? " · 야간" : ""}</div>
+      <div style="margin-bottom:6px;">
+        <div class="resident-row" style="border-color:${borderColor};background:${bg};margin-bottom:0;">
+          <div style="flex-shrink:0;min-width:64px;">
+            <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
+            <div style="font-size:10px;font-weight:700;color:#9E9C96;margin-top:1px;">${r.floor}${r.night ? " · 야간" : ""}</div>
+          </div>
+          <div class="status-group">${btns}</div>
         </div>
-        <div class="status-group">${btns}</div>
+        ${current === "absent" ? renderReasonBox(r.id) : ""}
       </div>
     `;
   }).join("");
@@ -1080,15 +1198,15 @@ function render(){
   if (S.residents.length === 0 && S.tab !== "roster") {
     body = renderEmptyState();
   } else if (searchable && S.search.trim()) {
-    body = renderSearchBar() + renderSearchResults();
+    body = renderSearchBar() + `<div id="searchResults">${renderSearchResults()}</div>`;
   } else if (S.tab === "slides") {
-    body = renderSearchBar() + renderSlides();
+    body = renderSearchBar() + `<div id="searchResults"></div>` + renderSlides();
   } else if (S.tab === "floor2") {
-    body = renderSearchBar() + renderFloorTab("2층");
+    body = renderSearchBar() + `<div id="searchResults"></div>` + renderFloorTab("2층");
   } else if (S.tab === "floor3") {
-    body = renderSearchBar() + renderFloorTab("3층");
+    body = renderSearchBar() + `<div id="searchResults"></div>` + renderFloorTab("3층");
   } else if (S.tab === "vehicle") {
-    body = renderSearchBar() + renderVehicleTab();
+    body = renderSearchBar() + `<div id="searchResults"></div>` + renderVehicleTab();
   } else if (S.tab === "roster") {
     body = renderRosterTab();
   }
