@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>서구케어재가노인주간보호센터</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    background: #FAF7F2;
+    color: #2C3B3E;
+    padding-bottom: 90px;
+  }
+  button, select, input { font-family: inherit; }
+  button { cursor: pointer; }
+
+  .header {
+    background: linear-gradient(135deg, #3F5245 0%, #2C3B3E 100%);
+    color: #FAF7F2;
+    padding: 28px 20px 22px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+  .header-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-btn {
+    background: rgba(255,255,255,0.12);
+    border: none;
+    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FAF7F2;
+    font-size: 16px;
+  }
+  .date-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.9;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .today-badge {
+    font-size: 11px;
+    background: rgba(255,255,255,0.18);
+    padding: 2px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .center-name { font-size: 22px; font-weight: 700; margin-top: 12px; }
+  .stats-row { display: flex; gap: 24px; margin-top: 18px; }
+  .stat-num { font-size: 28px; font-weight: 800; line-height: 1; }
+  .stat-label { font-size: 13px; opacity: 0.9; margin-top: 5px; font-weight: 600; }
+
+  .tabs { display: flex; gap: 5px; padding: 16px 16px 0; }
+  .tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 2px;
+    border-radius: 12px;
+    border: none;
+    background: #EFEAE1;
+    color: #3F3A32;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .tab-btn.active { background: #3F5245; color: #FAF7F2; }
+  .tab-icon { font-size: 15px; line-height: 1; }
+
+  .content { padding: 16px; }
+
+  .date-banner {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: #F6F1E4; color: #7A6238; font-size: 12px; font-weight: 700;
+    padding: 8px 10px; border-radius: 10px; margin-bottom: 12px;
+  }
+
+  .meal-counter {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; border-radius: 14px; padding: 12px 16px; border: 2px solid #EFEAE1;
+    margin-bottom: 14px;
+  }
+  .meal-left { display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 700; }
+  .meal-right { display: flex; align-items: center; gap: 12px; }
+  .meal-btn {
+    width: 36px; height: 36px; border-radius: 10px; border: 2px solid #D9D2C3;
+    background: #fff; font-size: 20px; font-weight: 700; color: #3F5245;
+  }
+  .meal-count { font-size: 20px; font-weight: 800; min-width: 24px; text-align: center; }
+
+  .floor-title { font-size: 14px; font-weight: 800; color: #3F5245; margin-bottom: 8px; padding-left: 4px; }
+
+  .resident-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 8px 10px; border-radius: 12px; border: 1.5px solid #E4DDCF; background: #fff;
+    margin-bottom: 6px;
+  }
+  .resident-name { font-size: 15px; font-weight: 700; flex-shrink: 0; min-width: 52px; }
+  .status-group { display: flex; gap: 5px; flex: 1; }
+  .status-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 3px;
+    padding: 6px 2px; border-radius: 8px; border: 1.5px solid #D9D2C3; background: #fff;
+    color: #5A5248; font-size: 11px; font-weight: 700;
+  }
+
+  .empty-box {
+    text-align: center; padding: 40px 20px; color: #8A8378; background: #fff; border-radius: 16px;
+  }
+  .empty-box .big-icon { font-size: 30px; opacity: 0.4; margin-bottom: 8px; }
+  .empty-box .title { font-weight: 600; margin-bottom: 4px; }
+  .primary-btn {
+    background: #3F5245; color: #fff; border: none; border-radius: 10px;
+    padding: 10px 18px; font-weight: 600; font-size: 13px;
+  }
+
+  .vehicle-card { border-radius: 16px; padding: 14px; margin-bottom: 14px; }
+  .vehicle-head { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; font-weight: 700; font-size: 14px; }
+  .vehicle-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vehicle-chip {
+    display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 11px; padding: 8px 12px;
+  }
+  .vehicle-chip select { border: none; background: transparent; font-size: 11px; color: #8A8378; }
+
+  .roster-add-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
+    padding: 12px; border-radius: 14px; border: 2px dashed #C9C2B4; background: #fff;
+    color: #5A5248; font-weight: 600; font-size: 14px; margin-bottom: 14px;
+  }
+  .add-form { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .add-form input, .add-form select {
+    padding: 10px 12px; border-radius: 10px; border: 1.5px solid #EFEAE1; font-size: 15px;
+  }
+  .add-form-row { display: flex; gap: 8px; }
+  .add-form-row select { flex: 1; }
+  .roster-item {
+    display: flex; align-items: center; justify-content: space-between; background: #fff;
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 8px;
+  }
+  .roster-item .name { font-weight: 700; font-size: 18px; }
+  .roster-item .meta { font-size: 13px; color: #6B6459; margin-top: 3px; font-weight: 600; }
+  .del-btn { background: none; border: none; color: #C98D74; padding: 8px; font-size: 18px; }
+
+  .slide-card { background: #fff; border-radius: 20px; border: 2px solid #E4DDCF; padding: 26px 22px; min-height: 420px; }
+  .slide-date { font-size: 13px; color: #8A8378; font-weight: 700; margin-bottom: 4px; }
+  .slide-title { font-size: 20px; font-weight: 800; color: #2C3B3E; margin-bottom: 24px; }
+  .total-circle {
+    width: 140px; height: 140px; border-radius: 50%; background: #3F5245; display: flex;
+    flex-direction: column; align-items: center; justify-content: center; color: #fff; margin: 0 auto 26px;
+  }
+  .total-circle .num { font-size: 42px; font-weight: 800; line-height: 1; }
+  .total-circle .lbl { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+  .status-summary-row {
+    display: flex; align-items: center; justify-content: space-between; border-radius: 14px;
+    padding: 12px 16px; margin-bottom: 10px; border-width: 2px; border-style: solid;
+  }
+  .meal-summary-row { display: flex; gap: 10px; }
+  .meal-summary-box { flex: 1; background: #F6F1E4; border: 2px solid #E3D6B0; border-radius: 14px; padding: 12px 14px; text-align: center; }
+
+  .slide-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+  .slide-nav-btn {
+    display: flex; align-items: center; gap: 4px; padding: 10px 16px; border-radius: 12px;
+    border: 2px solid #D9D2C3; background: #fff; color: #3F5245; font-weight: 700; font-size: 14px;
+  }
+  .slide-nav-btn:disabled { color: #C9C2B4; }
+  .dots { display: flex; gap: 8px; }
+  .dot { height: 8px; border-radius: 4px; background: #D9D2C3; cursor: pointer; }
+  .dot.active { width: 22px; background: #3F5245; }
+  .dot:not(.active) { width: 8px; }
+
+  .export-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 14px;
+    padding: 13px; border-radius: 13px; border: none; background: #3F5245; color: #fff; font-weight: 700; font-size: 14px;
+  }
+
+  .save-indicator {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; color: #8A8378; background: #FAF7F2; padding: 4px 10px; border-radius: 20px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .save-indicator.show { opacity: 1; }
+  .save-indicator.error { color: #B85C4A; }
+
+  .floor-empty { text-align: center; padding: 36px 20px; color: #8A8378; background: #fff; border-radius: 16px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="saveIndicator" class="save-indicator"></div>
+
+<script>
+/* ---------- Storage (localStorage 직접 사용) ---------- */
+const STORAGE_PREFIX = "centerCare_";
+function lsGet(key){
+  return localStorage.getItem(STORAGE_PREFIX + key);
+}
+function lsSet(key, value){
+  localStorage.setItem(STORAGE_PREFIX + key, value);
+}
+
+/* ---------- Constants ---------- */
+const FLOORS = ["2층", "3층"];
+const VEHICLES = ["스타렉스 9255", "스타렉스 5384", "카니발 8296", "레이 2410", "레이 6943", "도보"];
+const VEHICLE_COLORS = {
+  "스타렉스 9255": { bg: "#EDF3EF", border: "#7C9885", text: "#3F5245" },
+  "스타렉스 5384": { bg: "#F3EEE6", border: "#C9A66B", text: "#7A6238" },
+  "카니발 8296": { bg: "#F0EAEF", border: "#9B7CA3", text: "#5C4463" },
+  "레이 2410": { bg: "#EAEFF3", border: "#6B8FA3", text: "#3A5266" },
+  "레이 6943": { bg: "#F5EBE8", border: "#C98D74", text: "#7A4D3A" },
+  "도보": { bg: "#F1F0EC", border: "#9A9488", text: "#5A5548" },
+};
+const OLD_VEHICLE_MAP = {
+  "1호차": "스타렉스 9255",
+  "2호차": "스타렉스 5384",
+  "3호차": "카니발 8296",
+  "4호차": "레이 2410",
+  "5호차": "레이 6943",
+};
+const STATUS = {
+  present:  { label: "출석",   color: "#7C9885", bg: "#EDF3EF", icon: "✓" },
+  absent:   { label: "결석",   color: "#C98D74", bg: "#F5EBE8", icon: "✕" },
+  expected: { label: "등원예정", color: "#B0995B", bg: "#F6F1E4", icon: "🕐" },
+};
+const DEFAULT_RESIDENTS = [
+  { id: "r2_01", name: "이금도", floor: "2층", vehicle: "1호차" },
+  { id: "r2_02", name: "김계화", floor: "2층", vehicle: "1호차" },
+  { id: "r2_03", name: "김복영", floor: "2층", vehicle: "1호차" },
+  { id: "r2_04", name: "김무웅", floor: "2층", vehicle: "1호차" },
+  { id: "r2_05", name: "정인석", floor: "2층", vehicle: "1호차" },
+  { id: "r2_06", name: "전청자", floor: "2층", vehicle: "1호차" },
+  { id: "r2_07", name: "김분주", floor: "2층", vehicle: "1호차" },
+  { id: "r2_08", name: "김분선", floor: "2층", vehicle: "1호차" },
+  { id: "r2_09", name: "제갈순례", floor: "2층", vehicle: "1호차" },
+  { id: "r2_10", name: "김타연", floor: "2층", vehicle: "1호차" },
+  { id: "r2_11", name: "김태석", floor: "2층", vehicle: "1호차" },
+  { id: "r2_12", name: "추석철", floor: "2층", vehicle: "1호차" },
+  { id: "r2_13", name: "김말연", floor: "2층", vehicle: "1호차" },
+  { id: "r2_14", name: "강정순", floor: "2층", vehicle: "1호차" },
+  { id: "r2_15", name: "김두진", floor: "2층", vehicle: "1호차" },
+  { id: "r2_16", name: "윤창근", floor: "2층", vehicle: "1호차" },
+  { id: "r2_17", name: "이용대", floor: "2층", vehicle: "1호차" },
+  { id: "r2_18", name: "장명자", floor: "2층", vehicle: "1호차" },
+  { id: "r2_19", name: "전동순", floor: "2층", vehicle: "1호차" },
+  { id: "r2_20", name: "김기선", floor: "2층", vehicle: "1호차" },
+  { id: "r2_21", name: "권무생", floor: "2층", vehicle: "1호차" },
+  { id: "r2_22", name: "김숙자", floor: "2층", vehicle: "1호차" },
+  { id: "r2_23", name: "정도흥", floor: "2층", vehicle: "1호차" },
+  { id: "r2_24", name: "정병남", floor: "2층", vehicle: "1호차" },
+  { id: "r2_25", name: "이정옥", floor: "2층", vehicle: "1호차" },
+  { id: "r2_26", name: "차헌", floor: "2층", vehicle: "1호차" },
+  { id: "r2_27", name: "이옥수", floor: "2층", vehicle: "1호차" },
+  { id: "r2_28", name: "김금자", floor: "2층", vehicle: "1호차" },
+  { id: "r2_29", name: "문화자", floor: "2층", vehicle: "1호차" },
+  { id: "r2_30", name: "강귀화", floor: "2층", vehicle: "1호차" },
+  { id: "r3_01", name: "김금옥1", floor: "3층", vehicle: "1호차" },
+  { id: "r3_02", name: "김순련", floor: "3층", vehicle: "1호차" },
+  { id: "r3_03", name: "김대식", floor: "3층", vehicle: "1호차" },
+  { id: "r3_04", name: "김덕이", floor: "3층", vehicle: "1호차" },
+  { id: "r3_05", name: "임춘자1", floor: "3층", vehicle: "1호차" },
+  { id: "r3_06", name: "조영관", floor: "3층", vehicle: "1호차" },
+  { id: "r3_07", name: "하금자", floor: "3층", vehicle: "1호차" },
+  { id: "r3_08", name: "김옥조", floor: "3층", vehicle: "1호차" },
+  { id: "r3_09", name: "김태동", floor: "3층", vehicle: "1호차" },
+  { id: "r3_10", name: "예해옥", floor: "3층", vehicle: "1호차" },
+  { id: "r3_11", name: "오차남", floor: "3층", vehicle: "1호차" },
+  { id: "r3_12", name: "김상태", floor: "3층", vehicle: "1호차" },
+  { id: "r3_13", name: "김의규", floor: "3층", vehicle: "1호차" },
+  { id: "r3_14", name: "김홍두", floor: "3층", vehicle: "1호차" },
+  { id: "r3_15", name: "조차남", floor: "3층", vehicle: "1호차" },
+  { id: "r3_16", name: "소진여", floor: "3층", vehicle: "1호차" },
+  { id: "r3_17", name: "박윤실", floor: "3층", vehicle: "1호차" },
+  { id: "r3_18", name: "윤정자", floor: "3층", vehicle: "1호차" },
+  { id: "r3_19", name: "이제순", floor: "3층", vehicle: "1호차" },
+  { id: "r3_20", name: "김석곤", floor: "3층", vehicle: "1호차" },
+  { id: "r3_21", name: "김금옥2", floor: "3층", vehicle: "1호차" },
+  { id: "r3_22", name: "장규송", floor: "3층", vehicle: "1호차" },
+  { id: "r3_23", name: "임춘자2", floor: "3층", vehicle: "1호차" },
+  { id: "r3_24", name: "김상순", floor: "3층", vehicle: "1호차" },
+  { id: "r3_25", name: "이숙조", floor: "3층", vehicle: "1호차" },
+  { id: "r3_26", name: "정숙자", floor: "3층", vehicle: "1호차" },
+  { id: "r3_27", name: "김태영", floor: "3층", vehicle: "1호차" },
+  { id: "r3_28", name: "백석남", floor: "3층", vehicle: "1호차" },
+  { id: "r3_29", name: "강정자", floor: "3층", vehicle: "1호차" },
+  { id: "r3_30", name: "박숙희", floor: "3층", vehicle: "1호차" },
+  { id: "r3_31", name: "홍귀양", floor: "3층", vehicle: "1호차" },
+  { id: "r3_32", name: "김병갑", floor: "3층", vehicle: "1호차" },
+];
+
+/* ---------- Date helpers ---------- */
+function dateToKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function todayKey(){ return dateToKey(new Date()); }
+function keyToDate(key){ const [y,m,d]=key.split("-").map(Number); return new Date(y,m-1,d); }
+function formatDateLabel(key){
+  const d = keyToDate(key);
+  const days = ["일","월","화","수","목","금","토"];
+  return `${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`;
+}
+function shiftDateKey(key, delta){ const d = keyToDate(key); d.setDate(d.getDate()+delta); return dateToKey(d); }
+function sortByName(arr){ return [...arr].sort((a,b) => a.name.localeCompare(b.name, "ko")); }
+
+const WEEKDAYS = ["월","화","수","목","금","토","일"];
+function getWeekdayKorean(key){
+  const d = keyToDate(key);
+  const map = ["일","월","화","수","목","금","토"];
+  return map[d.getDay()];
+}
+function isScheduledDay(resident, dateKey){
+  if (!resident.schedule || resident.schedule.length === 0) return true;
+  return resident.schedule.includes(getWeekdayKorean(dateKey));
+}
+const SCHEDULE_OVERRIDES = {
+  "김태영": ["수","목","금"],
+  "정숙자": ["월","화","목"],
+  "강귀화": ["화","수","목"],
+  "강정자": ["월","수","금"],
+  "임춘자1": ["월","수","금"],
+  "김상순": ["화","목","토"],
+  "이숙조": ["화","목","토"],
+};
+function applyScheduleOverrides(residents){
+  return residents.map(r =>
+    (r.schedule === undefined && SCHEDULE_OVERRIDES[r.name])
+      ? { ...r, schedule: SCHEDULE_OVERRIDES[r.name] }
+      : r
+  ).map(r => r.name === "임춘자2" ? { ...r, schedule: [] } : r);
+}
+
+function migrateVehicleNames(residents){
+  return residents.map(r =>
+    OLD_VEHICLE_MAP[r.vehicle] ? { ...r, vehicle: OLD_VEHICLE_MAP[r.vehicle] } : r
+  );
+}
+
+/* ---------- State ---------- */
+const S = {
+  tab: "slides",
+  selectedDate: todayKey(),
+  residents: [],
+  attendance: {},
+  meals: {},
+  loaded: false,
+  page: 0,
+  showAdd: false,
+  newName: "",
+  newFloor: "2층",
+  newVehicle: "도보",
+};
+
+let saveTimer = null;
+let debounceTimers = {};
+
+function showSaveState(state){
+  const el = document.getElementById("saveIndicator");
+  el.classList.remove("error");
+  if (state === "saving") { el.textContent = "저장 중..."; el.classList.add("show"); }
+  else if (state === "saved") { el.textContent = "저장됨 ✓"; el.classList.add("show"); clearTimeout(saveTimer); saveTimer = setTimeout(()=>el.classList.remove("show"), 1200); }
+  else if (state === "error") { el.textContent = "저장 실패 (다시 시도해주세요)"; el.classList.add("error","show"); clearTimeout(saveTimer); saveTimer = setTimeout(()=>el.classList.remove("show"), 2500); }
+}
+
+function persist(key, value){
+  showSaveState("saving");
+  try {
+    lsSet(key, JSON.stringify(value));
+    showSaveState("saved");
+  } catch(e) {
+    showSaveState("error");
+  }
+}
+function debouncedPersist(key, value){
+  if (debounceTimers[key]) clearTimeout(debounceTimers[key]);
+  debounceTimers[key] = setTimeout(()=>persist(key, value), 350);
+}
+
+function loadAll(){
+  try {
+    const r = lsGet("residents");
+    const parsed = r ? JSON.parse(r) : [];
+    S.residents = migrateVehicleNames(applyScheduleOverrides((parsed && parsed.length > 0) ? parsed : DEFAULT_RESIDENTS));
+  } catch(e) { S.residents = migrateVehicleNames(applyScheduleOverrides(DEFAULT_RESIDENTS)); }
+  try {
+    const a = lsGet("attendance");
+    if (a) S.attendance = JSON.parse(a);
+  } catch(e) {}
+  try {
+    const m = lsGet("meals");
+    if (m) S.meals = JSON.parse(m);
+  } catch(e) {}
+  S.loaded = true;
+  debouncedPersist("residents", S.residents);
+  render();
+}
+
+function saveResidents(){ debouncedPersist("residents", S.residents); }
+function saveAttendance(){ debouncedPersist("attendance", S.attendance); }
+function saveMeals(){ debouncedPersist("meals", S.meals); }
+
+/* ---------- Actions ---------- */
+function setTab(tab){ S.tab = tab; if (tab !== "slides") S.page = 0; render(); }
+function setSelectedDate(key){ S.selectedDate = key; render(); }
+function shiftDate(delta){ S.selectedDate = shiftDateKey(S.selectedDate, delta); render(); }
+function goToday(){ S.selectedDate = todayKey(); render(); }
+
+function setStatus(id, status){
+  const day = { ...(S.attendance[S.selectedDate] || {}) };
+  day[id] = day[id] === status ? undefined : status;
+  S.attendance = { ...S.attendance, [S.selectedDate]: day };
+  saveAttendance();
+  render();
+}
+function setMealCount(floor, count){
+  const day = { ...(S.meals[S.selectedDate] || {}) };
+  day[floor] = count;
+  S.meals = { ...S.meals, [S.selectedDate]: day };
+  saveMeals();
+  render();
+}
+function setVehicle(id, vehicle){
+  S.residents = S.residents.map(r => r.id === id ? { ...r, vehicle } : r);
+  saveResidents();
+  render();
+}
+function removeResident(id){
+  S.residents = S.residents.filter(r => r.id !== id);
+  saveResidents();
+  render();
+}
+function toggleScheduleDay(id, day){
+  S.residents = S.residents.map(r => {
+    if (r.id !== id) return r;
+    const current = r.schedule || [];
+    const next = current.includes(day) ? current.filter(d => d !== day) : [...current, day];
+    return { ...r, schedule: next };
+  });
+  saveResidents();
+  render();
+}
+function clearSchedule(id){
+  S.residents = S.residents.map(r => r.id === id ? { ...r, schedule: [] } : r);
+  saveResidents();
+  render();
+}
+function toggleAddForm(){ S.showAdd = !S.showAdd; render(); }
+function updateNewName(v){ S.newName = v; }
+function updateNewFloor(v){ S.newFloor = v; }
+function updateNewVehicle(v){ S.newVehicle = v; }
+function addResident(){
+  const nameInput = document.getElementById("newNameInput");
+  const name = nameInput ? nameInput.value.trim() : "";
+  if (!name) return;
+  const id = "r_" + Date.now();
+  S.residents = [...S.residents, { id, name, floor: S.newFloor, vehicle: S.newVehicle, schedule: [] }];
+  S.newName = "";
+  S.showAdd = false;
+  saveResidents();
+  render();
+}
+function gotoPage(i){ S.page = Math.max(0, Math.min(2, i)); render(); }
+
+function computeCounts(){
+  const counts = { present: 0, absent: 0, expected: 0 };
+  const today = S.attendance[S.selectedDate] || {};
+  S.residents.forEach(r => { const s = today[r.id]; if (s) counts[s]++; });
+  return counts;
+}
+
+function downloadBlob(blob, filename){
+  // iOS 홈화면 앱 모드에서는 공유 시트를 통해 저장 (파일 앱, 메일 등으로 보낼 수 있음)
+  try {
+    if (navigator.canShare && window.File) {
+      const file = new File([blob], filename, { type: blob.type });
+      if (navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: filename }).catch(() => fallbackDownload(blob, filename));
+        return;
+      }
+    }
+  } catch (e) { /* 무시하고 아래 방식으로 */ }
+  fallbackDownload(blob, filename);
+}
+
+function fallbackDownload(blob, filename){
+  const url = URL.createObjectURL(blob);
+  // 새 탭으로 열기 (iOS Safari에서 다운로드 대신 표시되면 사용자가 공유버튼으로 저장 가능)
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.target = "_blank";
+  a.rel = "noopener";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => {
+    // 클릭이 안 먹은 경우 대비: 새 창으로 직접 열기
+    try { window.open(url, "_blank"); } catch(e) {}
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }, 300);
+}
+
+function exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, absentNames, expectedNames){
+  const rows = [];
+  rows.push(["서구케어재가노인주간보호센터"]);
+  rows.push(["날짜", dateLabel]);
+  rows.push([]);
+  rows.push(["구분", "인원수"]);
+  rows.push(["전체 인원", S.residents.length]);
+  rows.push(["출석", counts.present]);
+  rows.push(["결석", counts.absent]);
+  rows.push(["등원예정", counts.expected]);
+  rows.push([]);
+  FLOORS.forEach(f => rows.push([f + " 조식", todayMeals[f] || 0]));
+  rows.push([]);
+  rows.push(["결석자", absentNames.length ? absentNames.join(", ") : "없음"]);
+  rows.push(["등원예정자", expectedNames.length ? expectedNames.join(", ") : "없음"]);
+  rows.push([]);
+  rows.push(["이름", "층", "상태", "하원차량"]);
+  S.residents.forEach(r => {
+    rows.push([
+      r.name,
+      r.floor,
+      todayAttendance[r.id] ? STATUS[todayAttendance[r.id]].label : "미체크",
+      r.vehicle,
+    ]);
+  });
+
+  const csv = rows.map(row =>
+    row.map(cell => {
+      const s = String(cell === undefined || cell === null ? "" : cell);
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }).join(",")
+  ).join("\r\n");
+
+  // BOM 추가해서 엑셀에서 한글 안 깨지게
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+  downloadBlob(blob, `출석현황_${dateKey}.csv`);
+}
+
+function exportToExcel(){
+  try {
+    const dateKey = S.selectedDate;
+    const dateLabel = formatDateLabel(dateKey);
+    const todayAttendance = S.attendance[dateKey] || {};
+    const todayMeals = S.meals[dateKey] || {};
+    const counts = computeCounts();
+
+    const absentNames = S.residents.filter(r => todayAttendance[r.id] === "absent").map(r => r.name);
+    const expectedNames = S.residents.filter(r => todayAttendance[r.id] === "expected").map(r => r.name);
+
+    exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, absentNames, expectedNames);
+  } catch (e) {
+    console.error(e);
+    alert("내보내기에 실패했어요: " + (e && e.message ? e.message : e));
+  }
+}
+
+/* ---------- Render helpers ---------- */
+function esc(str){
+  return String(str).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function renderHeader(){
+  const counts = computeCounts();
+  const isToday = S.selectedDate === todayKey();
+  return `
+    <div class="header">
+      <div class="header-nav">
+        <button class="nav-btn" onclick="shiftDate(-1)">‹</button>
+        <div class="date-label" onclick="${isToday ? "" : "goToday()"}">
+          <span>☀️</span>
+          <span>${formatDateLabel(S.selectedDate)}</span>
+          ${!isToday ? `<span class="today-badge">오늘로</span>` : ""}
+        </div>
+        <button class="nav-btn" onclick="shiftDate(1)">›</button>
+      </div>
+      <div class="center-name">서구케어재가노인주간보호센터</div>
+      <div class="stats-row">
+        <div><div class="stat-num">${counts.present}</div><div class="stat-label">출석</div></div>
+        <div><div class="stat-num">${counts.absent}</div><div class="stat-label">결석</div></div>
+        <div><div class="stat-num">${counts.expected}</div><div class="stat-label">등원예정</div></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTabs(){
+  const tabs = [
+    { key: "slides", label: "현황판", icon: "📊" },
+    { key: "floor2", label: "2층", icon: "✓" },
+    { key: "floor3", label: "3층", icon: "✓" },
+    { key: "vehicle", label: "하원관리", icon: "🚌" },
+    { key: "roster", label: "명단관리", icon: "👥" },
+  ];
+  return `
+    <div class="tabs">
+      ${tabs.map(t => `
+        <button class="tab-btn ${S.tab === t.key ? "active" : ""}" onclick="setTab('${t.key}')">
+          <span class="tab-icon">${t.icon}</span>
+          <span>${t.label}</span>
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderMealCounter(floor){
+  const todayMeals = S.meals[S.selectedDate] || {};
+  const c = todayMeals[floor] || 0;
+  return `
+    <div class="meal-counter">
+      <div class="meal-left"><span>🍽️</span><span>${floor} 조식</span></div>
+      <div class="meal-right">
+        <button class="meal-btn" onclick="setMealCount('${floor}', ${Math.max(0,c-1)})">−</button>
+        <span class="meal-count">${c}</span>
+        <button class="meal-btn" onclick="setMealCount('${floor}', ${c+1})">+</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderEmptyState(){
+  return `
+    <div class="empty-box">
+      <div class="big-icon">👥</div>
+      <div class="title">등록된 어르신이 없어요</div>
+      <div style="font-size:13px;margin-bottom:16px;">명단관리 탭에서 먼저 등록해주세요</div>
+      <button class="primary-btn" onclick="setTab('roster'); toggleAddForm();">어르신 등록하기</button>
+    </div>
+  `;
+}
+
+function renderFloorTab(floor){
+  const list = sortByName(S.residents.filter(r => r.floor === floor));
+  const todayAttendance = S.attendance[S.selectedDate] || {};
+  let rows;
+  if (list.length === 0) {
+    rows = `<div class="floor-empty">${floor}에 등록된 어르신이 없어요</div>`;
+  } else {
+    rows = list.map(r => {
+      const current = todayAttendance[r.id];
+      const borderColor = current ? STATUS[current].color : "#E4DDCF";
+      const bg = current ? STATUS[current].bg : "#fff";
+      const schedule = r.schedule || [];
+      const isCustom = schedule.length > 0;
+      const scheduledToday = isScheduledDay(r, S.selectedDate);
+      const btns = Object.entries(STATUS).map(([key, s]) => {
+        const active = current === key;
+        return `
+          <button class="status-btn" style="border-color:${active ? s.color : "#D9D2C3"};background:${active ? s.color : "#fff"};color:${active ? "#fff" : "#5A5248"};" onclick="setStatus('${r.id}','${key}')">
+            <span>${s.icon}</span><span>${s.label}</span>
+          </button>
+        `;
+      }).join("");
+      const scheduleBadge = isCustom ? `
+        <div style="font-size:10px;font-weight:700;color:${scheduledToday ? "#B0995B" : "#B5AFA3"};margin-top:1px;">
+          ${schedule.join("·")}
+        </div>
+      ` : "";
+      return `
+        <div class="resident-row" style="border-color:${borderColor};background:${bg};${isCustom && !scheduledToday ? "opacity:0.6;" : ""}">
+          <div style="flex-shrink:0;min-width:52px;">
+            <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
+            ${scheduleBadge}
+          </div>
+          <div class="status-group">${btns}</div>
+        </div>
+      `;
+    }).join("");
+  }
+  return `
+    ${renderMealCounter(floor)}
+    <div class="floor-title">${floor} · ${list.length}명</div>
+    ${rows}
+  `;
+}
+
+function renderVehicleTab(){
+  const todayAttendance = S.attendance[S.selectedDate] || {};
+  const present = S.residents.filter(r => todayAttendance[r.id] === "present");
+  if (present.length === 0) {
+    return `
+      <div class="empty-box">
+        <div class="big-icon">🚌</div>
+        <div style="font-size:13px;">해당 날짜에 '출석'으로 표시된 분이 없어요</div>
+      </div>
+    `;
+  }
+  return VEHICLES.map(v => {
+    const c = VEHICLE_COLORS[v];
+    const list = present.filter(r => r.vehicle === v);
+    const chips = list.map(r => `
+      <div class="vehicle-chip">
+        <span style="font-size:13px;font-weight:700;">${esc(r.name)}</span>
+        <select onchange="setVehicle('${r.id}', this.value)">
+          ${VEHICLES.map(vv => `<option value="${vv}" ${vv===r.vehicle?"selected":""}>${vv}</option>`).join("")}
+        </select>
+      </div>
+    `).join("");
+    return `
+      <div class="vehicle-card" style="background:${c.bg};border:1.5px solid ${c.border};">
+        <div class="vehicle-head" style="color:${c.text};"><span>🚌</span><span>${v}</span><span style="font-size:12px;opacity:0.7;">${list.length}명</span></div>
+        ${list.length === 0 ? `<div style="font-size:12px;color:${c.text};opacity:0.6;">배정된 인원 없음</div>` : `<div class="vehicle-chips">${chips}</div>`}
+      </div>
+    `;
+  }).join("");
+}
+
+function renderRosterTab(){
+  const addForm = S.showAdd ? `
+    <div class="add-form">
+      <input id="newNameInput" placeholder="이름" value="${esc(S.newName)}" oninput="updateNewName(this.value)" />
+      <div class="add-form-row">
+        <select onchange="updateNewFloor(this.value)">
+          ${FLOORS.map(f => `<option value="${f}" ${f===S.newFloor?"selected":""}>${f}</option>`).join("")}
+        </select>
+        <select onchange="updateNewVehicle(this.value)">
+          ${VEHICLES.map(v => `<option value="${v}" ${v===S.newVehicle?"selected":""}>${v}</option>`).join("")}
+        </select>
+      </div>
+      <button class="primary-btn" style="padding:11px;" onclick="addResident()">등록하기</button>
+    </div>
+  ` : "";
+
+  const sortedResidents = [...S.residents].sort((a, b) => {
+    if (a.floor !== b.floor) return a.floor.localeCompare(b.floor, "ko");
+    return a.name.localeCompare(b.name, "ko");
+  });
+  const items = sortedResidents.map(r => {
+    const schedule = r.schedule || [];
+    const isDaily = schedule.length === 0;
+    const dayChips = WEEKDAYS.map(day => {
+      const active = schedule.includes(day);
+      return `
+        <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#B0995B" : "#D9D2C3"};background:${active ? "#B0995B" : "#fff"};color:${active ? "#fff" : "#8A8378"};font-size:12px;font-weight:700;" onclick="toggleScheduleDay('${r.id}','${day}')">${day}</button>
+      `;
+    }).join("");
+    return `
+      <div class="roster-item" style="flex-direction:column;align-items:stretch;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div>
+            <div class="name">${esc(r.name)}</div>
+            <div class="meta" style="display:flex;align-items:center;gap:6px;">
+              <span>${r.floor}</span>
+              <span>·</span>
+              <select onchange="setVehicle('${r.id}', this.value)" style="border:1px solid #D9D2C3;border-radius:6px;padding:2px 6px;font-size:12px;font-weight:700;color:#5A5248;background:#fff;">
+                ${VEHICLES.map(v => `<option value="${v}" ${v===r.vehicle?"selected":""}>${v}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+          <button class="del-btn" onclick="removeResident('${r.id}')">🗑️</button>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${isDaily ? "#3F5245" : "#D9D2C3"};background:${isDaily ? "#3F5245" : "#fff"};color:${isDaily ? "#fff" : "#8A8378"};font-size:11px;font-weight:700;" onclick="clearSchedule('${r.id}')">매일</button>
+          ${dayChips}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <button class="roster-add-btn" onclick="toggleAddForm()"><span>➕</span><span>어르신 등록</span></button>
+    ${addForm}
+    ${items}
+  `;
+}
+
+function renderSlides(){
+  const counts = computeCounts();
+  const todayMeals = S.meals[S.selectedDate] || {};
+  const todayAttendance = S.attendance[S.selectedDate] || {};
+  const total = S.residents.length;
+
+  let inner;
+  if (S.page === 0) {
+    inner = `
+      <div class="slide-date">${formatDateLabel(S.selectedDate)}</div>
+      <div class="slide-title">오늘 총인원 결과</div>
+      <div class="total-circle"><div class="num">${total}</div><div class="lbl">전체 인원</div></div>
+      ${["present","absent","expected"].map(k => `
+        <div class="status-summary-row" style="background:${STATUS[k].bg};border-color:${STATUS[k].color};">
+          <span style="font-size:16px;font-weight:700;color:${STATUS[k].color};">${STATUS[k].label}</span>
+          <span style="font-size:22px;font-weight:800;color:${STATUS[k].color};">${counts[k]}명</span>
+        </div>
+      `).join("")}
+      <div class="meal-summary-row">
+        ${FLOORS.map(f => `
+          <div class="meal-summary-box">
+            <div style="font-size:13px;font-weight:700;color:#7A6238;">${f} 조식</div>
+            <div style="font-size:22px;font-weight:800;color:#7A6238;margin-top:4px;">${todayMeals[f]||0}개</div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  } else {
+    const floor = FLOORS[S.page - 1];
+    const list = sortByName(S.residents.filter(r => r.floor === floor));
+    inner = `
+      <div class="slide-date">${floor} 어르신 현황</div>
+      <div class="slide-title">총 ${list.length}명</div>
+      ${list.length === 0 ? `<div style="text-align:center;color:#8A8378;padding:30px;font-size:13px;">등록된 어르신이 없어요</div>` :
+        list.map(r => {
+          const s = todayAttendance[r.id];
+          return `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;background:${s?STATUS[s].bg:"#F5F3EE"};margin-bottom:8px;">
+              <span style="font-size:16px;font-weight:700;">${esc(r.name)}</span>
+              <span style="font-size:12px;font-weight:700;color:${s?STATUS[s].color:"#B5AFA3"};">${s?STATUS[s].label:"미체크"}</span>
+            </div>
+          `;
+        }).join("")
+      }
+    `;
+  }
+
+  return `
+    <div class="slide-card">${inner}</div>
+    <div class="slide-nav">
+      <button class="slide-nav-btn" ${S.page===0?"disabled":""} onclick="gotoPage(${S.page-1})">‹ 이전</button>
+      <div class="dots">
+        ${[0,1,2].map(i => `<div class="dot ${i===S.page?"active":""}" onclick="gotoPage(${i})"></div>`).join("")}
+      </div>
+      <button class="slide-nav-btn" ${S.page===2?"disabled":""} onclick="gotoPage(${S.page+1})">다음 ›</button>
+    </div>
+    <button class="export-btn" onclick="exportToExcel()"><span>⬇️</span><span>파일로 내보내기 (엑셀)</span></button>
+  `;
+}
+
+/* ---------- Main render ---------- */
+function render(){
+  const app = document.getElementById("app");
+  if (!S.loaded) {
+    app.innerHTML = renderHeader() + renderTabs() + `<div class="content"><div class="empty-box">불러오는 중...</div></div>`;
+    return;
+  }
+
+  const isToday = S.selectedDate === todayKey();
+  let body = "";
+  if (S.residents.length === 0 && S.tab !== "roster") {
+    body = renderEmptyState();
+  } else if (S.tab === "slides") {
+    body = renderSlides();
+  } else if (S.tab === "floor2") {
+    body = renderFloorTab("2층");
+  } else if (S.tab === "floor3") {
+    body = renderFloorTab("3층");
+  } else if (S.tab === "vehicle") {
+    body = renderVehicleTab();
+  } else if (S.tab === "roster") {
+    body = renderRosterTab();
+  }
+
+  const banner = (!isToday && S.tab !== "roster") ? `<div class="date-banner">${formatDateLabel(S.selectedDate)} 기록을 보고 있어요</div>` : "";
+
+  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>`;
+
+  const nameInput = document.getElementById("newNameInput");
+  if (nameInput) {
+    nameInput.focus();
+    const val = nameInput.value;
+    nameInput.value = "";
+    nameInput.value = val;
+  }
+}
+
+loadAll();
+</script>
+</body>
+</html>
