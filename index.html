@@ -462,6 +462,14 @@ function toggleNight(id){
   render();
 }
 function toggleAddForm(){ S.showAdd = !S.showAdd; render(); }
+function resetVehicles(){
+  if (!confirm("모든 어르신의 하원 차량을 처음 기본값으로 되돌릴까요?\n(이름·층·출결 기록은 그대로 유지돼요)")) return;
+  const defMap = {};
+  DEFAULT_RESIDENTS.forEach(d => { defMap[d.name] = OLD_VEHICLE_MAP[d.vehicle] || d.vehicle; });
+  S.residents = S.residents.map(r => defMap[r.name] ? { ...r, vehicle: defMap[r.name] } : r);
+  saveResidents();
+  render();
+}
 function updateSearch(v){ S.search = v; render(); }
 function clearSearch(){ S.search = ""; S._searchFocused = false; render(); }
 function openStatusList(status){ S.statusModal = status; render(); }
@@ -845,6 +853,7 @@ function renderRosterTab(){
 
   return `
     <button class="roster-add-btn" onclick="toggleAddForm()"><span>➕</span><span>어르신 등록</span></button>
+    <button onclick="resetVehicles()" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border-radius:14px;border:1.5px solid #DEDBD3;background:#fff;color:#7A6238;font-weight:700;font-size:13px;margin-bottom:14px;"><span>🚌</span><span>하원 차량 기본값으로 되돌리기</span></button>
     ${addForm}
     ${items}
   `;
