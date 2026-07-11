@@ -472,7 +472,7 @@ function setFloorAll(floor, status){
   saveAttendance();
   render();
 }
-const ABSENT_REASONS = ["병원", "개인사정", "건강상 이유"];
+const ABSENT_REASONS = ["병원", "개인사정", "건강상 이유", "이용일X"];
 const EXPECTED_REASONS = ["늦게 오심", "병원", "개인사정"];
 function setAbsentReason(id, reason){
   const day = { ...(S.absentReasons[S.selectedDate] || {}) };
