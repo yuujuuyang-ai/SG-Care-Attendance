@@ -351,6 +351,7 @@ const S = {
   residents: [],
   attendance: {},
   absentReasons: {},
+  expectedReasons: {},
   meals: {},
   loaded: false,
   page: 0,
@@ -361,6 +362,8 @@ const S = {
   search: "",
   statusModal: null,
   confirmReset: false,
+  showCalendar: false,
+  calMonth: null,
   _searchFocused: false,
 };
 
@@ -404,6 +407,10 @@ function loadAll(){
     if (ar) S.absentReasons = JSON.parse(ar);
   } catch(e) {}
   try {
+    const er = lsGet("expectedReasons");
+    if (er) S.expectedReasons = JSON.parse(er);
+  } catch(e) {}
+  try {
     const m = lsGet("meals");
     if (m) S.meals = JSON.parse(m);
   } catch(e) {}
@@ -415,6 +422,7 @@ function loadAll(){
 function saveResidents(){ debouncedPersist("residents", S.residents); }
 function saveAttendance(){ debouncedPersist("attendance", S.attendance); }
 function saveAbsentReasons(){ debouncedPersist("absentReasons", S.absentReasons); }
+function saveExpectedReasons(){ debouncedPersist("expectedReasons", S.expectedReasons); }
 function saveMeals(){ debouncedPersist("meals", S.meals); }
 
 /* ---------- Actions ---------- */
@@ -422,6 +430,30 @@ function setTab(tab){ S.tab = tab; if (tab !== "slides") S.page = 0; S.search = 
 function setSelectedDate(key){ S.selectedDate = key; render(); }
 function shiftDate(delta){ S.selectedDate = shiftDateKey(S.selectedDate, delta); render(); }
 function goToday(){ S.selectedDate = todayKey(); render(); }
+function openCalendar(){
+  S.showCalendar = true;
+  S.calMonth = S.selectedDate.slice(0,7); // "YYYY-MM"
+  render();
+}
+function closeCalendar(){ S.showCalendar = false; render(); }
+function shiftCalMonth(delta){
+  const [y,m] = S.calMonth.split("-").map(Number);
+  const d = new Date(y, m-1+delta, 1);
+  S.calMonth = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  render();
+}
+function pickCalDate(key){
+  S.selectedDate = key;
+  S.showCalendar = false;
+  render();
+}
+function presentCountFor(dateKey){
+  const day = S.attendance[dateKey];
+  if (!day) return 0;
+  let n = 0;
+  for (const id in day){ if (day[id] === "present") n++; }
+  return n;
+}
 
 function setStatus(id, status){
   const day = { ...(S.attendance[S.selectedDate] || {}) };
@@ -441,12 +473,21 @@ function setFloorAll(floor, status){
   render();
 }
 const ABSENT_REASONS = ["병원", "개인사정", "건강상 이유"];
+const EXPECTED_REASONS = ["늦게 오심", "병원", "개인사정"];
 function setAbsentReason(id, reason){
   const day = { ...(S.absentReasons[S.selectedDate] || {}) };
   if (reason && reason.trim()) day[id] = reason;
   else delete day[id];
   S.absentReasons = { ...S.absentReasons, [S.selectedDate]: day };
   saveAbsentReasons();
+  render();
+}
+function setExpectedReason(id, reason){
+  const day = { ...(S.expectedReasons[S.selectedDate] || {}) };
+  if (reason && reason.trim()) day[id] = reason;
+  else delete day[id];
+  S.expectedReasons = { ...S.expectedReasons, [S.selectedDate]: day };
+  saveExpectedReasons();
   render();
 }
 function setMealCount(floor, count){
@@ -562,9 +603,13 @@ function doResetDay(){
   const newReasons = { ...S.absentReasons };
   delete newReasons[S.selectedDate];
   S.absentReasons = newReasons;
+  const newExpReasons = { ...S.expectedReasons };
+  delete newExpReasons[S.selectedDate];
+  S.expectedReasons = newExpReasons;
   saveAttendance();
   saveMeals();
   saveAbsentReasons();
+  saveExpectedReasons();
   render();
 }
 function cancelResetDay(){
@@ -640,16 +685,20 @@ function exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, ab
   FLOORS.forEach(f => rows.push([f + " 조식", todayMeals[f] || 0]));
   rows.push([]);
   const reasons = S.absentReasons[dateKey] || {};
+  const expReasons = S.expectedReasons[dateKey] || {};
   rows.push(["결석자", absentNames.length ? absentNames.join(", ") : "없음"]);
   rows.push(["등원예정자", expectedNames.length ? expectedNames.join(", ") : "없음"]);
   rows.push([]);
-  rows.push(["이름", "층", "상태", "결석사유", "하원차량"]);
+  rows.push(["이름", "층", "상태", "사유", "하원차량"]);
   S.residents.forEach(r => {
+    const st = todayAttendance[r.id];
+    const reasonCell = st === "absent" ? (reasons[r.id] || "")
+                     : st === "expected" ? (expReasons[r.id] || "") : "";
     rows.push([
       r.name,
       r.floor,
-      todayAttendance[r.id] ? STATUS[todayAttendance[r.id]].label : "미체크",
-      todayAttendance[r.id] === "absent" ? (reasons[r.id] || "") : "",
+      st ? STATUS[st].label : "미체크",
+      reasonCell,
       r.vehicle,
     ]);
   });
@@ -679,7 +728,11 @@ function exportToExcel(){
       const rs = dayReasons[r.id];
       return rs ? `${r.name}(${rs})` : r.name;
     });
-    const expectedNames = S.residents.filter(r => todayAttendance[r.id] === "expected").map(r => r.name);
+    const expDayReasons = S.expectedReasons[dateKey] || {};
+    const expectedNames = S.residents.filter(r => todayAttendance[r.id] === "expected").map(r => {
+      const rs = expDayReasons[r.id];
+      return rs ? `${r.name}(${rs})` : r.name;
+    });
 
     exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, absentNames, expectedNames);
   } catch (e) {
@@ -693,24 +746,31 @@ function esc(str){
   return String(str).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-function renderReasonBox(id){
-  const reasons = S.absentReasons[S.selectedDate] || {};
+function renderReasonBox(id, kind){
+  const isAbsent = kind === "absent";
+  const reasonList = isAbsent ? ABSENT_REASONS : EXPECTED_REASONS;
+  const store = isAbsent ? S.absentReasons : S.expectedReasons;
+  const setter = isAbsent ? "setAbsentReason" : "setExpectedReason";
+  const theme = isAbsent
+    ? { active: "#D39282", chipBorder: "#E3D5D0", chipText: "#B08575", boxBg: "#FBF3F0", boxBorder: "#F0DED8", label: "#B08575" }
+    : { active: "#C9A94E", chipBorder: "#E6DCC0", chipText: "#9A8442", boxBg: "#FBF7EC", boxBorder: "#EDE3C8", label: "#9A8442" };
+  const reasons = store[S.selectedDate] || {};
   const current = reasons[id] || "";
-  const chips = ABSENT_REASONS.map(rs => {
+  const chips = reasonList.map(rs => {
     const active = current === rs;
-    return `<button onclick="setAbsentReason('${id}', ${active ? "''" : `'${rs}'`})" style="padding:5px 11px;border-radius:8px;border:1.5px solid ${active ? "#D39282" : "#E3D5D0"};background:${active ? "#D39282" : "#fff"};color:${active ? "#fff" : "#B08575"};font-size:12px;font-weight:700;">${rs}</button>`;
+    return `<button onclick="${setter}('${id}', ${active ? "''" : `'${rs}'`})" style="padding:5px 11px;border-radius:8px;border:1.5px solid ${active ? theme.active : theme.chipBorder};background:${active ? theme.active : "#fff"};color:${active ? "#fff" : theme.chipText};font-size:12px;font-weight:700;">${rs}</button>`;
   }).join("");
-  const isPreset = ABSENT_REASONS.includes(current);
+  const isPreset = reasonList.includes(current);
   const customVal = isPreset ? "" : current;
   return `
-    <div style="background:#FBF3F0;border:1.5px solid #F0DED8;border-top:none;border-radius:0 0 12px 12px;padding:9px 12px;margin-top:-2px;">
+    <div style="background:${theme.boxBg};border:1.5px solid ${theme.boxBorder};border-top:none;border-radius:0 0 12px 12px;padding:9px 12px;margin-top:-2px;">
       <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
-        <span style="font-size:11px;font-weight:800;color:#B08575;margin-right:2px;">사유</span>
+        <span style="font-size:11px;font-weight:800;color:${theme.label};margin-right:2px;">사유</span>
         ${chips}
       </div>
       <input value="${esc(customVal)}" placeholder="직접 입력 (선택)"
-        onchange="setAbsentReason('${id}', this.value)"
-        style="width:100%;margin-top:7px;padding:7px 10px;border-radius:8px;border:1.5px solid #F0DED8;font-size:13px;background:#fff;color:#5A5852;outline:none;box-sizing:border-box;" />
+        onchange="${setter}('${id}', this.value)"
+        style="width:100%;margin-top:7px;padding:7px 10px;border-radius:8px;border:1.5px solid ${theme.boxBorder};font-size:13px;background:#fff;color:#5A5852;outline:none;box-sizing:border-box;" />
     </div>
   `;
 }
@@ -722,10 +782,10 @@ function renderHeader(){
     <div class="header">
       <div class="header-nav">
         <button class="nav-btn" onclick="shiftDate(-1)">‹</button>
-        <div class="date-label" onclick="${isToday ? "" : "goToday()"}">
-          <span>☀️</span>
+        <div class="date-label" onclick="openCalendar()" style="cursor:pointer;">
+          <span>📅</span>
           <span>${formatDateLabel(S.selectedDate)}</span>
-          ${!isToday ? `<span class="today-badge">오늘로</span>` : ""}
+          ${!isToday ? `<span class="today-badge" onclick="event.stopPropagation();goToday()">오늘로</span>` : ""}
         </div>
         <button class="nav-btn" onclick="shiftDate(1)">›</button>
       </div>
@@ -817,7 +877,8 @@ function renderFloorTab(floor){
           ${schedule.join("·")}
         </div>
       ` : "";
-      const reasonBox = current === "absent" ? renderReasonBox(r.id) : "";
+      const reasonBox = current === "absent" ? renderReasonBox(r.id, "absent")
+                      : current === "expected" ? renderReasonBox(r.id, "expected") : "";
       return `
         <div style="margin-bottom:6px;">
           <div class="resident-row" style="border-color:${borderColor};background:${bg};${isCustom && !scheduledToday ? "opacity:0.6;" : ""}margin-bottom:0;">
@@ -1028,6 +1089,10 @@ function renderSlides(){
           </div>
         `).join("")}
       </div>
+
+      <button onclick="openCalendar()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;padding:13px;border-radius:13px;border:1.5px solid #DEDBD3;background:#fff;color:#6B8A7A;font-weight:800;font-size:14px;">
+        <span>📅</span><span>월간 출석 달력 보기</span>
+      </button>
     `;
   } else {
     const floor = FLOORS[S.page - 1];
@@ -1112,7 +1177,7 @@ function renderSearchResults(){
           </div>
           <div class="status-group">${btns}</div>
         </div>
-        ${current === "absent" ? renderReasonBox(r.id) : ""}
+        ${current === "absent" ? renderReasonBox(r.id, "absent") : current === "expected" ? renderReasonBox(r.id, "expected") : ""}
       </div>
     `;
   }).join("");
@@ -1185,6 +1250,59 @@ function renderResetConfirm(){
   `;
 }
 
+function renderCalendar(){
+  if (!S.showCalendar) return "";
+  const [y, m] = S.calMonth.split("-").map(Number);
+  const first = new Date(y, m-1, 1);
+  const startDow = first.getDay(); // 0=일
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const tKey = todayKey();
+  const monthLabel = `${y}년 ${m}월`;
+  const dowNames = ["일","월","화","수","목","금","토"];
+
+  let cells = "";
+  for (let i = 0; i < startDow; i++) cells += `<div></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const isSel = key === S.selectedDate;
+    const isToday = key === tKey;
+    const cnt = presentCountFor(key);
+    const dow = new Date(y, m-1, d).getDay();
+    const dateColor = dow === 0 ? "#C98D74" : (dow === 6 ? "#6B8FA3" : "#343432");
+    cells += `
+      <div onclick="pickCalDate('${key}')" style="aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:10px;cursor:pointer;
+        background:${isSel ? "#6B8A7A" : (isToday ? "#EAF0EC" : "transparent")};
+        border:1.5px solid ${isToday && !isSel ? "#6B8A7A" : "transparent"};">
+        <span style="font-size:14px;font-weight:700;color:${isSel ? "#fff" : dateColor};">${d}</span>
+        ${cnt > 0 ? `<span style="font-size:10px;font-weight:800;color:${isSel ? "#EAF0EC" : "#6B8A7A"};">${cnt}명</span>` : `<span style="font-size:10px;">&nbsp;</span>`}
+      </div>
+    `;
+  }
+
+  return `
+    <div onclick="closeCalendar()" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:150;display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:380px;border-radius:20px;padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <button onclick="shiftCalMonth(-1)" style="background:#EFEDE8;border:none;border-radius:10px;width:36px;height:36px;font-size:18px;color:#5A5852;">‹</button>
+          <div style="font-size:17px;font-weight:800;color:#343432;">${monthLabel}</div>
+          <button onclick="shiftCalMonth(1)" style="background:#EFEDE8;border:none;border-radius:10px;width:36px;height:36px;font-size:18px;color:#5A5852;">›</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px;">
+          ${dowNames.map((n,i) => `<div style="text-align:center;font-size:12px;font-weight:700;color:${i===0?"#C98D74":(i===6?"#6B8FA3":"#9E9C96")};">${n}</div>`).join("")}
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">
+          ${cells}
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button onclick="pickCalDate('${tKey}')" style="flex:1;padding:12px;border-radius:12px;border:2px solid #6B8A7A;background:#fff;color:#6B8A7A;font-size:14px;font-weight:800;">오늘로</button>
+          <button onclick="closeCalendar()" style="flex:1;padding:12px;border-radius:12px;border:none;background:#6B8A7A;color:#fff;font-size:14px;font-weight:800;">닫기</button>
+        </div>
+        <div style="text-align:center;font-size:11px;color:#9E9C96;margin-top:10px;">날짜 아래 숫자는 그날 출석 인원이에요</div>
+      </div>
+    </div>
+  `;
+}
+
 function render(){
   const app = document.getElementById("app");
   if (!S.loaded) {
@@ -1213,7 +1331,7 @@ function render(){
 
   const banner = (!isToday && S.tab !== "roster") ? `<div class="date-banner">${formatDateLabel(S.selectedDate)} 기록을 보고 있어요</div>` : "";
 
-  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>` + renderStatusModal() + renderResetConfirm();
+  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>` + renderStatusModal() + renderResetConfirm() + renderCalendar();
 
   const nameInput = document.getElementById("newNameInput");
   if (nameInput) {
