@@ -9,19 +9,18 @@
   body {
     margin: 0;
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
-    background: #FAF7F2;
-    color: #2C3B3E;
+    background: #F8F7F4;
+    color: #343432;
     padding-bottom: 90px;
   }
   button, select, input { font-family: inherit; }
   button { cursor: pointer; }
 
   .header {
-    background: linear-gradient(135deg, #3F5245 0%, #2C3B3E 100%);
-    color: #FAF7F2;
-    padding: 28px 20px 22px;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    background: #F8F7F4;
+    color: #343432;
+    padding: 24px 20px 18px;
+    border-bottom: 1px solid #ECEAE5;
   }
   .header-nav {
     display: flex;
@@ -29,7 +28,7 @@
     justify-content: space-between;
   }
   .nav-btn {
-    background: rgba(255,255,255,0.12);
+    background: #EFEDE8;
     border: none;
     border-radius: 8px;
     width: 30px;
@@ -37,28 +36,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #FAF7F2;
+    color: #5A5852;
     font-size: 16px;
   }
   .date-label {
     display: flex;
     align-items: center;
     gap: 8px;
-    opacity: 0.9;
+    color: #9E9C96;
     font-size: 14px;
     font-weight: 700;
   }
   .today-badge {
     font-size: 11px;
-    background: rgba(255,255,255,0.18);
+    background: #EAE7DF;
+    color: #6B8A7A;
     padding: 2px 8px;
     border-radius: 8px;
     cursor: pointer;
   }
-  .center-name { font-size: 22px; font-weight: 700; margin-top: 12px; }
-  .stats-row { display: flex; gap: 24px; margin-top: 18px; }
-  .stat-num { font-size: 28px; font-weight: 800; line-height: 1; }
-  .stat-label { font-size: 13px; opacity: 0.9; margin-top: 5px; font-weight: 600; }
+  .center-name { font-size: 21px; font-weight: 800; margin-top: 10px; color: #343432; }
+  .stats-row { display: flex; gap: 26px; margin-top: 16px; }
+  .stat-num { font-size: 28px; font-weight: 800; line-height: 1; color: #343432; }
+  .stat-label { font-size: 12px; color: #9E9C96; margin-top: 6px; font-weight: 600; }
 
   .tabs { display: flex; gap: 5px; padding: 16px 16px 0; }
   .tab-btn {
@@ -71,12 +71,12 @@
     padding: 10px 2px;
     border-radius: 12px;
     border: none;
-    background: #EFEAE1;
-    color: #3F3A32;
+    background: #EFEDE8;
+    color: #4A4842;
     font-size: 11px;
     font-weight: 700;
   }
-  .tab-btn.active { background: #3F5245; color: #FAF7F2; }
+  .tab-btn.active { background: #6B8A7A; color: #F8F7F4; }
   .tab-icon { font-size: 15px; line-height: 1; }
 
   .content { padding: 16px; }
@@ -89,39 +89,39 @@
 
   .meal-counter {
     display: flex; align-items: center; justify-content: space-between;
-    background: #fff; border-radius: 14px; padding: 12px 16px; border: 2px solid #EFEAE1;
+    background: #fff; border-radius: 14px; padding: 12px 16px; border: 2px solid #EFEDE8;
     margin-bottom: 14px;
   }
   .meal-left { display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 700; }
   .meal-right { display: flex; align-items: center; gap: 12px; }
   .meal-btn {
-    width: 36px; height: 36px; border-radius: 10px; border: 2px solid #D9D2C3;
-    background: #fff; font-size: 20px; font-weight: 700; color: #3F5245;
+    width: 36px; height: 36px; border-radius: 10px; border: 2px solid #DEDBD3;
+    background: #fff; font-size: 20px; font-weight: 700; color: #6B8A7A;
   }
   .meal-count { font-size: 20px; font-weight: 800; min-width: 24px; text-align: center; }
 
-  .floor-title { font-size: 14px; font-weight: 800; color: #3F5245; margin-bottom: 8px; padding-left: 4px; }
+  .floor-title { font-size: 14px; font-weight: 800; color: #6B8A7A; margin-bottom: 8px; padding-left: 4px; }
 
   .resident-row {
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    padding: 8px 10px; border-radius: 12px; border: 1.5px solid #E4DDCF; background: #fff;
+    padding: 8px 10px; border-radius: 12px; border: 1.5px solid #ECEAE5; background: #fff;
     margin-bottom: 6px;
   }
   .resident-name { font-size: 15px; font-weight: 700; flex-shrink: 0; min-width: 52px; }
   .status-group { display: flex; gap: 5px; flex: 1; }
   .status-btn {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 3px;
-    padding: 6px 2px; border-radius: 8px; border: 1.5px solid #D9D2C3; background: #fff;
-    color: #5A5248; font-size: 11px; font-weight: 700;
+    padding: 6px 2px; border-radius: 8px; border: 1.5px solid #DEDBD3; background: #fff;
+    color: #5A5852; font-size: 11px; font-weight: 700;
   }
 
   .empty-box {
-    text-align: center; padding: 40px 20px; color: #8A8378; background: #fff; border-radius: 16px;
+    text-align: center; padding: 40px 20px; color: #9E9C96; background: #fff; border-radius: 16px;
   }
   .empty-box .big-icon { font-size: 30px; opacity: 0.4; margin-bottom: 8px; }
   .empty-box .title { font-weight: 600; margin-bottom: 4px; }
   .primary-btn {
-    background: #3F5245; color: #fff; border: none; border-radius: 10px;
+    background: #6B8A7A; color: #fff; border: none; border-radius: 10px;
     padding: 10px 18px; font-weight: 600; font-size: 13px;
   }
 
@@ -131,16 +131,16 @@
   .vehicle-chip {
     display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 11px; padding: 8px 12px;
   }
-  .vehicle-chip select { border: none; background: transparent; font-size: 11px; color: #8A8378; }
+  .vehicle-chip select { border: none; background: transparent; font-size: 11px; color: #9E9C96; }
 
   .roster-add-btn {
     display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
-    padding: 12px; border-radius: 14px; border: 2px dashed #C9C2B4; background: #fff;
-    color: #5A5248; font-weight: 600; font-size: 14px; margin-bottom: 14px;
+    padding: 12px; border-radius: 14px; border: 2px dashed #CFCcC4; background: #fff;
+    color: #5A5852; font-weight: 600; font-size: 14px; margin-bottom: 14px;
   }
   .add-form { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
   .add-form input, .add-form select {
-    padding: 10px 12px; border-radius: 10px; border: 1.5px solid #EFEAE1; font-size: 15px;
+    padding: 10px 12px; border-radius: 10px; border: 1.5px solid #EFEDE8; font-size: 15px;
   }
   .add-form-row { display: flex; gap: 8px; }
   .add-form-row select { flex: 1; }
@@ -149,14 +149,14 @@
     border-radius: 12px; padding: 12px 14px; margin-bottom: 8px;
   }
   .roster-item .name { font-weight: 700; font-size: 18px; }
-  .roster-item .meta { font-size: 13px; color: #6B6459; margin-top: 3px; font-weight: 600; }
+  .roster-item .meta { font-size: 13px; color: #7A7872; margin-top: 3px; font-weight: 600; }
   .del-btn { background: none; border: none; color: #C98D74; padding: 8px; font-size: 18px; }
 
-  .slide-card { background: #fff; border-radius: 20px; border: 2px solid #E4DDCF; padding: 26px 22px; min-height: 420px; }
-  .slide-date { font-size: 13px; color: #8A8378; font-weight: 700; margin-bottom: 4px; }
-  .slide-title { font-size: 20px; font-weight: 800; color: #2C3B3E; margin-bottom: 24px; }
+  .slide-card { background: #fff; border-radius: 20px; border: 2px solid #ECEAE5; padding: 26px 22px; min-height: 420px; }
+  .slide-date { font-size: 13px; color: #9E9C96; font-weight: 700; margin-bottom: 4px; }
+  .slide-title { font-size: 20px; font-weight: 800; color: #343432; margin-bottom: 24px; }
   .total-circle {
-    width: 140px; height: 140px; border-radius: 50%; background: #3F5245; display: flex;
+    width: 140px; height: 140px; border-radius: 50%; background: #6B8A7A; display: flex;
     flex-direction: column; align-items: center; justify-content: center; color: #fff; margin: 0 auto 26px;
   }
   .total-circle .num { font-size: 42px; font-weight: 800; line-height: 1; }
@@ -171,28 +171,28 @@
   .slide-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
   .slide-nav-btn {
     display: flex; align-items: center; gap: 4px; padding: 10px 16px; border-radius: 12px;
-    border: 2px solid #D9D2C3; background: #fff; color: #3F5245; font-weight: 700; font-size: 14px;
+    border: 2px solid #DEDBD3; background: #fff; color: #6B8A7A; font-weight: 700; font-size: 14px;
   }
-  .slide-nav-btn:disabled { color: #C9C2B4; }
+  .slide-nav-btn:disabled { color: #CFCcC4; }
   .dots { display: flex; gap: 8px; }
-  .dot { height: 8px; border-radius: 4px; background: #D9D2C3; cursor: pointer; }
-  .dot.active { width: 22px; background: #3F5245; }
+  .dot { height: 8px; border-radius: 4px; background: #DEDBD3; cursor: pointer; }
+  .dot.active { width: 22px; background: #6B8A7A; }
   .dot:not(.active) { width: 8px; }
 
   .export-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 14px;
-    padding: 13px; border-radius: 13px; border: none; background: #3F5245; color: #fff; font-weight: 700; font-size: 14px;
+    padding: 13px; border-radius: 13px; border: none; background: #6B8A7A; color: #fff; font-weight: 700; font-size: 14px;
   }
 
   .save-indicator {
     position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
-    font-size: 11px; color: #8A8378; background: #FAF7F2; padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; color: #9E9C96; background: #F8F7F4; padding: 4px 10px; border-radius: 20px;
     opacity: 0; transition: opacity 0.3s;
   }
   .save-indicator.show { opacity: 1; }
   .save-indicator.error { color: #B85C4A; }
 
-  .floor-empty { text-align: center; padding: 36px 20px; color: #8A8378; background: #fff; border-radius: 16px; font-size: 13px; }
+  .floor-empty { text-align: center; padding: 36px 20px; color: #9E9C96; background: #fff; border-radius: 16px; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -213,7 +213,7 @@ function lsSet(key, value){
 const FLOORS = ["2층", "3층"];
 const VEHICLES = ["스타렉스 9255", "스타렉스 5384", "카니발 8296", "레이 2410", "레이 6943", "도보"];
 const VEHICLE_COLORS = {
-  "스타렉스 9255": { bg: "#EDF3EF", border: "#7C9885", text: "#3F5245" },
+  "스타렉스 9255": { bg: "#EDF3EF", border: "#7C9885", text: "#6B8A7A" },
   "스타렉스 5384": { bg: "#F3EEE6", border: "#C9A66B", text: "#7A6238" },
   "카니발 8296": { bg: "#F0EAEF", border: "#9B7CA3", text: "#5C4463" },
   "레이 2410": { bg: "#EAEFF3", border: "#6B8FA3", text: "#3A5266" },
@@ -228,73 +228,73 @@ const OLD_VEHICLE_MAP = {
   "5호차": "레이 6943",
 };
 const STATUS = {
-  present:  { label: "출석",   color: "#7C9885", bg: "#EDF3EF", icon: "✓" },
-  absent:   { label: "결석",   color: "#C98D74", bg: "#F5EBE8", icon: "✕" },
-  expected: { label: "등원예정", color: "#B0995B", bg: "#F6F1E4", icon: "🕐" },
+  present:  { label: "출석",   color: "#7A9B8A", bg: "#EDF2EE", icon: "✓" },
+  absent:   { label: "결석",   color: "#D39282", bg: "#F7ECE8", icon: "✕" },
+  expected: { label: "등원예정", color: "#D3B36A", bg: "#F7F1E3", icon: "🕐" },
 };
 const DEFAULT_RESIDENTS = [
-  { id: "r2_01", name: "이금도", floor: "2층", vehicle: "1호차" },
-  { id: "r2_02", name: "김계화", floor: "2층", vehicle: "1호차" },
-  { id: "r2_03", name: "김복영", floor: "2층", vehicle: "1호차" },
-  { id: "r2_04", name: "김무웅", floor: "2층", vehicle: "1호차" },
-  { id: "r2_05", name: "정인석", floor: "2층", vehicle: "1호차" },
-  { id: "r2_06", name: "전청자", floor: "2층", vehicle: "1호차" },
-  { id: "r2_07", name: "김분주", floor: "2층", vehicle: "1호차" },
-  { id: "r2_08", name: "김분선", floor: "2층", vehicle: "1호차" },
-  { id: "r2_09", name: "제갈순례", floor: "2층", vehicle: "1호차" },
-  { id: "r2_10", name: "김타연", floor: "2층", vehicle: "1호차" },
-  { id: "r2_11", name: "김태석", floor: "2층", vehicle: "1호차" },
-  { id: "r2_12", name: "추석철", floor: "2층", vehicle: "1호차" },
-  { id: "r2_13", name: "김말연", floor: "2층", vehicle: "1호차" },
-  { id: "r2_14", name: "강정순", floor: "2층", vehicle: "1호차" },
-  { id: "r2_15", name: "김두진", floor: "2층", vehicle: "1호차" },
-  { id: "r2_16", name: "윤창근", floor: "2층", vehicle: "1호차" },
-  { id: "r2_17", name: "이용대", floor: "2층", vehicle: "1호차" },
-  { id: "r2_18", name: "장명자", floor: "2층", vehicle: "1호차" },
-  { id: "r2_19", name: "전동순", floor: "2층", vehicle: "1호차" },
-  { id: "r2_20", name: "김기선", floor: "2층", vehicle: "1호차" },
-  { id: "r2_21", name: "권무생", floor: "2층", vehicle: "1호차" },
-  { id: "r2_22", name: "김숙자", floor: "2층", vehicle: "1호차" },
-  { id: "r2_23", name: "정도흥", floor: "2층", vehicle: "1호차" },
-  { id: "r2_24", name: "정병남", floor: "2층", vehicle: "1호차" },
-  { id: "r2_25", name: "이정옥", floor: "2층", vehicle: "1호차" },
-  { id: "r2_26", name: "차헌", floor: "2층", vehicle: "1호차" },
-  { id: "r2_27", name: "이옥수", floor: "2층", vehicle: "1호차" },
-  { id: "r2_28", name: "김금자", floor: "2층", vehicle: "1호차" },
-  { id: "r2_29", name: "문화자", floor: "2층", vehicle: "1호차" },
-  { id: "r2_30", name: "강귀화", floor: "2층", vehicle: "1호차" },
-  { id: "r3_01", name: "김금옥1", floor: "3층", vehicle: "1호차" },
-  { id: "r3_02", name: "김순련", floor: "3층", vehicle: "1호차" },
-  { id: "r3_03", name: "김대식", floor: "3층", vehicle: "1호차" },
-  { id: "r3_04", name: "김덕이", floor: "3층", vehicle: "1호차" },
-  { id: "r3_05", name: "임춘자1", floor: "3층", vehicle: "1호차" },
-  { id: "r3_06", name: "조영관", floor: "3층", vehicle: "1호차" },
-  { id: "r3_07", name: "하금자", floor: "3층", vehicle: "1호차" },
-  { id: "r3_08", name: "김옥조", floor: "3층", vehicle: "1호차" },
-  { id: "r3_09", name: "김태동", floor: "3층", vehicle: "1호차" },
-  { id: "r3_10", name: "예해옥", floor: "3층", vehicle: "1호차" },
-  { id: "r3_11", name: "오차남", floor: "3층", vehicle: "1호차" },
-  { id: "r3_12", name: "김상태", floor: "3층", vehicle: "1호차" },
-  { id: "r3_13", name: "김의규", floor: "3층", vehicle: "1호차" },
-  { id: "r3_14", name: "김홍두", floor: "3층", vehicle: "1호차" },
-  { id: "r3_15", name: "조차남", floor: "3층", vehicle: "1호차" },
-  { id: "r3_16", name: "소진여", floor: "3층", vehicle: "1호차" },
-  { id: "r3_17", name: "박윤실", floor: "3층", vehicle: "1호차" },
-  { id: "r3_18", name: "윤정자", floor: "3층", vehicle: "1호차" },
-  { id: "r3_19", name: "이제순", floor: "3층", vehicle: "1호차" },
-  { id: "r3_20", name: "김석곤", floor: "3층", vehicle: "1호차" },
-  { id: "r3_21", name: "김금옥2", floor: "3층", vehicle: "1호차" },
-  { id: "r3_22", name: "장규송", floor: "3층", vehicle: "1호차" },
-  { id: "r3_23", name: "임춘자2", floor: "3층", vehicle: "1호차" },
-  { id: "r3_24", name: "김상순", floor: "3층", vehicle: "1호차" },
-  { id: "r3_25", name: "이숙조", floor: "3층", vehicle: "1호차" },
-  { id: "r3_26", name: "정숙자", floor: "3층", vehicle: "1호차" },
-  { id: "r3_27", name: "김태영", floor: "3층", vehicle: "1호차" },
+  { id: "r2_01", name: "이금도", floor: "2층", vehicle: "스타렉스 9255", night: true },
+  { id: "r2_02", name: "김계화", floor: "2층", vehicle: "스타렉스 5384", night: true },
+  { id: "r2_03", name: "김복영", floor: "2층", vehicle: "도보" },
+  { id: "r2_04", name: "김무웅", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r2_05", name: "정인석", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r2_06", name: "전청자", floor: "2층", vehicle: "레이 2410", night: true },
+  { id: "r2_07", name: "김분주", floor: "2층", vehicle: "스타렉스 5384", night: true },
+  { id: "r2_08", name: "김분선", floor: "2층", vehicle: "스타렉스 5384", night: true },
+  { id: "r2_09", name: "제갈순례", floor: "2층", vehicle: "스타렉스 5384", night: true },
+  { id: "r2_10", name: "김타연", floor: "2층", vehicle: "스타렉스 9255", night: true },
+  { id: "r2_11", name: "김태석", floor: "2층", vehicle: "스타렉스 9255", night: true },
+  { id: "r2_12", name: "추석철", floor: "2층", vehicle: "스타렉스 5384", night: true },
+  { id: "r2_13", name: "김말연", floor: "2층", vehicle: "스타렉스 5384", night: true },
+  { id: "r2_14", name: "강정순", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r2_15", name: "김두진", floor: "2층", vehicle: "레이 6943", night: true },
+  { id: "r2_16", name: "윤창근", floor: "2층", vehicle: "스타렉스 9255", night: true },
+  { id: "r2_17", name: "이용대", floor: "2층", vehicle: "스타렉스 5384" },
+  { id: "r2_18", name: "장명자", floor: "2층", vehicle: "레이 2410" },
+  { id: "r2_19", name: "전동순", floor: "2층", vehicle: "스타렉스 5384", night: true },
+  { id: "r2_20", name: "김기선", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r2_21", name: "권무생", floor: "2층", vehicle: "레이 2410", night: true },
+  { id: "r2_22", name: "김숙자", floor: "2층", vehicle: "카니발 8296" },
+  { id: "r2_23", name: "정도흥", floor: "2층", vehicle: "레이 2410", night: true },
+  { id: "r2_24", name: "정병남", floor: "2층", vehicle: "레이 6943", night: true },
+  { id: "r2_25", name: "이정옥", floor: "2층", vehicle: "스타렉스 5384", night: true },
+  { id: "r2_26", name: "차헌", floor: "2층", vehicle: "레이 6943", night: true },
+  { id: "r2_27", name: "이옥수", floor: "2층", vehicle: "스타렉스 9255", night: true },
+  { id: "r2_28", name: "김금자", floor: "2층", vehicle: "스타렉스 9255", night: true },
+  { id: "r2_29", name: "문화자", floor: "2층", vehicle: "레이 6943" },
+  { id: "r2_30", name: "강귀화", floor: "2층", vehicle: "카니발 8296" },
+  { id: "r3_01", name: "김금옥1", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r3_02", name: "김순련", floor: "3층", vehicle: "레이 6943" },
+  { id: "r3_03", name: "김대식", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r3_04", name: "김덕이", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r3_05", name: "임춘자1", floor: "3층", vehicle: "레이 2410" },
+  { id: "r3_06", name: "조영관", floor: "3층", vehicle: "레이 2410", night: true },
+  { id: "r3_07", name: "하금자", floor: "3층", vehicle: "도보" },
+  { id: "r3_08", name: "김옥조", floor: "3층", vehicle: "스타렉스 5384", night: true },
+  { id: "r3_09", name: "김태동", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r3_10", name: "예해옥", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r3_11", name: "오차남", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r3_12", name: "김상태", floor: "3층", vehicle: "스타렉스 9255", night: true },
+  { id: "r3_13", name: "김의규", floor: "3층", vehicle: "스타렉스 9255", night: true },
+  { id: "r3_14", name: "김홍두", floor: "3층", vehicle: "도보", night: true },
+  { id: "r3_15", name: "조차남", floor: "3층", vehicle: "레이 6943", night: true },
+  { id: "r3_16", name: "소진여", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r3_17", name: "박윤실", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r3_18", name: "윤정자", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r3_19", name: "이제순", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r3_20", name: "김석곤", floor: "3층", vehicle: "레이 6943" },
+  { id: "r3_21", name: "김금옥2", floor: "3층", vehicle: "레이 6943", night: true },
+  { id: "r3_22", name: "장규송", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r3_23", name: "임춘자2", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r3_24", name: "김상순", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r3_25", name: "이숙조", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r3_26", name: "정숙자", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r3_27", name: "김태영", floor: "3층", vehicle: "카니발 8296" },
   { id: "r3_28", name: "백석남", floor: "3층", vehicle: "1호차" },
-  { id: "r3_29", name: "강정자", floor: "3층", vehicle: "1호차" },
-  { id: "r3_30", name: "박숙희", floor: "3층", vehicle: "1호차" },
-  { id: "r3_31", name: "홍귀양", floor: "3층", vehicle: "1호차" },
-  { id: "r3_32", name: "김병갑", floor: "3층", vehicle: "1호차" },
+  { id: "r3_29", name: "강정자", floor: "3층", vehicle: "레이 2410" },
+  { id: "r3_30", name: "박숙희", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r3_31", name: "홍귀양", floor: "3층", vehicle: "레이 2410" },
+  { id: "r3_32", name: "김병갑", floor: "3층", vehicle: "카니발 8296" },
 ];
 
 /* ---------- Date helpers ---------- */
@@ -357,6 +357,9 @@ const S = {
   newName: "",
   newFloor: "2층",
   newVehicle: "도보",
+  search: "",
+  statusModal: null,
+  confirmReset: false,
 };
 
 let saveTimer = null;
@@ -408,7 +411,7 @@ function saveAttendance(){ debouncedPersist("attendance", S.attendance); }
 function saveMeals(){ debouncedPersist("meals", S.meals); }
 
 /* ---------- Actions ---------- */
-function setTab(tab){ S.tab = tab; if (tab !== "slides") S.page = 0; render(); }
+function setTab(tab){ S.tab = tab; if (tab !== "slides") S.page = 0; S.search = ""; render(); }
 function setSelectedDate(key){ S.selectedDate = key; render(); }
 function shiftDate(delta){ S.selectedDate = shiftDateKey(S.selectedDate, delta); render(); }
 function goToday(){ S.selectedDate = todayKey(); render(); }
@@ -452,7 +455,36 @@ function clearSchedule(id){
   saveResidents();
   render();
 }
+function toggleNight(id){
+  S.residents = S.residents.map(r => r.id === id ? { ...r, night: !r.night } : r);
+  saveResidents();
+  render();
+}
 function toggleAddForm(){ S.showAdd = !S.showAdd; render(); }
+function updateSearch(v){ S.search = v; render(); }
+function clearSearch(){ S.search = ""; render(); }
+function openStatusList(status){ S.statusModal = status; render(); }
+function closeStatusList(){ S.statusModal = null; render(); }
+function resetDay(){
+  S.confirmReset = true;
+  render();
+}
+function doResetDay(){
+  S.confirmReset = false;
+  const newAttendance = { ...S.attendance };
+  delete newAttendance[S.selectedDate];
+  S.attendance = newAttendance;
+  const newMeals = { ...S.meals };
+  delete newMeals[S.selectedDate];
+  S.meals = newMeals;
+  saveAttendance();
+  saveMeals();
+  render();
+}
+function cancelResetDay(){
+  S.confirmReset = false;
+  render();
+}
 function updateNewName(v){ S.newName = v; }
 function updateNewFloor(v){ S.newFloor = v; }
 function updateNewVehicle(v){ S.newVehicle = v; }
@@ -584,10 +616,14 @@ function renderHeader(){
         <button class="nav-btn" onclick="shiftDate(1)">›</button>
       </div>
       <div class="center-name">서구케어재가노인주간보호센터</div>
-      <div class="stats-row">
-        <div><div class="stat-num">${counts.present}</div><div class="stat-label">출석</div></div>
-        <div><div class="stat-num">${counts.absent}</div><div class="stat-label">결석</div></div>
-        <div><div class="stat-num">${counts.expected}</div><div class="stat-label">등원예정</div></div>
+      <div class="stats-row" style="align-items:flex-start;">
+        <div onclick="openStatusList('present')" style="cursor:pointer;"><div class="stat-num">${counts.present}</div><div class="stat-label">출석 ›</div></div>
+        <div onclick="openStatusList('absent')" style="cursor:pointer;"><div class="stat-num">${counts.absent}</div><div class="stat-label">결석 ›</div></div>
+        <div onclick="openStatusList('expected')" style="cursor:pointer;"><div class="stat-num">${counts.expected}</div><div class="stat-label">등원예정 ›</div></div>
+        <button onclick="resetDay()" style="margin-left:auto;background:#EFEDE8;border:none;border-radius:10px;color:#8C8A84;font-size:11px;font-weight:700;padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px;">
+          <span style="font-size:15px;">↺</span>
+          <span>초기화</span>
+        </button>
       </div>
     </div>
   `;
@@ -648,7 +684,7 @@ function renderFloorTab(floor){
   } else {
     rows = list.map(r => {
       const current = todayAttendance[r.id];
-      const borderColor = current ? STATUS[current].color : "#E4DDCF";
+      const borderColor = current ? STATUS[current].color : "#ECEAE5";
       const bg = current ? STATUS[current].bg : "#fff";
       const schedule = r.schedule || [];
       const isCustom = schedule.length > 0;
@@ -656,13 +692,13 @@ function renderFloorTab(floor){
       const btns = Object.entries(STATUS).map(([key, s]) => {
         const active = current === key;
         return `
-          <button class="status-btn" style="border-color:${active ? s.color : "#D9D2C3"};background:${active ? s.color : "#fff"};color:${active ? "#fff" : "#5A5248"};" onclick="setStatus('${r.id}','${key}')">
+          <button class="status-btn" style="border-color:${active ? s.color : "#DEDBD3"};background:${active ? s.color : "#fff"};color:${active ? "#fff" : "#5A5852"};" onclick="setStatus('${r.id}','${key}')">
             <span>${s.icon}</span><span>${s.label}</span>
           </button>
         `;
       }).join("");
       const scheduleBadge = isCustom ? `
-        <div style="font-size:10px;font-weight:700;color:${scheduledToday ? "#B0995B" : "#B5AFA3"};margin-top:1px;">
+        <div style="font-size:10px;font-weight:700;color:${scheduledToday ? "#B0995B" : "#B8B6AE"};margin-top:1px;">
           ${schedule.join("·")}
         </div>
       ` : "";
@@ -695,24 +731,60 @@ function renderVehicleTab(){
       </div>
     `;
   }
-  return VEHICLES.map(v => {
-    const c = VEHICLE_COLORS[v];
-    const list = present.filter(r => r.vehicle === v);
-    const chips = list.map(r => `
-      <div class="vehicle-chip">
-        <span style="font-size:13px;font-weight:700;">${esc(r.name)}</span>
-        <select onchange="setVehicle('${r.id}', this.value)">
-          ${VEHICLES.map(vv => `<option value="${vv}" ${vv===r.vehicle?"selected":""}>${vv}</option>`).join("")}
-        </select>
-      </div>
-    `).join("");
+
+  function renderShift(shiftLabel, shiftTime, people, headerColor){
+    const vehicleBlocks = VEHICLES.map(v => {
+      const c = VEHICLE_COLORS[v];
+      const vehicleList = people.filter(r => r.vehicle === v);
+      if (vehicleList.length === 0) return "";
+
+      const floorRows = FLOORS.map(floor => {
+        const list = sortByName(vehicleList.filter(r => r.floor === floor));
+        if (list.length === 0) return "";
+        const chips = list.map(r => `
+          <div class="vehicle-chip">
+            <span style="font-size:13px;font-weight:700;">${esc(r.name)}</span>
+            <select onchange="setVehicle('${r.id}', this.value)">
+              ${VEHICLES.map(vv => `<option value="${vv}" ${vv===r.vehicle?"selected":""}>${vv}</option>`).join("")}
+            </select>
+          </div>
+        `).join("");
+        return `
+          <div style="margin-top:8px;">
+            <div style="font-size:12px;font-weight:800;color:${c.text};opacity:0.85;margin-bottom:5px;">${floor} · ${list.length}명</div>
+            <div class="vehicle-chips">${chips}</div>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="vehicle-card" style="background:${c.bg};border:1.5px solid ${c.border};margin-bottom:10px;">
+          <div class="vehicle-head" style="color:${c.text};"><span>🚌</span><span>${v}</span><span style="font-size:12px;opacity:0.7;">${vehicleList.length}명</span></div>
+          ${floorRows}
+        </div>
+      `;
+    }).join("");
+
     return `
-      <div class="vehicle-card" style="background:${c.bg};border:1.5px solid ${c.border};">
-        <div class="vehicle-head" style="color:${c.text};"><span>🚌</span><span>${v}</span><span style="font-size:12px;opacity:0.7;">${list.length}명</span></div>
-        ${list.length === 0 ? `<div style="font-size:12px;color:${c.text};opacity:0.6;">배정된 인원 없음</div>` : `<div class="vehicle-chips">${chips}</div>`}
+      <div style="margin-bottom:22px;">
+        <div style="display:flex;align-items:center;gap:8px;background:${headerColor};color:#fff;padding:12px 16px;border-radius:14px;margin-bottom:10px;">
+          <span style="font-size:18px;font-weight:800;">${shiftLabel}</span>
+          <span style="font-size:13px;opacity:0.9;">${shiftTime}</span>
+          <span style="font-size:13px;opacity:0.9;margin-left:auto;">${people.length}명</span>
+        </div>
+        ${people.length > 0 ? vehicleBlocks : `<div style="font-size:12px;color:#9E9C96;padding:8px 4px;">해당 인원 없음</div>`}
       </div>
     `;
-  }).join("");
+  }
+
+  const dayPeople = present.filter(r => !r.night);
+  const nightPeople = present.filter(r => r.night);
+
+  let html = renderShift("주간반", "4시 하원", dayPeople, "#6B8A7A");
+  if (nightPeople.length > 0) {
+    html += renderShift("야간반", "5시 하원", nightPeople, "#5C4463");
+  }
+  return html;
 }
 
 function renderRosterTab(){
@@ -741,26 +813,28 @@ function renderRosterTab(){
     const dayChips = WEEKDAYS.map(day => {
       const active = schedule.includes(day);
       return `
-        <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#B0995B" : "#D9D2C3"};background:${active ? "#B0995B" : "#fff"};color:${active ? "#fff" : "#8A8378"};font-size:12px;font-weight:700;" onclick="toggleScheduleDay('${r.id}','${day}')">${day}</button>
+        <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#B0995B" : "#DEDBD3"};background:${active ? "#B0995B" : "#fff"};color:${active ? "#fff" : "#9E9C96"};font-size:12px;font-weight:700;" onclick="toggleScheduleDay('${r.id}','${day}')">${day}</button>
       `;
     }).join("");
     return `
       <div class="roster-item" style="flex-direction:column;align-items:stretch;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
           <div>
-            <div class="name">${esc(r.name)}</div>
+            <div class="name">${esc(r.name)}${r.night ? ` <span style="font-size:12px;font-weight:800;color:#5C4463;background:#F0EAEF;padding:2px 8px;border-radius:8px;">야간</span>` : ""}</div>
             <div class="meta" style="display:flex;align-items:center;gap:6px;">
               <span>${r.floor}</span>
               <span>·</span>
-              <select onchange="setVehicle('${r.id}', this.value)" style="border:1px solid #D9D2C3;border-radius:6px;padding:2px 6px;font-size:12px;font-weight:700;color:#5A5248;background:#fff;">
+              <select onchange="setVehicle('${r.id}', this.value)" style="border:1px solid #DEDBD3;border-radius:6px;padding:2px 6px;font-size:12px;font-weight:700;color:#5A5852;background:#fff;">
                 ${VEHICLES.map(v => `<option value="${v}" ${v===r.vehicle?"selected":""}>${v}</option>`).join("")}
               </select>
             </div>
           </div>
           <button class="del-btn" onclick="removeResident('${r.id}')">🗑️</button>
         </div>
-        <div style="display:flex;gap:4px;flex-wrap:wrap;">
-          <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${isDaily ? "#3F5245" : "#D9D2C3"};background:${isDaily ? "#3F5245" : "#fff"};color:${isDaily ? "#fff" : "#8A8378"};font-size:11px;font-weight:700;" onclick="clearSchedule('${r.id}')">매일</button>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
+          <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${r.night ? "#5C4463" : "#DEDBD3"};background:${r.night ? "#5C4463" : "#fff"};color:${r.night ? "#fff" : "#9E9C96"};font-size:11px;font-weight:700;" onclick="toggleNight('${r.id}')">${r.night ? "🌙 야간반" : "야간반 지정"}</button>
+          <span style="width:1px;height:20px;background:#ECEAE5;margin:0 2px;"></span>
+          <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${isDaily ? "#6B8A7A" : "#DEDBD3"};background:${isDaily ? "#6B8A7A" : "#fff"};color:${isDaily ? "#fff" : "#9E9C96"};font-size:11px;font-weight:700;" onclick="clearSchedule('${r.id}')">매일</button>
           ${dayChips}
         </div>
       </div>
@@ -782,17 +856,38 @@ function renderSlides(){
 
   let inner;
   if (S.page === 0) {
+    const segMax = total > 0 ? total : 1;
+    const segs = ["present","absent","expected"].map(k => ({
+      k, val: counts[k], color: STATUS[k].color, pct: (counts[k]/segMax)*100
+    }));
+    const barSegments = segs.filter(s => s.val > 0).map(s =>
+      `<div style="width:${s.pct}%;background:${s.color};"></div>`
+    ).join("");
     inner = `
       <div class="slide-date">${formatDateLabel(S.selectedDate)}</div>
       <div class="slide-title">오늘 총인원 결과</div>
-      <div class="total-circle"><div class="num">${total}</div><div class="lbl">전체 인원</div></div>
+
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px;">
+        <span style="font-size:14px;font-weight:700;color:#9E9C96;">전체</span>
+        <span style="font-size:26px;font-weight:800;color:#343432;">${total}</span>
+        <span style="font-size:14px;font-weight:700;color:#9E9C96;">명</span>
+      </div>
+
+      <div style="display:flex;width:100%;height:34px;border-radius:10px;overflow:hidden;background:#F0ECE4;margin-bottom:16px;">
+        ${barSegments}
+      </div>
+
       ${["present","absent","expected"].map(k => `
-        <div class="status-summary-row" style="background:${STATUS[k].bg};border-color:${STATUS[k].color};">
-          <span style="font-size:16px;font-weight:700;color:${STATUS[k].color};">${STATUS[k].label}</span>
-          <span style="font-size:22px;font-weight:800;color:${STATUS[k].color};">${counts[k]}명</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 2px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:16px;height:16px;border-radius:50%;background:${STATUS[k].color};display:inline-block;"></span>
+            <span style="font-size:16px;font-weight:700;color:#343432;">${STATUS[k].label}</span>
+          </div>
+          <span style="font-size:18px;font-weight:800;color:${STATUS[k].color};">${counts[k]}명</span>
         </div>
       `).join("")}
-      <div class="meal-summary-row">
+
+      <div class="meal-summary-row" style="margin-top:6px;">
         ${FLOORS.map(f => `
           <div class="meal-summary-box">
             <div style="font-size:13px;font-weight:700;color:#7A6238;">${f} 조식</div>
@@ -807,13 +902,13 @@ function renderSlides(){
     inner = `
       <div class="slide-date">${floor} 어르신 현황</div>
       <div class="slide-title">총 ${list.length}명</div>
-      ${list.length === 0 ? `<div style="text-align:center;color:#8A8378;padding:30px;font-size:13px;">등록된 어르신이 없어요</div>` :
+      ${list.length === 0 ? `<div style="text-align:center;color:#9E9C96;padding:30px;font-size:13px;">등록된 어르신이 없어요</div>` :
         list.map(r => {
           const s = todayAttendance[r.id];
           return `
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;background:${s?STATUS[s].bg:"#F5F3EE"};margin-bottom:8px;">
               <span style="font-size:16px;font-weight:700;">${esc(r.name)}</span>
-              <span style="font-size:12px;font-weight:700;color:${s?STATUS[s].color:"#B5AFA3"};">${s?STATUS[s].label:"미체크"}</span>
+              <span style="font-size:12px;font-weight:700;color:${s?STATUS[s].color:"#B8B6AE"};">${s?STATUS[s].label:"미체크"}</span>
             </div>
           `;
         }).join("")
@@ -835,6 +930,120 @@ function renderSlides(){
 }
 
 /* ---------- Main render ---------- */
+function renderSearchBar(){
+  return `
+    <div style="display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #ECEAE5;border-radius:12px;padding:8px 12px;margin-bottom:14px;">
+      <span style="font-size:15px;">🔍</span>
+      <input id="searchInput" placeholder="이름 검색" value="${esc(S.search)}" oninput="updateSearch(this.value)"
+        style="flex:1;border:none;outline:none;font-size:15px;background:transparent;color:#343432;" />
+      ${S.search ? `<button onclick="clearSearch()" style="border:none;background:#EFEDE8;border-radius:50%;width:22px;height:22px;font-size:13px;color:#9E9C96;">✕</button>` : ""}
+    </div>
+  `;
+}
+
+function renderSearchResults(){
+  const todayAttendance = S.attendance[S.selectedDate] || {};
+  const q = S.search.trim();
+  const matches = S.residents
+    .filter(r => r.name.includes(q))
+    .sort((a, b) => {
+      if (a.floor !== b.floor) return a.floor.localeCompare(b.floor, "ko");
+      return a.name.localeCompare(b.name, "ko");
+    });
+
+  if (matches.length === 0) {
+    return `<div class="floor-empty">"${esc(q)}" 검색 결과가 없어요</div>`;
+  }
+
+  return matches.map(r => {
+    const current = todayAttendance[r.id];
+    const borderColor = current ? STATUS[current].color : "#ECEAE5";
+    const bg = current ? STATUS[current].bg : "#fff";
+    const btns = Object.entries(STATUS).map(([key, s]) => {
+      const active = current === key;
+      return `
+        <button class="status-btn" style="border-color:${active ? s.color : "#DEDBD3"};background:${active ? s.color : "#fff"};color:${active ? "#fff" : "#5A5852"};" onclick="setStatus('${r.id}','${key}')">
+          <span>${s.icon}</span><span>${s.label}</span>
+        </button>
+      `;
+    }).join("");
+    return `
+      <div class="resident-row" style="border-color:${borderColor};background:${bg};">
+        <div style="flex-shrink:0;min-width:64px;">
+          <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
+          <div style="font-size:10px;font-weight:700;color:#9E9C96;margin-top:1px;">${r.floor}${r.night ? " · 야간" : ""}</div>
+        </div>
+        <div class="status-group">${btns}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderStatusModal(){
+  if (!S.statusModal) return "";
+  const status = S.statusModal;
+  const s = STATUS[status];
+  const todayAttendance = S.attendance[S.selectedDate] || {};
+  const list = S.residents
+    .filter(r => todayAttendance[r.id] === status)
+    .sort((a, b) => {
+      if (a.floor !== b.floor) return a.floor.localeCompare(b.floor, "ko");
+      return a.name.localeCompare(b.name, "ko");
+    });
+
+  const byFloor = FLOORS.map(floor => {
+    const fl = list.filter(r => r.floor === floor);
+    if (fl.length === 0) return "";
+    const names = fl.map(r => `
+      <div style="display:inline-flex;align-items:center;gap:4px;background:${s.bg};border:1.5px solid ${s.color};border-radius:10px;padding:6px 10px;margin:0 6px 6px 0;">
+        <span style="font-size:14px;font-weight:700;color:#343432;">${esc(r.name)}</span>
+        ${r.night ? `<span style="font-size:10px;font-weight:800;color:#5C4463;">야간</span>` : ""}
+      </div>
+    `).join("");
+    return `
+      <div style="margin-bottom:14px;">
+        <div style="font-size:13px;font-weight:800;color:#5A5852;margin-bottom:8px;">${floor} · ${fl.length}명</div>
+        <div style="display:flex;flex-wrap:wrap;">${names}</div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div onclick="closeStatusList()" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;display:flex;align-items:flex-end;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:600px;border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;max-height:75vh;overflow-y:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:20px;font-weight:800;color:${s.color};">${s.label}</span>
+            <span style="font-size:16px;font-weight:700;color:#9E9C96;">${list.length}명</span>
+          </div>
+          <button onclick="closeStatusList()" style="border:none;background:#EFEDE8;border-radius:50%;width:32px;height:32px;font-size:16px;color:#5A5852;">✕</button>
+        </div>
+        ${list.length === 0 ? `<div style="text-align:center;color:#9E9C96;padding:30px;font-size:14px;">${s.label} 어르신이 없어요</div>` : byFloor}
+      </div>
+    </div>
+  `;
+}
+
+function renderResetConfirm(){
+  if (!S.confirmReset) return "";
+  const label = formatDateLabel(S.selectedDate);
+  return `
+    <div onclick="cancelResetDay()" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;">
+      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:340px;border-radius:20px;padding:24px;text-align:center;">
+        <div style="font-size:34px;margin-bottom:10px;">⚠️</div>
+        <div style="font-size:18px;font-weight:800;color:#343432;margin-bottom:8px;">기록을 초기화할까요?</div>
+        <div style="font-size:14px;color:#7A7872;line-height:1.5;margin-bottom:20px;">
+          <b>${label}</b>의 출석·조식 기록이 모두 지워져요.<br>어르신 명단과 차량 배정은 그대로 유지돼요.
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="cancelResetDay()" style="flex:1;padding:13px;border-radius:12px;border:2px solid #DEDBD3;background:#fff;color:#5A5852;font-size:15px;font-weight:700;">취소</button>
+          <button onclick="doResetDay()" style="flex:1;padding:13px;border-radius:12px;border:none;background:#C98D74;color:#fff;font-size:15px;font-weight:700;">초기화</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function render(){
   const app = document.getElementById("app");
   if (!S.loaded) {
@@ -843,24 +1052,27 @@ function render(){
   }
 
   const isToday = S.selectedDate === todayKey();
+  const searchable = (S.tab === "slides" || S.tab === "floor2" || S.tab === "floor3" || S.tab === "vehicle");
   let body = "";
   if (S.residents.length === 0 && S.tab !== "roster") {
     body = renderEmptyState();
+  } else if (searchable && S.search.trim()) {
+    body = renderSearchBar() + renderSearchResults();
   } else if (S.tab === "slides") {
-    body = renderSlides();
+    body = renderSearchBar() + renderSlides();
   } else if (S.tab === "floor2") {
-    body = renderFloorTab("2층");
+    body = renderSearchBar() + renderFloorTab("2층");
   } else if (S.tab === "floor3") {
-    body = renderFloorTab("3층");
+    body = renderSearchBar() + renderFloorTab("3층");
   } else if (S.tab === "vehicle") {
-    body = renderVehicleTab();
+    body = renderSearchBar() + renderVehicleTab();
   } else if (S.tab === "roster") {
     body = renderRosterTab();
   }
 
   const banner = (!isToday && S.tab !== "roster") ? `<div class="date-banner">${formatDateLabel(S.selectedDate)} 기록을 보고 있어요</div>` : "";
 
-  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>`;
+  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>` + renderStatusModal() + renderResetConfirm();
 
   const nameInput = document.getElementById("newNameInput");
   if (nameInput) {
@@ -868,6 +1080,14 @@ function render(){
     const val = nameInput.value;
     nameInput.value = "";
     nameInput.value = val;
+  }
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput && document.activeElement !== searchInput) {
+    // 검색 입력 중 포커스 유지
+    const val = searchInput.value;
+    searchInput.focus();
+    searchInput.value = "";
+    searchInput.value = val;
   }
 }
 
