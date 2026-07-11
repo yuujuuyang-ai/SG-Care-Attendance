@@ -503,9 +503,9 @@ function addResident(){
 function gotoPage(i){ S.page = Math.max(0, Math.min(2, i)); render(); }
 
 function computeCounts(){
-  const counts = { present: 0, absent: 0, expected: 0 };
+  const counts = { present: 0, absent: 0, expected: 0, unchecked: 0 };
   const today = S.attendance[S.selectedDate] || {};
-  S.residents.forEach(r => { const s = today[r.id]; if (s) counts[s]++; });
+  S.residents.forEach(r => { const s = today[r.id]; if (s) counts[s]++; else counts.unchecked++; });
   return counts;
 }
 
@@ -617,10 +617,11 @@ function renderHeader(){
         <button class="nav-btn" onclick="shiftDate(1)">›</button>
       </div>
       <div class="center-name">서구케어재가노인주간보호센터</div>
-      <div class="stats-row" style="align-items:flex-start;">
+      <div class="stats-row" style="align-items:flex-start;gap:18px;">
         <div onclick="openStatusList('present')" style="cursor:pointer;"><div class="stat-num">${counts.present}</div><div class="stat-label">출석 ›</div></div>
         <div onclick="openStatusList('absent')" style="cursor:pointer;"><div class="stat-num">${counts.absent}</div><div class="stat-label">결석 ›</div></div>
         <div onclick="openStatusList('expected')" style="cursor:pointer;"><div class="stat-num">${counts.expected}</div><div class="stat-label">등원예정 ›</div></div>
+        <div onclick="openStatusList('unchecked')" style="cursor:pointer;"><div class="stat-num" style="color:#9E9C96;">${counts.unchecked}</div><div class="stat-label">미체크 ›</div></div>
         <button onclick="resetDay()" style="margin-left:auto;background:#EFEDE8;border:none;border-radius:10px;color:#8C8A84;font-size:11px;font-weight:700;padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px;">
           <span style="font-size:15px;">↺</span>
           <span>초기화</span>
@@ -887,6 +888,13 @@ function renderSlides(){
           <span style="font-size:18px;font-weight:800;color:${STATUS[k].color};">${counts[k]}명</span>
         </div>
       `).join("")}
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 2px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="width:16px;height:16px;border-radius:50%;background:#C7C5BF;display:inline-block;"></span>
+            <span style="font-size:16px;font-weight:700;color:#9E9C96;">미체크</span>
+          </div>
+          <span style="font-size:18px;font-weight:800;color:#9E9C96;">${counts.unchecked}명</span>
+        </div>
 
       <div class="meal-summary-row" style="margin-top:6px;">
         ${FLOORS.map(f => `
@@ -986,10 +994,12 @@ function renderSearchResults(){
 function renderStatusModal(){
   if (!S.statusModal) return "";
   const status = S.statusModal;
-  const s = STATUS[status];
+  const s = status === "unchecked"
+    ? { label: "미체크", color: "#9E9C96", bg: "#F0EFEB" }
+    : STATUS[status];
   const todayAttendance = S.attendance[S.selectedDate] || {};
   const list = S.residents
-    .filter(r => todayAttendance[r.id] === status)
+    .filter(r => status === "unchecked" ? !todayAttendance[r.id] : todayAttendance[r.id] === status)
     .sort((a, b) => {
       if (a.floor !== b.floor) return a.floor.localeCompare(b.floor, "ko");
       return a.name.localeCompare(b.name, "ko");
