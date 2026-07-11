@@ -360,6 +360,7 @@ const S = {
   search: "",
   statusModal: null,
   confirmReset: false,
+  _searchFocused: false,
 };
 
 let saveTimer = null;
@@ -411,7 +412,7 @@ function saveAttendance(){ debouncedPersist("attendance", S.attendance); }
 function saveMeals(){ debouncedPersist("meals", S.meals); }
 
 /* ---------- Actions ---------- */
-function setTab(tab){ S.tab = tab; if (tab !== "slides") S.page = 0; S.search = ""; render(); }
+function setTab(tab){ S.tab = tab; if (tab !== "slides") S.page = 0; S.search = ""; S._searchFocused = false; render(); }
 function setSelectedDate(key){ S.selectedDate = key; render(); }
 function shiftDate(delta){ S.selectedDate = shiftDateKey(S.selectedDate, delta); render(); }
 function goToday(){ S.selectedDate = todayKey(); render(); }
@@ -462,7 +463,7 @@ function toggleNight(id){
 }
 function toggleAddForm(){ S.showAdd = !S.showAdd; render(); }
 function updateSearch(v){ S.search = v; render(); }
-function clearSearch(){ S.search = ""; render(); }
+function clearSearch(){ S.search = ""; S._searchFocused = false; render(); }
 function openStatusList(status){ S.statusModal = status; render(); }
 function closeStatusList(){ S.statusModal = null; render(); }
 function resetDay(){
@@ -934,7 +935,10 @@ function renderSearchBar(){
   return `
     <div style="display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #ECEAE5;border-radius:12px;padding:8px 12px;margin-bottom:14px;">
       <span style="font-size:15px;">🔍</span>
-      <input id="searchInput" placeholder="이름 검색" value="${esc(S.search)}" oninput="updateSearch(this.value)"
+      <input id="searchInput" placeholder="이름 검색" value="${esc(S.search)}"
+        oninput="updateSearch(this.value)"
+        onfocus="S._searchFocused=true"
+        onblur="S._searchFocused=false"
         style="flex:1;border:none;outline:none;font-size:15px;background:transparent;color:#343432;" />
       ${S.search ? `<button onclick="clearSearch()" style="border:none;background:#EFEDE8;border-radius:50%;width:22px;height:22px;font-size:13px;color:#9E9C96;">✕</button>` : ""}
     </div>
@@ -1081,13 +1085,14 @@ function render(){
     nameInput.value = "";
     nameInput.value = val;
   }
+  // 검색칸은 사용자가 직접 만지고 있을 때만 포커스를 되돌려줌.
+  // (출석 버튼 등을 눌러 다시 그릴 때 커서가 검색칸으로 튀는 문제 방지)
   const searchInput = document.getElementById("searchInput");
-  if (searchInput && document.activeElement !== searchInput) {
-    // 검색 입력 중 포커스 유지
+  if (searchInput && S._searchFocused) {
     const val = searchInput.value;
     searchInput.focus();
-    searchInput.value = "";
-    searchInput.value = val;
+    const len = val.length;
+    try { searchInput.setSelectionRange(len, len); } catch(e){}
   }
 }
 
