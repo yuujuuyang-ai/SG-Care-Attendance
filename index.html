@@ -638,6 +638,16 @@ function computeCounts(){
   S.residents.forEach(r => { const s = today[r.id]; if (s) counts[s]++; else counts.unchecked++; });
   return counts;
 }
+function computeFloorCounts(floor){
+  const counts = { present: 0, absent: 0, expected: 0, unchecked: 0, total: 0 };
+  const today = S.attendance[S.selectedDate] || {};
+  S.residents.filter(r => r.floor === floor).forEach(r => {
+    counts.total++;
+    const s = today[r.id];
+    if (s) counts[s]++; else counts.unchecked++;
+  });
+  return counts;
+}
 
 function downloadBlob(blob, filename){
   // iOS 홈화면 앱 모드에서는 공유 시트를 통해 저장 (파일 앱, 메일 등으로 보낼 수 있음)
@@ -1080,6 +1090,34 @@ function renderSlides(){
           </div>
           <span style="font-size:18px;font-weight:800;color:#9E9C96;">${counts.unchecked}명</span>
         </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;margin-bottom:14px;">
+        ${FLOORS.map(f => {
+          const fc = computeFloorCounts(f);
+          return `
+            <div style="background:#F5F3EE;border-radius:14px;padding:12px 14px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                <span style="font-size:15px;font-weight:800;color:#343432;">${f}</span>
+                <span style="font-size:12px;font-weight:700;color:#9E9C96;">전체 ${fc.total}명</span>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <div style="flex:1;background:${STATUS.present.bg};border-radius:10px;padding:8px 4px;text-align:center;">
+                  <div style="font-size:11px;font-weight:700;color:${STATUS.present.color};">출석</div>
+                  <div style="font-size:20px;font-weight:800;color:${STATUS.present.color};">${fc.present}</div>
+                </div>
+                <div style="flex:1;background:${STATUS.absent.bg};border-radius:10px;padding:8px 4px;text-align:center;">
+                  <div style="font-size:11px;font-weight:700;color:${STATUS.absent.color};">결석</div>
+                  <div style="font-size:20px;font-weight:800;color:${STATUS.absent.color};">${fc.absent}</div>
+                </div>
+                <div style="flex:1;background:${STATUS.expected.bg};border-radius:10px;padding:8px 4px;text-align:center;">
+                  <div style="font-size:11px;font-weight:700;color:${STATUS.expected.color};">등원예정</div>
+                  <div style="font-size:20px;font-weight:800;color:${STATUS.expected.color};">${fc.expected}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
 
       <div class="meal-summary-row" style="margin-top:6px;">
         ${FLOORS.map(f => `
