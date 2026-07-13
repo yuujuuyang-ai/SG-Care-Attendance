@@ -99,6 +99,13 @@
     background: #fff; font-size: 20px; font-weight: 700; color: #6B8A7A;
   }
   .meal-count { font-size: 20px; font-weight: 800; min-width: 24px; text-align: center; }
+  .count-input {
+    width: 52px; border: 1.5px solid #DEDBD3; border-radius: 8px; background: #F8F7F4;
+    padding: 4px 0; -moz-appearance: textfield; outline: none;
+  }
+  .count-input:focus { border-color: #6B8A7A; background: #fff; }
+  .count-input::-webkit-outer-spin-button,
+  .count-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
   .floor-title { font-size: 14px; font-weight: 800; color: #6B8A7A; margin-bottom: 8px; padding-left: 4px; }
 
@@ -864,7 +871,9 @@ function renderMealCounter(floor){
       <div class="meal-left"><span>🍽️</span><span>${floor} 조식</span></div>
       <div class="meal-right">
         <button class="meal-btn" onclick="setMealCount('${floor}', ${Math.max(0,c-1)})">−</button>
-        <span class="meal-count">${c}</span>
+        <input class="meal-count count-input" type="number" inputmode="numeric" pattern="[0-9]*" value="${c}"
+          onfocus="this.select()"
+          onchange="setMealCount('${floor}', Math.max(0, parseInt(this.value)||0))" />
         <button class="meal-btn" onclick="setMealCount('${floor}', ${c+1})">+</button>
       </div>
     </div>
@@ -872,7 +881,9 @@ function renderMealCounter(floor){
       <div class="meal-left"><span>👥</span><span>${floor} 직원</span></div>
       <div class="meal-right">
         <button class="meal-btn" style="color:#4E7360;" onclick="setStaffCount('${floor}', ${Math.max(0,sc-1)})">−</button>
-        <span class="meal-count">${sc}</span>
+        <input class="meal-count count-input" type="number" inputmode="numeric" pattern="[0-9]*" value="${sc}"
+          onfocus="this.select()"
+          onchange="setStaffCount('${floor}', Math.max(0, parseInt(this.value)||0))" />
         <button class="meal-btn" style="color:#4E7360;" onclick="setStaffCount('${floor}', ${sc+1})">+</button>
       </div>
     </div>
