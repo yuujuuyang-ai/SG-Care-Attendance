@@ -212,6 +212,7 @@ function lsSet(key, value){
 /* ---------- Constants ---------- */
 const FLOORS = ["2층", "3층"];
 const VEHICLES = ["스타렉스 9255", "스타렉스 5384", "카니발 8296", "레이 2410", "레이 6943", "도보"];
+const NIGHT_VEHICLE_ORDER = ["레이 2410", "스타렉스 9255", "스타렉스 5384", "레이 6943", "도보", "카니발 8296"];
 const VEHICLE_COLORS = {
   "스타렉스 9255": { bg: "#EDF3EF", border: "#7C9885", text: "#6B8A7A" },
   "스타렉스 5384": { bg: "#F3EEE6", border: "#C9A66B", text: "#7A6238" },
@@ -353,6 +354,7 @@ const S = {
   absentReasons: {},
   expectedReasons: {},
   meals: {},
+  staff: {},
   loaded: false,
   page: 0,
   showAdd: false,
@@ -414,6 +416,10 @@ function loadAll(){
     const m = lsGet("meals");
     if (m) S.meals = JSON.parse(m);
   } catch(e) {}
+  try {
+    const st = lsGet("staff");
+    if (st) S.staff = JSON.parse(st);
+  } catch(e) {}
   S.loaded = true;
   debouncedPersist("residents", S.residents);
   render();
@@ -424,6 +430,7 @@ function saveAttendance(){ debouncedPersist("attendance", S.attendance); }
 function saveAbsentReasons(){ debouncedPersist("absentReasons", S.absentReasons); }
 function saveExpectedReasons(){ debouncedPersist("expectedReasons", S.expectedReasons); }
 function saveMeals(){ debouncedPersist("meals", S.meals); }
+function saveStaff(){ debouncedPersist("staff", S.staff); }
 
 /* ---------- Actions ---------- */
 function setTab(tab){ S.tab = tab; if (tab !== "slides") S.page = 0; S.search = ""; S._searchFocused = false; render(); }
@@ -495,6 +502,13 @@ function setMealCount(floor, count){
   day[floor] = count;
   S.meals = { ...S.meals, [S.selectedDate]: day };
   saveMeals();
+  render();
+}
+function setStaffCount(floor, count){
+  const day = { ...(S.staff[S.selectedDate] || {}) };
+  day[floor] = count;
+  S.staff = { ...S.staff, [S.selectedDate]: day };
+  saveStaff();
   render();
 }
 function setVehicle(id, vehicle){
@@ -606,10 +620,14 @@ function doResetDay(){
   const newExpReasons = { ...S.expectedReasons };
   delete newExpReasons[S.selectedDate];
   S.expectedReasons = newExpReasons;
+  const newStaff = { ...S.staff };
+  delete newStaff[S.selectedDate];
+  S.staff = newStaff;
   saveAttendance();
   saveMeals();
   saveAbsentReasons();
   saveExpectedReasons();
+  saveStaff();
   render();
 }
 function cancelResetDay(){
@@ -693,6 +711,8 @@ function exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, ab
   rows.push(["등원예정", counts.expected]);
   rows.push([]);
   FLOORS.forEach(f => rows.push([f + " 조식", todayMeals[f] || 0]));
+  const todayStaff = S.staff[dateKey] || {};
+  FLOORS.forEach(f => rows.push([f + " 직원", todayStaff[f] || 0]));
   rows.push([]);
   const reasons = S.absentReasons[dateKey] || {};
   const expReasons = S.expectedReasons[dateKey] || {};
@@ -837,6 +857,8 @@ function renderTabs(){
 function renderMealCounter(floor){
   const todayMeals = S.meals[S.selectedDate] || {};
   const c = todayMeals[floor] || 0;
+  const todayStaff = S.staff[S.selectedDate] || {};
+  const sc = todayStaff[floor] || 0;
   return `
     <div class="meal-counter">
       <div class="meal-left"><span>🍽️</span><span>${floor} 조식</span></div>
@@ -844,6 +866,14 @@ function renderMealCounter(floor){
         <button class="meal-btn" onclick="setMealCount('${floor}', ${Math.max(0,c-1)})">−</button>
         <span class="meal-count">${c}</span>
         <button class="meal-btn" onclick="setMealCount('${floor}', ${c+1})">+</button>
+      </div>
+    </div>
+    <div class="meal-counter" style="border-color:#C7DBCC;">
+      <div class="meal-left"><span>👥</span><span>${floor} 직원</span></div>
+      <div class="meal-right">
+        <button class="meal-btn" style="color:#4E7360;" onclick="setStaffCount('${floor}', ${Math.max(0,sc-1)})">−</button>
+        <span class="meal-count">${sc}</span>
+        <button class="meal-btn" style="color:#4E7360;" onclick="setStaffCount('${floor}', ${sc+1})">+</button>
       </div>
     </div>
   `;
@@ -928,8 +958,8 @@ function renderVehicleTab(){
     `;
   }
 
-  function renderShift(shiftLabel, shiftTime, people, headerColor){
-    const vehicleBlocks = VEHICLES.map(v => {
+  function renderShift(shiftLabel, shiftTime, people, headerColor, vehicleOrder){
+    const vehicleBlocks = vehicleOrder.map(v => {
       const c = VEHICLE_COLORS[v];
       const vehicleList = people.filter(r => r.vehicle === v);
       if (vehicleList.length === 0) return "";
@@ -976,9 +1006,9 @@ function renderVehicleTab(){
   const dayPeople = present.filter(r => !r.night);
   const nightPeople = present.filter(r => r.night);
 
-  let html = renderShift("주간반", "4시 하원", dayPeople, "#6B8A7A");
+  let html = renderShift("주간반", "4시 하원", dayPeople, "#6B8A7A", VEHICLES);
   if (nightPeople.length > 0) {
-    html += renderShift("야간반", "5시 하원", nightPeople, "#5C4463");
+    html += renderShift("야간반", "5시 하원", nightPeople, "#5C4463", NIGHT_VEHICLE_ORDER);
   }
   return html;
 }
@@ -1048,6 +1078,7 @@ function renderRosterTab(){
 function renderSlides(){
   const counts = computeCounts();
   const todayMeals = S.meals[S.selectedDate] || {};
+  const todayStaff = S.staff[S.selectedDate] || {};
   const todayAttendance = S.attendance[S.selectedDate] || {};
   const total = S.residents.length;
 
@@ -1124,6 +1155,15 @@ function renderSlides(){
           <div class="meal-summary-box">
             <div style="font-size:13px;font-weight:700;color:#7A6238;">${f} 조식</div>
             <div style="font-size:22px;font-weight:800;color:#7A6238;margin-top:4px;">${todayMeals[f]||0}개</div>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="meal-summary-row" style="margin-top:10px;">
+        ${FLOORS.map(f => `
+          <div style="flex:1;background:#EDF3EF;border:2px solid #C7DBCC;border-radius:14px;padding:12px 14px;text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:#4E7360;">${f} 직원</div>
+            <div style="font-size:22px;font-weight:800;color:#4E7360;margin-top:4px;">${todayStaff[f]||0}명</div>
           </div>
         `).join("")}
       </div>
