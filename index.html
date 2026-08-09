@@ -333,6 +333,18 @@ function isScheduledDay(resident, dateKey){
   if (!resident.schedule || resident.schedule.length === 0) return true;
   return resident.schedule.includes(getWeekdayKorean(dateKey));
 }
+// 저장된 출결값이 없을 때, 이 어르신이 오늘 자동 등원예정 요일이면 true
+function isAutoExpectedDay(resident, dateKey){
+  if (!resident.autoExpected || resident.autoExpected.length === 0) return false;
+  return resident.autoExpected.includes(getWeekdayKorean(dateKey));
+}
+// 실제 저장값 우선, 없으면 자동 등원예정 요일이면 "expected"로 취급
+function effectiveStatus(resident, dateKey){
+  const saved = (S.attendance[dateKey] || {})[resident.id];
+  if (saved) return saved;
+  if (isAutoExpectedDay(resident, dateKey)) return "expected";
+  return undefined;
+}
 const SCHEDULE_OVERRIDES = {
   "김태영": ["수","목","금"],
   "정숙자": ["월","화","목"],
@@ -596,6 +608,21 @@ function clearSchedule(id){
   saveResidents();
   render();
 }
+function toggleAutoExpected(id, day){
+  S.residents = S.residents.map(r => {
+    if (r.id !== id) return r;
+    const current = r.autoExpected || [];
+    const next = current.includes(day) ? current.filter(d => d !== day) : [...current, day];
+    return { ...r, autoExpected: next };
+  });
+  saveResidents();
+  render();
+}
+function clearAutoExpected(id){
+  S.residents = S.residents.map(r => r.id === id ? { ...r, autoExpected: [] } : r);
+  saveResidents();
+  render();
+}
 function toggleNight(id){
   S.residents = S.residents.map(r => r.id === id ? { ...r, night: !r.night } : r);
   saveResidents();
@@ -788,16 +815,14 @@ function gotoPage(i){ S.page = Math.max(0, Math.min(2, i)); render(); }
 
 function computeCounts(){
   const counts = { present: 0, absent: 0, expected: 0, unchecked: 0 };
-  const today = S.attendance[S.selectedDate] || {};
-  S.residents.forEach(r => { const s = today[r.id]; if (s) counts[s]++; else counts.unchecked++; });
+  S.residents.forEach(r => { const s = effectiveStatus(r, S.selectedDate); if (s) counts[s]++; else counts.unchecked++; });
   return counts;
 }
 function computeFloorCounts(floor){
   const counts = { present: 0, absent: 0, expected: 0, unchecked: 0, total: 0 };
-  const today = S.attendance[S.selectedDate] || {};
   S.residents.filter(r => r.floor === floor).forEach(r => {
     counts.total++;
-    const s = today[r.id];
+    const s = effectiveStatus(r, S.selectedDate);
     if (s) counts[s]++; else counts.unchecked++;
   });
   return counts;
@@ -857,9 +882,10 @@ function exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, ab
   rows.push([]);
   rows.push(["이름", "층", "상태", "사유", "하원차량"]);
   S.residents.forEach(r => {
-    const st = todayAttendance[r.id];
-    const reasonCell = st === "absent" ? (reasons[r.id] || "")
-                     : st === "expected" ? (expReasons[r.id] || "") : "";
+    const saved = todayAttendance[r.id];
+    const st = saved || (isAutoExpectedDay(r, dateKey) ? "expected" : undefined);
+    const reasonCell = saved === "absent" ? (reasons[r.id] || "")
+                     : saved === "expected" ? (expReasons[r.id] || "") : "";
     rows.push([
       r.name,
       r.floor,
@@ -895,7 +921,10 @@ function exportToExcel(){
       return rs ? `${r.name}(${rs})` : r.name;
     });
     const expDayReasons = S.expectedReasons[dateKey] || {};
-    const expectedNames = S.residents.filter(r => todayAttendance[r.id] === "expected").map(r => {
+    const expectedNames = S.residents.filter(r => {
+      const saved = todayAttendance[r.id];
+      return saved === "expected" || (!saved && isAutoExpectedDay(r, dateKey));
+    }).map(r => {
       const rs = expDayReasons[r.id];
       return rs ? `${r.name}(${rs})` : r.name;
     });
@@ -1038,7 +1067,9 @@ function renderFloorTab(floor){
     rows = `<div class="floor-empty">${floor}에 등록된 어르신이 없어요</div>`;
   } else {
     rows = list.map(r => {
-      const current = todayAttendance[r.id];
+      const saved = todayAttendance[r.id];
+      const current = effectiveStatus(r, S.selectedDate);
+      const isAuto = !saved && current === "expected"; // 자동 등원예정 (아직 저장 안 됨)
       const borderColor = current ? STATUS[current].color : "#ECEAE5";
       const bg = current ? STATUS[current].bg : "#fff";
       const schedule = r.schedule || [];
@@ -1057,14 +1088,18 @@ function renderFloorTab(floor){
           ${schedule.join("·")}
         </div>
       ` : "";
-      const reasonBox = current === "absent" ? renderReasonBox(r.id, "absent")
-                      : current === "expected" ? renderReasonBox(r.id, "expected") : "";
+      const autoBadge = isAuto ? `
+        <div style="font-size:10px;font-weight:800;color:#C9A94E;margin-top:1px;">🕐 자동 등원예정</div>
+      ` : "";
+      const reasonBox = saved === "absent" ? renderReasonBox(r.id, "absent")
+                      : saved === "expected" ? renderReasonBox(r.id, "expected") : "";
       return `
         <div style="margin-bottom:6px;">
           <div class="resident-row" style="border-color:${borderColor};background:${bg};${isCustom && !scheduledToday ? "opacity:0.6;" : ""}margin-bottom:0;">
             <div style="flex-shrink:0;min-width:52px;">
               <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
               ${scheduleBadge}
+              ${autoBadge}
             </div>
             <div class="status-group">${btns}</div>
           </div>
@@ -1176,10 +1211,17 @@ function renderRosterTab(){
   const items = sortedResidents.map(r => {
     const schedule = r.schedule || [];
     const isDaily = schedule.length === 0;
+    const autoExp = r.autoExpected || [];
     const dayChips = WEEKDAYS.map(day => {
       const active = schedule.includes(day);
       return `
         <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#B0995B" : "#DEDBD3"};background:${active ? "#B0995B" : "#fff"};color:${active ? "#fff" : "#9E9C96"};font-size:12px;font-weight:700;" onclick="toggleScheduleDay('${r.id}','${day}')">${day}</button>
+      `;
+    }).join("");
+    const autoExpChips = WEEKDAYS.map(day => {
+      const active = autoExp.includes(day);
+      return `
+        <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#C9A94E" : "#DEDBD3"};background:${active ? "#C9A94E" : "#fff"};color:${active ? "#fff" : "#9E9C96"};font-size:12px;font-weight:700;" onclick="toggleAutoExpected('${r.id}','${day}')">${day}</button>
       `;
     }).join("");
     return `
@@ -1208,6 +1250,16 @@ function renderRosterTab(){
         <button style="margin-top:8px;padding:8px 10px;border-radius:8px;border:1.5px solid #E3D5D0;background:#FBF3F0;color:#B08575;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;" onclick="openLongAbsent('${r.id}')">
           <span>🗓️</span><span>기간 결석 미리 지정 (입원·여행 등)</span>
         </button>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #ECEAE5;">
+          <div style="font-size:11px;font-weight:800;color:#C9A94E;margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+            <span>🕐</span><span>자동 등원예정 요일</span>
+            ${autoExp.length > 0 ? `<span style="font-weight:700;color:#9E9C96;">(${autoExp.join("·")})</span>` : `<span style="font-weight:600;color:#B8B6AE;">없음</span>`}
+          </div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
+            ${autoExpChips}
+            ${autoExp.length > 0 ? `<button style="padding:5px 9px;border-radius:8px;border:1.5px solid #DEDBD3;background:#fff;color:#9E9C96;font-size:11px;font-weight:700;" onclick="clearAutoExpected('${r.id}')">해제</button>` : ""}
+          </div>
+        </div>
       </div>
     `;
   }).join("");
@@ -1324,7 +1376,7 @@ function renderSlides(){
       <div class="slide-title">총 ${list.length}명</div>
       ${list.length === 0 ? `<div style="text-align:center;color:#9E9C96;padding:30px;font-size:13px;">등록된 어르신이 없어요</div>` :
         list.map(r => {
-          const s = todayAttendance[r.id];
+          const s = effectiveStatus(r, S.selectedDate);
           return `
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;background:${s?STATUS[s].bg:"#F5F3EE"};margin-bottom:8px;">
               <span style="font-size:16px;font-weight:700;">${esc(r.name)}</span>
@@ -1379,7 +1431,8 @@ function renderSearchResults(){
   }
 
   return matches.map(r => {
-    const current = todayAttendance[r.id];
+    const saved = todayAttendance[r.id];
+    const current = effectiveStatus(r, S.selectedDate);
     const borderColor = current ? STATUS[current].color : "#ECEAE5";
     const bg = current ? STATUS[current].bg : "#fff";
     const btns = Object.entries(STATUS).map(([key, s]) => {
@@ -1399,7 +1452,7 @@ function renderSearchResults(){
           </div>
           <div class="status-group">${btns}</div>
         </div>
-        ${current === "absent" ? renderReasonBox(r.id, "absent") : current === "expected" ? renderReasonBox(r.id, "expected") : ""}
+        ${saved === "absent" ? renderReasonBox(r.id, "absent") : saved === "expected" ? renderReasonBox(r.id, "expected") : ""}
       </div>
     `;
   }).join("");
@@ -1417,7 +1470,7 @@ function renderStatusModal(){
   const dayExpectedReasons = S.expectedReasons[S.selectedDate] || {};
   const showReason = (status === "absent" || status === "expected");
   const list = S.residents
-    .filter(r => status === "unchecked" ? !todayAttendance[r.id] : todayAttendance[r.id] === status)
+    .filter(r => { const eff = effectiveStatus(r, S.selectedDate); return status === "unchecked" ? !eff : eff === status; })
     .filter(r => floorFilter ? r.floor === floorFilter : true)
     .sort((a, b) => {
       if (a.floor !== b.floor) return a.floor.localeCompare(b.floor, "ko");
