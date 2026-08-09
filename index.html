@@ -303,6 +303,10 @@ const DEFAULT_RESIDENTS = [
   { id: "r3_30", name: "박숙희", floor: "3층", vehicle: "스타렉스 5384" },
   { id: "r3_31", name: "홍귀양", floor: "3층", vehicle: "레이 2410" },
   { id: "r3_32", name: "김병갑", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r2_31", name: "곽충근", floor: "2층", vehicle: "도보" },
+  { id: "r2_32", name: "김상용", floor: "2층", vehicle: "도보" },
+  { id: "r2_33", name: "김순애", floor: "2층", vehicle: "도보" },
+  { id: "r3_33", name: "박금순", floor: "3층", vehicle: "도보" },
 ];
 
 /* ---------- Date helpers ---------- */
@@ -373,6 +377,8 @@ const S = {
   statusModalFloor: null,
   confirmReset: false,
   showCalendar: false,
+  showStats: false,
+  longAbsent: null,
   calMonth: null,
   _searchFocused: false,
 };
@@ -462,6 +468,12 @@ function pickCalDate(key){
   S.showCalendar = false;
   render();
 }
+function openStats(){
+  S.showStats = true;
+  if (!S.calMonth) S.calMonth = S.selectedDate.slice(0,7);
+  render();
+}
+function closeStats(){ S.showStats = false; render(); }
 function presentCountFor(dateKey){
   const day = S.attendance[dateKey];
   if (!day) return 0;
@@ -469,6 +481,41 @@ function presentCountFor(dateKey){
   for (const id in day){ if (day[id] === "present") n++; }
   return n;
 }
+
+/* 이번 달(calMonth 기준) 통계 집계 */
+function computeMonthStats(){
+  const ym = S.calMonth; // "YYYY-MM"
+  const dateKeys = Object.keys(S.attendance).filter(k => k.startsWith(ym + "-"));
+
+  // 개인별 출석/결석 일수
+  const perPerson = {};
+  S.residents.forEach(r => { perPerson[r.id] = { present: 0, absent: 0, expected: 0 }; });
+
+  // 사유별 집계 (결석)
+  const reasonCounts = {};       // { "병원": 3, ... }
+  const reasonDetails = {};      // { "병원": ["김OO(8/3)", ...] }
+
+  dateKeys.forEach(dateKey => {
+    const day = S.attendance[dateKey] || {};
+    const dayAbsentReasons = S.absentReasons[dateKey] || {};
+    const dd = keyToDate(dateKey);
+    const dLabel = `${dd.getMonth()+1}/${dd.getDate()}`;
+    S.residents.forEach(r => {
+      const st = day[r.id];
+      if (!st) return;
+      if (perPerson[r.id]) perPerson[r.id][st] = (perPerson[r.id][st] || 0) + 1;
+      if (st === "absent") {
+        const reason = (dayAbsentReasons[r.id] || "").trim() || "사유 미입력";
+        reasonCounts[reason] = (reasonCounts[reason] || 0) + 1;
+        if (!reasonDetails[reason]) reasonDetails[reason] = [];
+        reasonDetails[reason].push(`${r.name}(${dLabel})`);
+      }
+    });
+  });
+
+  return { perPerson, reasonCounts, reasonDetails, dayCount: dateKeys.length };
+}
+
 
 function setStatus(id, status){
   const day = { ...(S.attendance[S.selectedDate] || {}) };
@@ -554,6 +601,82 @@ function toggleNight(id){
   saveResidents();
   render();
 }
+
+/* ---------- 장기결석 미리 지정 ---------- */
+function openLongAbsent(id){
+  const r = S.residents.find(x => x.id === id);
+  S.longAbsent = {
+    id,
+    name: r ? r.name : "",
+    from: S.selectedDate,
+    to: S.selectedDate,
+    reason: "",
+  };
+  render();
+}
+function closeLongAbsent(){ S.longAbsent = null; render(); }
+function updateLongAbsentField(field, value){
+  if (!S.longAbsent) return;
+  S.longAbsent = { ...S.longAbsent, [field]: value };
+  // 날짜 입력은 즉시 갱신할 필요 없어서 재렌더 안 함(입력 끊김 방지). 미리보기 갱신만.
+  const el = document.getElementById("longAbsentPreview");
+  if (el) el.innerHTML = longAbsentPreviewText();
+}
+function longAbsentDates(){
+  if (!S.longAbsent) return [];
+  const { from, to } = S.longAbsent;
+  if (!from || !to || from > to) return [];
+  const dates = [];
+  let cur = from;
+  let guard = 0;
+  while (cur <= to && guard < 400) {
+    const d = keyToDate(cur);
+    if (d.getDay() !== 0) dates.push(cur); // 일요일(0) 제외
+    cur = shiftDateKey(cur, 1);
+    guard++;
+  }
+  return dates;
+}
+function longAbsentPreviewText(){
+  const dates = longAbsentDates();
+  if (dates.length === 0) return `<span style="color:#C98D74;">시작일이 종료일보다 늦어요</span>`;
+  return `일요일 빼고 <b>${dates.length}일</b>이 결석으로 지정돼요`;
+}
+function applyLongAbsent(){
+  if (!S.longAbsent) return;
+  const { id, reason } = S.longAbsent;
+  const fromEl = document.getElementById("longAbsentFrom");
+  const toEl = document.getElementById("longAbsentTo");
+  const reasonEl = document.getElementById("longAbsentReason");
+  const from = fromEl ? fromEl.value : S.longAbsent.from;
+  const to = toEl ? toEl.value : S.longAbsent.to;
+  const rsn = reasonEl ? reasonEl.value.trim() : (reason || "").trim();
+  S.longAbsent = { ...S.longAbsent, from, to, reason: rsn };
+  const dates = longAbsentDates();
+  if (dates.length === 0) { alert("날짜를 다시 확인해주세요."); return; }
+
+  const newAttendance = { ...S.attendance };
+  const newAbsentReasons = { ...S.absentReasons };
+  dates.forEach(dateKey => {
+    const day = { ...(newAttendance[dateKey] || {}) };
+    day[id] = "absent";
+    newAttendance[dateKey] = day;
+    if (rsn) {
+      const dayReason = { ...(newAbsentReasons[dateKey] || {}) };
+      dayReason[id] = rsn;
+      newAbsentReasons[dateKey] = dayReason;
+    }
+  });
+  S.attendance = newAttendance;
+  S.absentReasons = newAbsentReasons;
+  saveAttendance();
+  saveAbsentReasons();
+  const name = S.longAbsent.name;
+  S.longAbsent = null;
+  render();
+  alert(`${name} 어르신 ${dates.length}일 결석 지정 완료했어요.`);
+}
+
 function toggleAddForm(){ S.showAdd = !S.showAdd; render(); }
 function resetVehicles(){
   if (!confirm("모든 어르신의 하원 차량을 처음 기본값으로 되돌릴까요?\n(이름·층·출결 기록은 그대로 유지돼요)")) return;
@@ -1082,6 +1205,9 @@ function renderRosterTab(){
           <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${isDaily ? "#6B8A7A" : "#DEDBD3"};background:${isDaily ? "#6B8A7A" : "#fff"};color:${isDaily ? "#fff" : "#9E9C96"};font-size:11px;font-weight:700;" onclick="clearSchedule('${r.id}')">매일</button>
           ${dayChips}
         </div>
+        <button style="margin-top:8px;padding:8px 10px;border-radius:8px;border:1.5px solid #E3D5D0;background:#FBF3F0;color:#B08575;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;" onclick="openLongAbsent('${r.id}')">
+          <span>🗓️</span><span>기간 결석 미리 지정 (입원·여행 등)</span>
+        </button>
       </div>
     `;
   }).join("");
@@ -1411,7 +1537,129 @@ function renderCalendar(){
           <button onclick="pickCalDate('${tKey}')" style="flex:1;padding:12px;border-radius:12px;border:2px solid #6B8A7A;background:#fff;color:#6B8A7A;font-size:14px;font-weight:800;">오늘로</button>
           <button onclick="closeCalendar()" style="flex:1;padding:12px;border-radius:12px;border:none;background:#6B8A7A;color:#fff;font-size:14px;font-weight:800;">닫기</button>
         </div>
+        <button onclick="openStats()" style="width:100%;margin-top:8px;padding:12px;border-radius:12px;border:none;background:#5C4463;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <span>📈</span><span>이달의 통계 (출석일수·결석사유)</span>
+        </button>
         <div style="text-align:center;font-size:11px;color:#9E9C96;margin-top:10px;">날짜 아래 숫자는 그날 출석 인원이에요</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderStats(){
+  if (!S.showStats) return "";
+  const [y, m] = S.calMonth.split("-").map(Number);
+  const monthLabel = `${y}년 ${m}월`;
+  const { perPerson, reasonCounts, reasonDetails, dayCount } = computeMonthStats();
+
+  // 개인별 출석일수: 층별로 나눠서, 출석 많은 순
+  const personBlocks = FLOORS.map(floor => {
+    const people = S.residents
+      .filter(r => r.floor === floor)
+      .map(r => ({ ...r, stat: perPerson[r.id] || { present:0, absent:0, expected:0 } }))
+      .filter(r => r.stat.present > 0 || r.stat.absent > 0 || r.stat.expected > 0)
+      .sort((a, b) => b.stat.present - a.stat.present || a.name.localeCompare(b.name, "ko"));
+    if (people.length === 0) {
+      return `
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:800;color:#6B8A7A;margin-bottom:8px;">${floor}</div>
+          <div style="font-size:12px;color:#9E9C96;padding:6px 2px;">기록 없음</div>
+        </div>`;
+    }
+    const rows = people.map(r => `
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border:1.5px solid #ECEAE5;border-radius:10px;padding:9px 12px;margin-bottom:6px;">
+        <span style="font-size:15px;font-weight:700;color:#343432;">${esc(r.name)}${r.night ? ` <span style="font-size:10px;font-weight:800;color:#5C4463;">야간</span>` : ""}</span>
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:15px;font-weight:800;color:#6B8A7A;">출석 ${r.stat.present}일</span>
+          ${r.stat.absent > 0 ? `<span style="font-size:12px;font-weight:700;color:#D39282;">결석 ${r.stat.absent}</span>` : ""}
+        </span>
+      </div>
+    `).join("");
+    return `
+      <div style="margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:800;color:#6B8A7A;margin-bottom:8px;">${floor} · ${people.length}명</div>
+        ${rows}
+      </div>
+    `;
+  }).join("");
+
+  // 결석 사유 집계: 건수 많은 순
+  const reasonKeys = Object.keys(reasonCounts).sort((a, b) => reasonCounts[b] - reasonCounts[a]);
+  const totalAbsent = reasonKeys.reduce((sum, k) => sum + reasonCounts[k], 0);
+  const reasonBlocks = reasonKeys.length === 0
+    ? `<div style="font-size:13px;color:#9E9C96;padding:10px 2px;">이번 달 결석 기록이 없어요</div>`
+    : reasonKeys.map(reason => {
+        const isNone = reason === "사유 미입력";
+        const col = isNone ? "#9E9C96" : "#D39282";
+        const bg = isNone ? "#F0EFEB" : "#F7ECE8";
+        return `
+          <div style="background:${bg};border-radius:12px;padding:12px 14px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:15px;font-weight:800;color:${col};">${esc(reason)}</span>
+              <span style="font-size:15px;font-weight:800;color:${col};">${reasonCounts[reason]}건</span>
+            </div>
+            <div style="font-size:12px;color:#7A7872;line-height:1.6;">${reasonDetails[reason].map(esc).join(", ")}</div>
+          </div>
+        `;
+      }).join("");
+
+  return `
+    <div onclick="closeStats()" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:160;display:flex;align-items:flex-end;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:600px;border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;max-height:82vh;overflow-y:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button onclick="shiftCalMonth(-1)" style="background:#EFEDE8;border:none;border-radius:8px;width:30px;height:30px;font-size:16px;color:#5A5852;">‹</button>
+            <span style="font-size:18px;font-weight:800;color:#343432;">${monthLabel} 통계</span>
+            <button onclick="shiftCalMonth(1)" style="background:#EFEDE8;border:none;border-radius:8px;width:30px;height:30px;font-size:16px;color:#5A5852;">›</button>
+          </div>
+          <button onclick="closeStats()" style="border:none;background:#EFEDE8;border-radius:50%;width:32px;height:32px;font-size:16px;color:#5A5852;">✕</button>
+        </div>
+        <div style="font-size:12px;color:#9E9C96;margin-bottom:16px;">이번 달 기록이 있는 날: ${dayCount}일</div>
+
+        <div style="font-size:15px;font-weight:800;color:#343432;margin-bottom:10px;">📅 개인별 출석일수</div>
+        ${personBlocks}
+
+        <div style="font-size:15px;font-weight:800;color:#343432;margin:20px 0 10px;">🩺 결석 사유 집계 ${totalAbsent > 0 ? `<span style="font-size:13px;font-weight:700;color:#9E9C96;">(총 ${totalAbsent}건)</span>` : ""}</div>
+        ${reasonBlocks}
+      </div>
+    </div>
+  `;
+}
+
+function renderLongAbsent(){
+  if (!S.longAbsent) return "";
+  const { name, from, to, reason } = S.longAbsent;
+  return `
+    <div onclick="closeLongAbsent()" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:170;display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:360px;border-radius:20px;padding:22px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:18px;font-weight:800;color:#343432;">기간 결석 지정</div>
+          <button onclick="closeLongAbsent()" style="border:none;background:#EFEDE8;border-radius:50%;width:30px;height:30px;font-size:15px;color:#5A5852;">✕</button>
+        </div>
+        <div style="font-size:14px;font-weight:700;color:#B08575;margin-bottom:16px;">${esc(name)} 어르신</div>
+
+        <div style="font-size:12px;font-weight:800;color:#5A5852;margin-bottom:5px;">시작일</div>
+        <input id="longAbsentFrom" type="date" value="${from}" onchange="updateLongAbsentField('from', this.value)"
+          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #DEDBD3;font-size:15px;background:#fff;color:#343432;margin-bottom:12px;box-sizing:border-box;" />
+
+        <div style="font-size:12px;font-weight:800;color:#5A5852;margin-bottom:5px;">종료일</div>
+        <input id="longAbsentTo" type="date" value="${to}" onchange="updateLongAbsentField('to', this.value)"
+          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #DEDBD3;font-size:15px;background:#fff;color:#343432;margin-bottom:12px;box-sizing:border-box;" />
+
+        <div style="font-size:12px;font-weight:800;color:#5A5852;margin-bottom:5px;">사유 (선택)</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;">
+          ${["입원","병원","개인사정","여행"].map(rs => `<button onclick="document.getElementById('longAbsentReason').value='${rs}'" style="padding:6px 11px;border-radius:8px;border:1.5px solid #E3D5D0;background:#fff;color:#B08575;font-size:12px;font-weight:700;">${rs}</button>`).join("")}
+        </div>
+        <input id="longAbsentReason" value="${esc(reason || "")}" placeholder="예: 입원"
+          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #DEDBD3;font-size:15px;background:#fff;color:#343432;margin-bottom:12px;box-sizing:border-box;" />
+
+        <div id="longAbsentPreview" style="font-size:13px;color:#7A6238;background:#F6F1E4;border-radius:10px;padding:10px 12px;margin-bottom:16px;text-align:center;">${longAbsentPreviewText()}</div>
+
+        <div style="display:flex;gap:10px;">
+          <button onclick="closeLongAbsent()" style="flex:1;padding:13px;border-radius:12px;border:2px solid #DEDBD3;background:#fff;color:#5A5852;font-size:15px;font-weight:700;">취소</button>
+          <button onclick="applyLongAbsent()" style="flex:1;padding:13px;border-radius:12px;border:none;background:#D39282;color:#fff;font-size:15px;font-weight:800;">결석 지정</button>
+        </div>
+        <div style="font-size:11px;color:#9E9C96;text-align:center;margin-top:10px;">일요일은 자동으로 빠져요</div>
       </div>
     </div>
   `;
@@ -1445,7 +1693,7 @@ function render(){
 
   const banner = (!isToday && S.tab !== "roster") ? `<div class="date-banner">${formatDateLabel(S.selectedDate)} 기록을 보고 있어요</div>` : "";
 
-  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>` + renderStatusModal() + renderResetConfirm() + renderCalendar();
+  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>` + renderStatusModal() + renderResetConfirm() + renderCalendar() + renderStats() + renderLongAbsent();
 
   const nameInput = document.getElementById("newNameInput");
   if (nameInput) {
