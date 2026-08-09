@@ -345,6 +345,13 @@ function effectiveStatus(resident, dateKey){
   if (isAutoExpectedDay(resident, dateKey)) return "expected";
   return undefined;
 }
+// 자동 등원예정일 때 보여줄 사유 (저장된 사유 우선, 없으면 자동 기본사유)
+function effectiveExpectedReason(resident, dateKey){
+  const savedReason = (S.expectedReasons[dateKey] || {})[resident.id];
+  if (savedReason) return savedReason;
+  if (isAutoExpectedDay(resident, dateKey)) return resident.autoExpectedReason || "";
+  return "";
+}
 const SCHEDULE_OVERRIDES = {
   "김태영": ["수","목","금"],
   "정숙자": ["월","화","목"],
@@ -620,6 +627,17 @@ function toggleAutoExpected(id, day){
 }
 function clearAutoExpected(id){
   S.residents = S.residents.map(r => r.id === id ? { ...r, autoExpected: [] } : r);
+  saveResidents();
+  render();
+}
+function setAutoExpectedReason(id, reason){
+  const val = (reason || "").trim();
+  S.residents = S.residents.map(r => {
+    if (r.id !== id) return r;
+    // 같은 사유 다시 누르면 해제
+    const next = (r.autoExpectedReason === val) ? "" : val;
+    return { ...r, autoExpectedReason: next };
+  });
   saveResidents();
   render();
 }
@@ -1089,7 +1107,7 @@ function renderFloorTab(floor){
         </div>
       ` : "";
       const autoBadge = isAuto ? `
-        <div style="font-size:10px;font-weight:800;color:#C9A94E;margin-top:1px;">🕐 자동 등원예정</div>
+        <div style="font-size:10px;font-weight:800;color:#C9A94E;margin-top:1px;">🕐 자동 등원예정${(r.autoExpectedReason ? ` · ${esc(r.autoExpectedReason)}` : "")}</div>
       ` : "";
       const reasonBox = saved === "absent" ? renderReasonBox(r.id, "absent")
                       : saved === "expected" ? renderReasonBox(r.id, "expected") : "";
@@ -1259,6 +1277,13 @@ function renderRosterTab(){
             ${autoExpChips}
             ${autoExp.length > 0 ? `<button style="padding:5px 9px;border-radius:8px;border:1.5px solid #DEDBD3;background:#fff;color:#9E9C96;font-size:11px;font-weight:700;" onclick="clearAutoExpected('${r.id}')">해제</button>` : ""}
           </div>
+          ${autoExp.length > 0 ? `
+            <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:8px;">
+              <span style="font-size:11px;font-weight:800;color:#9A8442;">사유</span>
+              ${["늦게 오심","오후 등원","병원 후 등원"].map(rs => `<button onclick="setAutoExpectedReason('${r.id}','${rs}')" style="padding:5px 10px;border-radius:8px;border:1.5px solid ${(r.autoExpectedReason||"")===rs ? "#C9A94E" : "#E6DCC0"};background:${(r.autoExpectedReason||"")===rs ? "#C9A94E" : "#fff"};color:${(r.autoExpectedReason||"")===rs ? "#fff" : "#9A8442"};font-size:11px;font-weight:700;">${rs}</button>`).join("")}
+              <input value="${esc(r.autoExpectedReason||"")}" placeholder="직접 입력" onchange="setAutoExpectedReason('${r.id}', this.value)" style="flex:1;min-width:90px;padding:6px 9px;border-radius:8px;border:1.5px solid #E6DCC0;font-size:12px;background:#fff;color:#5A5852;outline:none;box-sizing:border-box;" />
+            </div>
+          ` : ""}
         </div>
       </div>
     `;
@@ -1483,7 +1508,7 @@ function renderStatusModal(){
     if (fl.length === 0) return "";
     const rows = fl.map(r => {
       const reason = status === "absent" ? dayAbsentReasons[r.id]
-                   : status === "expected" ? dayExpectedReasons[r.id] : "";
+                   : status === "expected" ? effectiveExpectedReason(r, S.selectedDate) : "";
       const reasonTag = (showReason && reason)
         ? `<span style="font-size:12px;font-weight:700;color:${s.color};background:${s.bg};padding:2px 9px;border-radius:8px;">${esc(reason)}</span>`
         : (showReason ? `<span style="font-size:12px;font-weight:600;color:#B8B6AE;">사유 미입력</span>` : "");
