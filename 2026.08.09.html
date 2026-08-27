@@ -303,6 +303,10 @@ const DEFAULT_RESIDENTS = [
   { id: "r3_30", name: "박숙희", floor: "3층", vehicle: "스타렉스 5384" },
   { id: "r3_31", name: "홍귀양", floor: "3층", vehicle: "레이 2410" },
   { id: "r3_32", name: "김병갑", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r2_31", name: "곽충근", floor: "2층", vehicle: "도보" },
+  { id: "r2_32", name: "김상용", floor: "2층", vehicle: "도보" },
+  { id: "r2_33", name: "김순애", floor: "2층", vehicle: "도보" },
+  { id: "r3_33", name: "박금순", floor: "3층", vehicle: "도보" },
 ];
 
 /* ---------- Date helpers ---------- */
@@ -329,6 +333,25 @@ function isScheduledDay(resident, dateKey){
   if (!resident.schedule || resident.schedule.length === 0) return true;
   return resident.schedule.includes(getWeekdayKorean(dateKey));
 }
+// 저장된 출결값이 없을 때, 이 어르신이 오늘 자동 등원예정 요일이면 true
+function isAutoExpectedDay(resident, dateKey){
+  if (!resident.autoExpected || resident.autoExpected.length === 0) return false;
+  return resident.autoExpected.includes(getWeekdayKorean(dateKey));
+}
+// 실제 저장값 우선, 없으면 자동 등원예정 요일이면 "expected"로 취급
+function effectiveStatus(resident, dateKey){
+  const saved = (S.attendance[dateKey] || {})[resident.id];
+  if (saved) return saved;
+  if (isAutoExpectedDay(resident, dateKey)) return "expected";
+  return undefined;
+}
+// 자동 등원예정일 때 보여줄 사유 (저장된 사유 우선, 없으면 자동 기본사유)
+function effectiveExpectedReason(resident, dateKey){
+  const savedReason = (S.expectedReasons[dateKey] || {})[resident.id];
+  if (savedReason) return savedReason;
+  if (isAutoExpectedDay(resident, dateKey)) return resident.autoExpectedReason || "";
+  return "";
+}
 const SCHEDULE_OVERRIDES = {
   "김태영": ["수","목","금"],
   "정숙자": ["월","화","목"],
@@ -343,7 +366,7 @@ function applyScheduleOverrides(residents){
     (r.schedule === undefined && SCHEDULE_OVERRIDES[r.name])
       ? { ...r, schedule: SCHEDULE_OVERRIDES[r.name] }
       : r
-  ).map(r => r.name === "임춘자2" ? { ...r, schedule: [] } : r);
+  );
 }
 
 function migrateVehicleNames(residents){
@@ -362,6 +385,7 @@ const S = {
   expectedReasons: {},
   meals: {},
   staff: {},
+  notes: {},
   loaded: false,
   page: 0,
   showAdd: false,
@@ -373,6 +397,8 @@ const S = {
   statusModalFloor: null,
   confirmReset: false,
   showCalendar: false,
+  showStats: false,
+  longAbsent: null,
   calMonth: null,
   _searchFocused: false,
 };
@@ -428,6 +454,10 @@ function loadAll(){
     const st = lsGet("staff");
     if (st) S.staff = JSON.parse(st);
   } catch(e) {}
+  try {
+    const nt = lsGet("notes");
+    if (nt) S.notes = JSON.parse(nt);
+  } catch(e) {}
   S.loaded = true;
   debouncedPersist("residents", S.residents);
   render();
@@ -439,6 +469,7 @@ function saveAbsentReasons(){ debouncedPersist("absentReasons", S.absentReasons)
 function saveExpectedReasons(){ debouncedPersist("expectedReasons", S.expectedReasons); }
 function saveMeals(){ debouncedPersist("meals", S.meals); }
 function saveStaff(){ debouncedPersist("staff", S.staff); }
+function saveNotes(){ debouncedPersist("notes", S.notes); }
 
 /* ---------- Actions ---------- */
 function setTab(tab){ S.tab = tab; if (tab !== "slides") S.page = 0; S.search = ""; S._searchFocused = false; render(); }
@@ -462,6 +493,12 @@ function pickCalDate(key){
   S.showCalendar = false;
   render();
 }
+function openStats(){
+  S.showStats = true;
+  if (!S.calMonth) S.calMonth = S.selectedDate.slice(0,7);
+  render();
+}
+function closeStats(){ S.showStats = false; render(); }
 function presentCountFor(dateKey){
   const day = S.attendance[dateKey];
   if (!day) return 0;
@@ -469,6 +506,41 @@ function presentCountFor(dateKey){
   for (const id in day){ if (day[id] === "present") n++; }
   return n;
 }
+
+/* 이번 달(calMonth 기준) 통계 집계 */
+function computeMonthStats(){
+  const ym = S.calMonth; // "YYYY-MM"
+  const dateKeys = Object.keys(S.attendance).filter(k => k.startsWith(ym + "-"));
+
+  // 개인별 출석/결석 일수
+  const perPerson = {};
+  S.residents.forEach(r => { perPerson[r.id] = { present: 0, absent: 0, expected: 0 }; });
+
+  // 사유별 집계 (결석)
+  const reasonCounts = {};       // { "병원": 3, ... }
+  const reasonDetails = {};      // { "병원": ["김OO(8/3)", ...] }
+
+  dateKeys.forEach(dateKey => {
+    const day = S.attendance[dateKey] || {};
+    const dayAbsentReasons = S.absentReasons[dateKey] || {};
+    const dd = keyToDate(dateKey);
+    const dLabel = `${dd.getMonth()+1}/${dd.getDate()}`;
+    S.residents.forEach(r => {
+      const st = day[r.id];
+      if (!st) return;
+      if (perPerson[r.id]) perPerson[r.id][st] = (perPerson[r.id][st] || 0) + 1;
+      if (st === "absent") {
+        const reason = (dayAbsentReasons[r.id] || "").trim() || "사유 미입력";
+        reasonCounts[reason] = (reasonCounts[reason] || 0) + 1;
+        if (!reasonDetails[reason]) reasonDetails[reason] = [];
+        reasonDetails[reason].push(`${r.name}(${dLabel})`);
+      }
+    });
+  });
+
+  return { perPerson, reasonCounts, reasonDetails, dayCount: dateKeys.length };
+}
+
 
 function setStatus(id, status){
   const day = { ...(S.attendance[S.selectedDate] || {}) };
@@ -519,6 +591,11 @@ function setStaffCount(floor, count){
   saveStaff();
   render();
 }
+function setNote(value){
+  // 재렌더하면 입력 커서가 튀므로, 상태만 갱신하고 저장만 함 (화면 갱신 X)
+  S.notes = { ...S.notes, [S.selectedDate]: value };
+  saveNotes();
+}
 function setVehicle(id, vehicle){
   S.residents = S.residents.map(r => r.id === id ? { ...r, vehicle } : r);
   saveResidents();
@@ -549,11 +626,113 @@ function clearSchedule(id){
   saveResidents();
   render();
 }
+function toggleAutoExpected(id, day){
+  S.residents = S.residents.map(r => {
+    if (r.id !== id) return r;
+    const current = r.autoExpected || [];
+    const next = current.includes(day) ? current.filter(d => d !== day) : [...current, day];
+    return { ...r, autoExpected: next };
+  });
+  saveResidents();
+  render();
+}
+function clearAutoExpected(id){
+  S.residents = S.residents.map(r => r.id === id ? { ...r, autoExpected: [] } : r);
+  saveResidents();
+  render();
+}
+function setAutoExpectedReason(id, reason){
+  const val = (reason || "").trim();
+  S.residents = S.residents.map(r => {
+    if (r.id !== id) return r;
+    // 같은 사유 다시 누르면 해제
+    const next = (r.autoExpectedReason === val) ? "" : val;
+    return { ...r, autoExpectedReason: next };
+  });
+  saveResidents();
+  render();
+}
 function toggleNight(id){
   S.residents = S.residents.map(r => r.id === id ? { ...r, night: !r.night } : r);
   saveResidents();
   render();
 }
+
+/* ---------- 장기결석 미리 지정 ---------- */
+function openLongAbsent(id){
+  const r = S.residents.find(x => x.id === id);
+  S.longAbsent = {
+    id,
+    name: r ? r.name : "",
+    from: S.selectedDate,
+    to: S.selectedDate,
+    reason: "",
+  };
+  render();
+}
+function closeLongAbsent(){ S.longAbsent = null; render(); }
+function updateLongAbsentField(field, value){
+  if (!S.longAbsent) return;
+  S.longAbsent = { ...S.longAbsent, [field]: value };
+  // 날짜 입력은 즉시 갱신할 필요 없어서 재렌더 안 함(입력 끊김 방지). 미리보기 갱신만.
+  const el = document.getElementById("longAbsentPreview");
+  if (el) el.innerHTML = longAbsentPreviewText();
+}
+function longAbsentDates(){
+  if (!S.longAbsent) return [];
+  const { from, to } = S.longAbsent;
+  if (!from || !to || from > to) return [];
+  const dates = [];
+  let cur = from;
+  let guard = 0;
+  while (cur <= to && guard < 400) {
+    const d = keyToDate(cur);
+    if (d.getDay() !== 0) dates.push(cur); // 일요일(0) 제외
+    cur = shiftDateKey(cur, 1);
+    guard++;
+  }
+  return dates;
+}
+function longAbsentPreviewText(){
+  const dates = longAbsentDates();
+  if (dates.length === 0) return `<span style="color:#C98D74;">시작일이 종료일보다 늦어요</span>`;
+  return `일요일 빼고 <b>${dates.length}일</b>이 결석으로 지정돼요`;
+}
+function applyLongAbsent(){
+  if (!S.longAbsent) return;
+  const { id, reason } = S.longAbsent;
+  const fromEl = document.getElementById("longAbsentFrom");
+  const toEl = document.getElementById("longAbsentTo");
+  const reasonEl = document.getElementById("longAbsentReason");
+  const from = fromEl ? fromEl.value : S.longAbsent.from;
+  const to = toEl ? toEl.value : S.longAbsent.to;
+  const rsn = reasonEl ? reasonEl.value.trim() : (reason || "").trim();
+  S.longAbsent = { ...S.longAbsent, from, to, reason: rsn };
+  const dates = longAbsentDates();
+  if (dates.length === 0) { alert("날짜를 다시 확인해주세요."); return; }
+
+  const newAttendance = { ...S.attendance };
+  const newAbsentReasons = { ...S.absentReasons };
+  dates.forEach(dateKey => {
+    const day = { ...(newAttendance[dateKey] || {}) };
+    day[id] = "absent";
+    newAttendance[dateKey] = day;
+    if (rsn) {
+      const dayReason = { ...(newAbsentReasons[dateKey] || {}) };
+      dayReason[id] = rsn;
+      newAbsentReasons[dateKey] = dayReason;
+    }
+  });
+  S.attendance = newAttendance;
+  S.absentReasons = newAbsentReasons;
+  saveAttendance();
+  saveAbsentReasons();
+  const name = S.longAbsent.name;
+  S.longAbsent = null;
+  render();
+  alert(`${name} 어르신 ${dates.length}일 결석 지정 완료했어요.`);
+}
+
 function toggleAddForm(){ S.showAdd = !S.showAdd; render(); }
 function resetVehicles(){
   if (!confirm("모든 어르신의 하원 차량을 처음 기본값으로 되돌릴까요?\n(이름·층·출결 기록은 그대로 유지돼요)")) return;
@@ -665,16 +844,14 @@ function gotoPage(i){ S.page = Math.max(0, Math.min(2, i)); render(); }
 
 function computeCounts(){
   const counts = { present: 0, absent: 0, expected: 0, unchecked: 0 };
-  const today = S.attendance[S.selectedDate] || {};
-  S.residents.forEach(r => { const s = today[r.id]; if (s) counts[s]++; else counts.unchecked++; });
+  S.residents.forEach(r => { const s = effectiveStatus(r, S.selectedDate); if (s) counts[s]++; else counts.unchecked++; });
   return counts;
 }
 function computeFloorCounts(floor){
   const counts = { present: 0, absent: 0, expected: 0, unchecked: 0, total: 0 };
-  const today = S.attendance[S.selectedDate] || {};
   S.residents.filter(r => r.floor === floor).forEach(r => {
     counts.total++;
-    const s = today[r.id];
+    const s = effectiveStatus(r, S.selectedDate);
     if (s) counts[s]++; else counts.unchecked++;
   });
   return counts;
@@ -731,12 +908,15 @@ function exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, ab
   const expReasons = S.expectedReasons[dateKey] || {};
   rows.push(["결석자", absentNames.length ? absentNames.join(", ") : "없음"]);
   rows.push(["등원예정자", expectedNames.length ? expectedNames.join(", ") : "없음"]);
+  const dayNote = (S.notes[dateKey] || "").trim();
+  if (dayNote) { rows.push([]); rows.push(["오늘의 메모", dayNote]); }
   rows.push([]);
   rows.push(["이름", "층", "상태", "사유", "하원차량"]);
   S.residents.forEach(r => {
-    const st = todayAttendance[r.id];
-    const reasonCell = st === "absent" ? (reasons[r.id] || "")
-                     : st === "expected" ? (expReasons[r.id] || "") : "";
+    const saved = todayAttendance[r.id];
+    const st = saved || (isAutoExpectedDay(r, dateKey) ? "expected" : undefined);
+    const reasonCell = saved === "absent" ? (reasons[r.id] || "")
+                     : saved === "expected" ? (expReasons[r.id] || "") : "";
     rows.push([
       r.name,
       r.floor,
@@ -772,7 +952,10 @@ function exportToExcel(){
       return rs ? `${r.name}(${rs})` : r.name;
     });
     const expDayReasons = S.expectedReasons[dateKey] || {};
-    const expectedNames = S.residents.filter(r => todayAttendance[r.id] === "expected").map(r => {
+    const expectedNames = S.residents.filter(r => {
+      const saved = todayAttendance[r.id];
+      return saved === "expected" || (!saved && isAutoExpectedDay(r, dateKey));
+    }).map(r => {
       const rs = expDayReasons[r.id];
       return rs ? `${r.name}(${rs})` : r.name;
     });
@@ -915,7 +1098,9 @@ function renderFloorTab(floor){
     rows = `<div class="floor-empty">${floor}에 등록된 어르신이 없어요</div>`;
   } else {
     rows = list.map(r => {
-      const current = todayAttendance[r.id];
+      const saved = todayAttendance[r.id];
+      const current = effectiveStatus(r, S.selectedDate);
+      const isAuto = !saved && current === "expected"; // 자동 등원예정 (아직 저장 안 됨)
       const borderColor = current ? STATUS[current].color : "#ECEAE5";
       const bg = current ? STATUS[current].bg : "#fff";
       const schedule = r.schedule || [];
@@ -934,14 +1119,18 @@ function renderFloorTab(floor){
           ${schedule.join("·")}
         </div>
       ` : "";
-      const reasonBox = current === "absent" ? renderReasonBox(r.id, "absent")
-                      : current === "expected" ? renderReasonBox(r.id, "expected") : "";
+      const autoBadge = isAuto ? `
+        <div style="font-size:10px;font-weight:800;color:#C9A94E;margin-top:1px;">🕐 자동 등원예정${(r.autoExpectedReason ? ` · ${esc(r.autoExpectedReason)}` : "")}</div>
+      ` : "";
+      const reasonBox = saved === "absent" ? renderReasonBox(r.id, "absent")
+                      : saved === "expected" ? renderReasonBox(r.id, "expected") : "";
       return `
         <div style="margin-bottom:6px;">
           <div class="resident-row" style="border-color:${borderColor};background:${bg};${isCustom && !scheduledToday ? "opacity:0.6;" : ""}margin-bottom:0;">
             <div style="flex-shrink:0;min-width:52px;">
               <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
               ${scheduleBadge}
+              ${autoBadge}
             </div>
             <div class="status-group">${btns}</div>
           </div>
@@ -1053,10 +1242,17 @@ function renderRosterTab(){
   const items = sortedResidents.map(r => {
     const schedule = r.schedule || [];
     const isDaily = schedule.length === 0;
+    const autoExp = r.autoExpected || [];
     const dayChips = WEEKDAYS.map(day => {
       const active = schedule.includes(day);
       return `
         <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#B0995B" : "#DEDBD3"};background:${active ? "#B0995B" : "#fff"};color:${active ? "#fff" : "#9E9C96"};font-size:12px;font-weight:700;" onclick="toggleScheduleDay('${r.id}','${day}')">${day}</button>
+      `;
+    }).join("");
+    const autoExpChips = WEEKDAYS.map(day => {
+      const active = autoExp.includes(day);
+      return `
+        <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#C9A94E" : "#DEDBD3"};background:${active ? "#C9A94E" : "#fff"};color:${active ? "#fff" : "#9E9C96"};font-size:12px;font-weight:700;" onclick="toggleAutoExpected('${r.id}','${day}')">${day}</button>
       `;
     }).join("");
     return `
@@ -1081,6 +1277,26 @@ function renderRosterTab(){
           <span style="width:1px;height:20px;background:#ECEAE5;margin:0 2px;"></span>
           <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${isDaily ? "#6B8A7A" : "#DEDBD3"};background:${isDaily ? "#6B8A7A" : "#fff"};color:${isDaily ? "#fff" : "#9E9C96"};font-size:11px;font-weight:700;" onclick="clearSchedule('${r.id}')">매일</button>
           ${dayChips}
+        </div>
+        <button style="margin-top:8px;padding:8px 10px;border-radius:8px;border:1.5px solid #E3D5D0;background:#FBF3F0;color:#B08575;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;" onclick="openLongAbsent('${r.id}')">
+          <span>🗓️</span><span>기간 결석 미리 지정 (입원·여행 등)</span>
+        </button>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #ECEAE5;">
+          <div style="font-size:11px;font-weight:800;color:#C9A94E;margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+            <span>🕐</span><span>자동 등원예정 요일</span>
+            ${autoExp.length > 0 ? `<span style="font-weight:700;color:#9E9C96;">(${autoExp.join("·")})</span>` : `<span style="font-weight:600;color:#B8B6AE;">없음</span>`}
+          </div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
+            ${autoExpChips}
+            ${autoExp.length > 0 ? `<button style="padding:5px 9px;border-radius:8px;border:1.5px solid #DEDBD3;background:#fff;color:#9E9C96;font-size:11px;font-weight:700;" onclick="clearAutoExpected('${r.id}')">해제</button>` : ""}
+          </div>
+          ${autoExp.length > 0 ? `
+            <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:8px;">
+              <span style="font-size:11px;font-weight:800;color:#9A8442;">사유</span>
+              ${["늦게 오심","오후 등원","병원 후 등원"].map(rs => `<button onclick="setAutoExpectedReason('${r.id}','${rs}')" style="padding:5px 10px;border-radius:8px;border:1.5px solid ${(r.autoExpectedReason||"")===rs ? "#C9A94E" : "#E6DCC0"};background:${(r.autoExpectedReason||"")===rs ? "#C9A94E" : "#fff"};color:${(r.autoExpectedReason||"")===rs ? "#fff" : "#9A8442"};font-size:11px;font-weight:700;">${rs}</button>`).join("")}
+              <input value="${esc(r.autoExpectedReason||"")}" placeholder="직접 입력" onchange="setAutoExpectedReason('${r.id}', this.value)" style="flex:1;min-width:90px;padding:6px 9px;border-radius:8px;border:1.5px solid #E6DCC0;font-size:12px;background:#fff;color:#5A5852;outline:none;box-sizing:border-box;" />
+            </div>
+          ` : ""}
         </div>
       </div>
     `;
@@ -1198,7 +1414,7 @@ function renderSlides(){
       <div class="slide-title">총 ${list.length}명</div>
       ${list.length === 0 ? `<div style="text-align:center;color:#9E9C96;padding:30px;font-size:13px;">등록된 어르신이 없어요</div>` :
         list.map(r => {
-          const s = todayAttendance[r.id];
+          const s = effectiveStatus(r, S.selectedDate);
           return `
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;background:${s?STATUS[s].bg:"#F5F3EE"};margin-bottom:8px;">
               <span style="font-size:16px;font-weight:700;">${esc(r.name)}</span>
@@ -1210,7 +1426,22 @@ function renderSlides(){
     `;
   }
 
+  const noteVal = S.notes[S.selectedDate] || "";
+  const noteCard = S.page === 0 ? `
+    <div style="background:#fff;border-radius:20px;border:2px solid #ECEAE5;padding:16px 18px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+        <span style="font-size:15px;">📝</span>
+        <span style="font-size:15px;font-weight:800;color:#343432;">오늘의 메모</span>
+        <span style="font-size:11px;font-weight:600;color:#9E9C96;">${formatDateLabel(S.selectedDate)}</span>
+      </div>
+      <textarea id="dayNoteInput" placeholder="오늘 있었던 일, 인계사항 등을 자유롭게 적어요&#10;(예: 김OO 보호자 연락 옴 / 3층 에어컨 수리 예정)"
+        oninput="setNote(this.value)"
+        style="width:100%;min-height:70px;padding:11px 12px;border-radius:12px;border:1.5px solid #ECEAE5;font-size:14px;line-height:1.5;background:#FAFAF8;color:#343432;outline:none;resize:vertical;box-sizing:border-box;font-family:inherit;">${esc(noteVal)}</textarea>
+    </div>
+  ` : "";
+
   return `
+    ${noteCard}
     <div class="slide-card">${inner}</div>
     <div class="slide-nav">
       <button class="slide-nav-btn" ${S.page===0?"disabled":""} onclick="gotoPage(${S.page-1})">‹ 이전</button>
@@ -1253,7 +1484,8 @@ function renderSearchResults(){
   }
 
   return matches.map(r => {
-    const current = todayAttendance[r.id];
+    const saved = todayAttendance[r.id];
+    const current = effectiveStatus(r, S.selectedDate);
     const borderColor = current ? STATUS[current].color : "#ECEAE5";
     const bg = current ? STATUS[current].bg : "#fff";
     const btns = Object.entries(STATUS).map(([key, s]) => {
@@ -1273,7 +1505,7 @@ function renderSearchResults(){
           </div>
           <div class="status-group">${btns}</div>
         </div>
-        ${current === "absent" ? renderReasonBox(r.id, "absent") : current === "expected" ? renderReasonBox(r.id, "expected") : ""}
+        ${saved === "absent" ? renderReasonBox(r.id, "absent") : saved === "expected" ? renderReasonBox(r.id, "expected") : ""}
       </div>
     `;
   }).join("");
@@ -1291,7 +1523,7 @@ function renderStatusModal(){
   const dayExpectedReasons = S.expectedReasons[S.selectedDate] || {};
   const showReason = (status === "absent" || status === "expected");
   const list = S.residents
-    .filter(r => status === "unchecked" ? !todayAttendance[r.id] : todayAttendance[r.id] === status)
+    .filter(r => { const eff = effectiveStatus(r, S.selectedDate); return status === "unchecked" ? !eff : eff === status; })
     .filter(r => floorFilter ? r.floor === floorFilter : true)
     .sort((a, b) => {
       if (a.floor !== b.floor) return a.floor.localeCompare(b.floor, "ko");
@@ -1304,7 +1536,7 @@ function renderStatusModal(){
     if (fl.length === 0) return "";
     const rows = fl.map(r => {
       const reason = status === "absent" ? dayAbsentReasons[r.id]
-                   : status === "expected" ? dayExpectedReasons[r.id] : "";
+                   : status === "expected" ? effectiveExpectedReason(r, S.selectedDate) : "";
       const reasonTag = (showReason && reason)
         ? `<span style="font-size:12px;font-weight:700;color:${s.color};background:${s.bg};padding:2px 9px;border-radius:8px;">${esc(reason)}</span>`
         : (showReason ? `<span style="font-size:12px;font-weight:600;color:#B8B6AE;">사유 미입력</span>` : "");
@@ -1411,7 +1643,129 @@ function renderCalendar(){
           <button onclick="pickCalDate('${tKey}')" style="flex:1;padding:12px;border-radius:12px;border:2px solid #6B8A7A;background:#fff;color:#6B8A7A;font-size:14px;font-weight:800;">오늘로</button>
           <button onclick="closeCalendar()" style="flex:1;padding:12px;border-radius:12px;border:none;background:#6B8A7A;color:#fff;font-size:14px;font-weight:800;">닫기</button>
         </div>
+        <button onclick="openStats()" style="width:100%;margin-top:8px;padding:12px;border-radius:12px;border:none;background:#5C4463;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <span>📈</span><span>이달의 통계 (출석일수·결석사유)</span>
+        </button>
         <div style="text-align:center;font-size:11px;color:#9E9C96;margin-top:10px;">날짜 아래 숫자는 그날 출석 인원이에요</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderStats(){
+  if (!S.showStats) return "";
+  const [y, m] = S.calMonth.split("-").map(Number);
+  const monthLabel = `${y}년 ${m}월`;
+  const { perPerson, reasonCounts, reasonDetails, dayCount } = computeMonthStats();
+
+  // 개인별 출석일수: 층별로 나눠서, 출석 많은 순
+  const personBlocks = FLOORS.map(floor => {
+    const people = S.residents
+      .filter(r => r.floor === floor)
+      .map(r => ({ ...r, stat: perPerson[r.id] || { present:0, absent:0, expected:0 } }))
+      .filter(r => r.stat.present > 0 || r.stat.absent > 0 || r.stat.expected > 0)
+      .sort((a, b) => b.stat.present - a.stat.present || a.name.localeCompare(b.name, "ko"));
+    if (people.length === 0) {
+      return `
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:800;color:#6B8A7A;margin-bottom:8px;">${floor}</div>
+          <div style="font-size:12px;color:#9E9C96;padding:6px 2px;">기록 없음</div>
+        </div>`;
+    }
+    const rows = people.map(r => `
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border:1.5px solid #ECEAE5;border-radius:10px;padding:9px 12px;margin-bottom:6px;">
+        <span style="font-size:15px;font-weight:700;color:#343432;">${esc(r.name)}${r.night ? ` <span style="font-size:10px;font-weight:800;color:#5C4463;">야간</span>` : ""}</span>
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:15px;font-weight:800;color:#6B8A7A;">출석 ${r.stat.present}일</span>
+          ${r.stat.absent > 0 ? `<span style="font-size:12px;font-weight:700;color:#D39282;">결석 ${r.stat.absent}</span>` : ""}
+        </span>
+      </div>
+    `).join("");
+    return `
+      <div style="margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:800;color:#6B8A7A;margin-bottom:8px;">${floor} · ${people.length}명</div>
+        ${rows}
+      </div>
+    `;
+  }).join("");
+
+  // 결석 사유 집계: 건수 많은 순
+  const reasonKeys = Object.keys(reasonCounts).sort((a, b) => reasonCounts[b] - reasonCounts[a]);
+  const totalAbsent = reasonKeys.reduce((sum, k) => sum + reasonCounts[k], 0);
+  const reasonBlocks = reasonKeys.length === 0
+    ? `<div style="font-size:13px;color:#9E9C96;padding:10px 2px;">이번 달 결석 기록이 없어요</div>`
+    : reasonKeys.map(reason => {
+        const isNone = reason === "사유 미입력";
+        const col = isNone ? "#9E9C96" : "#D39282";
+        const bg = isNone ? "#F0EFEB" : "#F7ECE8";
+        return `
+          <div style="background:${bg};border-radius:12px;padding:12px 14px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:15px;font-weight:800;color:${col};">${esc(reason)}</span>
+              <span style="font-size:15px;font-weight:800;color:${col};">${reasonCounts[reason]}건</span>
+            </div>
+            <div style="font-size:12px;color:#7A7872;line-height:1.6;">${reasonDetails[reason].map(esc).join(", ")}</div>
+          </div>
+        `;
+      }).join("");
+
+  return `
+    <div onclick="closeStats()" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:160;display:flex;align-items:flex-end;justify-content:center;">
+      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:600px;border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;max-height:82vh;overflow-y:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button onclick="shiftCalMonth(-1)" style="background:#EFEDE8;border:none;border-radius:8px;width:30px;height:30px;font-size:16px;color:#5A5852;">‹</button>
+            <span style="font-size:18px;font-weight:800;color:#343432;">${monthLabel} 통계</span>
+            <button onclick="shiftCalMonth(1)" style="background:#EFEDE8;border:none;border-radius:8px;width:30px;height:30px;font-size:16px;color:#5A5852;">›</button>
+          </div>
+          <button onclick="closeStats()" style="border:none;background:#EFEDE8;border-radius:50%;width:32px;height:32px;font-size:16px;color:#5A5852;">✕</button>
+        </div>
+        <div style="font-size:12px;color:#9E9C96;margin-bottom:16px;">이번 달 기록이 있는 날: ${dayCount}일</div>
+
+        <div style="font-size:15px;font-weight:800;color:#343432;margin-bottom:10px;">📅 개인별 출석일수</div>
+        ${personBlocks}
+
+        <div style="font-size:15px;font-weight:800;color:#343432;margin:20px 0 10px;">🩺 결석 사유 집계 ${totalAbsent > 0 ? `<span style="font-size:13px;font-weight:700;color:#9E9C96;">(총 ${totalAbsent}건)</span>` : ""}</div>
+        ${reasonBlocks}
+      </div>
+    </div>
+  `;
+}
+
+function renderLongAbsent(){
+  if (!S.longAbsent) return "";
+  const { name, from, to, reason } = S.longAbsent;
+  return `
+    <div onclick="closeLongAbsent()" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:170;display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:360px;border-radius:20px;padding:22px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:18px;font-weight:800;color:#343432;">기간 결석 지정</div>
+          <button onclick="closeLongAbsent()" style="border:none;background:#EFEDE8;border-radius:50%;width:30px;height:30px;font-size:15px;color:#5A5852;">✕</button>
+        </div>
+        <div style="font-size:14px;font-weight:700;color:#B08575;margin-bottom:16px;">${esc(name)} 어르신</div>
+
+        <div style="font-size:12px;font-weight:800;color:#5A5852;margin-bottom:5px;">시작일</div>
+        <input id="longAbsentFrom" type="date" value="${from}" onchange="updateLongAbsentField('from', this.value)"
+          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #DEDBD3;font-size:15px;background:#fff;color:#343432;margin-bottom:12px;box-sizing:border-box;" />
+
+        <div style="font-size:12px;font-weight:800;color:#5A5852;margin-bottom:5px;">종료일</div>
+        <input id="longAbsentTo" type="date" value="${to}" onchange="updateLongAbsentField('to', this.value)"
+          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #DEDBD3;font-size:15px;background:#fff;color:#343432;margin-bottom:12px;box-sizing:border-box;" />
+
+        <div style="font-size:12px;font-weight:800;color:#5A5852;margin-bottom:5px;">사유 (선택)</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;">
+          ${["입원","병원","개인사정","여행"].map(rs => `<button onclick="document.getElementById('longAbsentReason').value='${rs}'" style="padding:6px 11px;border-radius:8px;border:1.5px solid #E3D5D0;background:#fff;color:#B08575;font-size:12px;font-weight:700;">${rs}</button>`).join("")}
+        </div>
+        <input id="longAbsentReason" value="${esc(reason || "")}" placeholder="예: 입원"
+          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #DEDBD3;font-size:15px;background:#fff;color:#343432;margin-bottom:12px;box-sizing:border-box;" />
+
+        <div id="longAbsentPreview" style="font-size:13px;color:#7A6238;background:#F6F1E4;border-radius:10px;padding:10px 12px;margin-bottom:16px;text-align:center;">${longAbsentPreviewText()}</div>
+
+        <div style="display:flex;gap:10px;">
+          <button onclick="closeLongAbsent()" style="flex:1;padding:13px;border-radius:12px;border:2px solid #DEDBD3;background:#fff;color:#5A5852;font-size:15px;font-weight:700;">취소</button>
+          <button onclick="applyLongAbsent()" style="flex:1;padding:13px;border-radius:12px;border:none;background:#D39282;color:#fff;font-size:15px;font-weight:800;">결석 지정</button>
+        </div>
+        <div style="font-size:11px;color:#9E9C96;text-align:center;margin-top:10px;">일요일은 자동으로 빠져요</div>
       </div>
     </div>
   `;
@@ -1445,7 +1799,7 @@ function render(){
 
   const banner = (!isToday && S.tab !== "roster") ? `<div class="date-banner">${formatDateLabel(S.selectedDate)} 기록을 보고 있어요</div>` : "";
 
-  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>` + renderStatusModal() + renderResetConfirm() + renderCalendar();
+  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>` + renderStatusModal() + renderResetConfirm() + renderCalendar() + renderStats() + renderLongAbsent();
 
   const nameInput = document.getElementById("newNameInput");
   if (nameInput) {
