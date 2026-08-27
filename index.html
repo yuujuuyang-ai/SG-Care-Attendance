@@ -366,7 +366,7 @@ function applyScheduleOverrides(residents){
     (r.schedule === undefined && SCHEDULE_OVERRIDES[r.name])
       ? { ...r, schedule: SCHEDULE_OVERRIDES[r.name] }
       : r
-  ).map(r => r.name === "임춘자2" ? { ...r, schedule: [] } : r);
+  );
 }
 
 function migrateVehicleNames(residents){
@@ -385,6 +385,7 @@ const S = {
   expectedReasons: {},
   meals: {},
   staff: {},
+  notes: {},
   loaded: false,
   page: 0,
   showAdd: false,
@@ -453,6 +454,10 @@ function loadAll(){
     const st = lsGet("staff");
     if (st) S.staff = JSON.parse(st);
   } catch(e) {}
+  try {
+    const nt = lsGet("notes");
+    if (nt) S.notes = JSON.parse(nt);
+  } catch(e) {}
   S.loaded = true;
   debouncedPersist("residents", S.residents);
   render();
@@ -464,6 +469,7 @@ function saveAbsentReasons(){ debouncedPersist("absentReasons", S.absentReasons)
 function saveExpectedReasons(){ debouncedPersist("expectedReasons", S.expectedReasons); }
 function saveMeals(){ debouncedPersist("meals", S.meals); }
 function saveStaff(){ debouncedPersist("staff", S.staff); }
+function saveNotes(){ debouncedPersist("notes", S.notes); }
 
 /* ---------- Actions ---------- */
 function setTab(tab){ S.tab = tab; if (tab !== "slides") S.page = 0; S.search = ""; S._searchFocused = false; render(); }
@@ -584,6 +590,11 @@ function setStaffCount(floor, count){
   S.staff = { ...S.staff, [S.selectedDate]: day };
   saveStaff();
   render();
+}
+function setNote(value){
+  // 재렌더하면 입력 커서가 튀므로, 상태만 갱신하고 저장만 함 (화면 갱신 X)
+  S.notes = { ...S.notes, [S.selectedDate]: value };
+  saveNotes();
 }
 function setVehicle(id, vehicle){
   S.residents = S.residents.map(r => r.id === id ? { ...r, vehicle } : r);
@@ -897,6 +908,8 @@ function exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, ab
   const expReasons = S.expectedReasons[dateKey] || {};
   rows.push(["결석자", absentNames.length ? absentNames.join(", ") : "없음"]);
   rows.push(["등원예정자", expectedNames.length ? expectedNames.join(", ") : "없음"]);
+  const dayNote = (S.notes[dateKey] || "").trim();
+  if (dayNote) { rows.push([]); rows.push(["오늘의 메모", dayNote]); }
   rows.push([]);
   rows.push(["이름", "층", "상태", "사유", "하원차량"]);
   S.residents.forEach(r => {
@@ -1413,7 +1426,22 @@ function renderSlides(){
     `;
   }
 
+  const noteVal = S.notes[S.selectedDate] || "";
+  const noteCard = S.page === 0 ? `
+    <div style="background:#fff;border-radius:20px;border:2px solid #ECEAE5;padding:16px 18px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+        <span style="font-size:15px;">📝</span>
+        <span style="font-size:15px;font-weight:800;color:#343432;">오늘의 메모</span>
+        <span style="font-size:11px;font-weight:600;color:#9E9C96;">${formatDateLabel(S.selectedDate)}</span>
+      </div>
+      <textarea id="dayNoteInput" placeholder="오늘 있었던 일, 인계사항 등을 자유롭게 적어요&#10;(예: 김OO 보호자 연락 옴 / 3층 에어컨 수리 예정)"
+        oninput="setNote(this.value)"
+        style="width:100%;min-height:70px;padding:11px 12px;border-radius:12px;border:1.5px solid #ECEAE5;font-size:14px;line-height:1.5;background:#FAFAF8;color:#343432;outline:none;resize:vertical;box-sizing:border-box;font-family:inherit;">${esc(noteVal)}</textarea>
+    </div>
+  ` : "";
+
   return `
+    ${noteCard}
     <div class="slide-card">${inner}</div>
     <div class="slide-nav">
       <button class="slide-nav-btn" ${S.page===0?"disabled":""} onclick="gotoPage(${S.page-1})">‹ 이전</button>
