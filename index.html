@@ -9,18 +9,18 @@
   body {
     margin: 0;
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
-    background: #F8F7F4;
-    color: #343432;
+    background: #F7F9FC;
+    color: #1F2937;
     padding-bottom: 90px;
   }
   button, select, input { font-family: inherit; }
   button { cursor: pointer; }
 
   .header {
-    background: #F8F7F4;
-    color: #343432;
+    background: #F7F9FC;
+    color: #1F2937;
     padding: 24px 20px 18px;
-    border-bottom: 1px solid #ECEAE5;
+    border-bottom: 1px solid #D9E2EC;
   }
   .header-nav {
     display: flex;
@@ -28,7 +28,7 @@
     justify-content: space-between;
   }
   .nav-btn {
-    background: #EFEDE8;
+    background: #E8EEF6;
     border: none;
     border-radius: 8px;
     width: 30px;
@@ -36,29 +36,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #5A5852;
+    color: #374151;
     font-size: 16px;
   }
   .date-label {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #9E9C96;
+    color: #8A95A3;
     font-size: 14px;
     font-weight: 700;
   }
   .today-badge {
     font-size: 11px;
     background: #EAE7DF;
-    color: #6B8A7A;
+    color: #2F5F8F;
     padding: 2px 8px;
     border-radius: 8px;
     cursor: pointer;
   }
-  .center-name { font-size: 21px; font-weight: 800; margin-top: 10px; color: #343432; }
+  .center-name { font-size: 21px; font-weight: 800; margin-top: 10px; color: #1F2937; }
   .stats-row { display: flex; gap: 26px; margin-top: 16px; }
-  .stat-num { font-size: 28px; font-weight: 800; line-height: 1; color: #343432; }
-  .stat-label { font-size: 12px; color: #9E9C96; margin-top: 6px; font-weight: 600; }
+  .stat-num { font-size: 28px; font-weight: 800; line-height: 1; color: #1F2937; }
+  .stat-label { font-size: 12px; color: #8A95A3; margin-top: 6px; font-weight: 600; }
 
   .tabs { display: flex; gap: 5px; padding: 16px 16px 0; }
   .tab-btn {
@@ -71,64 +71,112 @@
     padding: 10px 2px;
     border-radius: 12px;
     border: none;
-    background: #EFEDE8;
+    background: #E8EEF6;
     color: #4A4842;
     font-size: 11px;
     font-weight: 700;
   }
-  .tab-btn.active { background: #6B8A7A; color: #F8F7F4; }
+  .tab-btn.active { background: #2F5F8F; color: #F7F9FC; }
   .tab-icon { font-size: 15px; line-height: 1; }
 
   .content { padding: 16px; }
 
   .date-banner {
     display: flex; align-items: center; justify-content: center; gap: 6px;
-    background: #F6F1E4; color: #7A6238; font-size: 12px; font-weight: 700;
+    background: #EEF4FA; color: #456184; font-size: 12px; font-weight: 700;
     padding: 8px 10px; border-radius: 10px; margin-bottom: 12px;
   }
 
   .meal-counter {
     display: flex; align-items: center; justify-content: space-between;
-    background: #fff; border-radius: 14px; padding: 12px 16px; border: 2px solid #EFEDE8;
+    background: #fff; border-radius: 14px; padding: 12px 16px; border: 2px solid #E8EEF6;
     margin-bottom: 14px;
   }
-  .meal-left { display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 700; }
-  .meal-right { display: flex; align-items: center; gap: 12px; }
-  .meal-btn {
-    width: 36px; height: 36px; border-radius: 10px; border: 2px solid #DEDBD3;
-    background: #fff; font-size: 20px; font-weight: 700; color: #6B8A7A;
+  .meal-counter-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 14px;
   }
-  .meal-count { font-size: 20px; font-weight: 800; min-width: 24px; text-align: center; }
+  .meal-counter-row .meal-counter {
+    margin-bottom: 0;
+    padding: 9px 7px;
+    gap: 4px;
+  }
+  .breakfast-counter {
+    background: #F8FAFC;
+    border-color: #D0D7E2;
+  }
+  .breakfast-counter .meal-left { color: #475569; }
+  .breakfast-counter .meal-btn {
+    color: #475569;
+    border-color: #D0D7E2;
+  }
+  .breakfast-counter .count-input {
+    border-color: #D0D7E2;
+    background: #fff;
+    color: #475569;
+  }
+  .staff-counter {
+    background: #F8FAFC;
+    border-color: #D0D7E2;
+  }
+  .staff-counter .meal-left { color: #475569; }
+  .staff-counter .meal-btn {
+    color: #475569;
+    border-color: #D0D7E2;
+  }
+  .meal-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #E8EEF6; font-size: 21px;
+  }
+  .meal-left { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; white-space: nowrap; }
+  .meal-right { display: flex; align-items: center; gap: 3px; }
+  .meal-btn {
+    width: 26px; height: 28px; border-radius: 8px; border: 2px solid #C8D3DF;
+    background: #fff; font-size: 17px; font-weight: 700; color: #2F5F8F;
+  }
+  .meal-count { font-size: 17px; font-weight: 800; min-width: 20px; text-align: center; }
   .count-input {
-    width: 52px; border: 1.5px solid #DEDBD3; border-radius: 8px; background: #F8F7F4;
+    width: 34px; border: 1.5px solid #C8D3DF; border-radius: 8px; background: #F7F9FC;
     padding: 4px 0; -moz-appearance: textfield; outline: none;
   }
-  .count-input:focus { border-color: #6B8A7A; background: #fff; }
+  .count-input:focus { border-color: #2F5F8F; background: #fff; }
   .count-input::-webkit-outer-spin-button,
   .count-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-  .floor-title { font-size: 14px; font-weight: 800; color: #6B8A7A; margin-bottom: 8px; padding-left: 4px; }
+  .floor-title { font-size: 14px; font-weight: 800; color: #2F5F8F; margin-bottom: 8px; padding-left: 4px; }
 
   .resident-row {
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    padding: 8px 10px; border-radius: 12px; border: 1.5px solid #ECEAE5; background: #fff;
+    padding: 8px 10px; border-radius: 12px; border: 1.5px solid #D9E2EC; background: #fff;
     margin-bottom: 6px;
   }
   .resident-name { font-size: 15px; font-weight: 700; flex-shrink: 0; min-width: 52px; }
+  .memo-badge {
+    display: inline-flex; align-items: center; margin-left: 5px; padding: 2px 7px;
+    border-radius: 999px; background: #EAF3FF; color: #2D6F9F;
+    font-size: 10px; font-weight: 800; vertical-align: middle;
+  }
+  .resident-memo {
+    margin-top: 6px; font-size: 11px; font-weight: 700; line-height: 1.35;
+    color: #2D6F9F; background: #EAF3FF; border-radius: 8px; padding: 5px 7px;
+  }
   .status-group { display: flex; gap: 5px; flex: 1; }
   .status-btn {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 3px;
-    padding: 6px 2px; border-radius: 8px; border: 1.5px solid #DEDBD3; background: #fff;
-    color: #5A5852; font-size: 11px; font-weight: 700;
+    padding: 6px 2px; border-radius: 8px; border: 1.5px solid #C8D3DF; background: #fff;
+    color: #374151; font-size: 11px; font-weight: 700;
   }
 
   .empty-box {
-    text-align: center; padding: 40px 20px; color: #9E9C96; background: #fff; border-radius: 16px;
+    text-align: center; padding: 40px 20px; color: #8A95A3; background: #fff; border-radius: 16px;
   }
   .empty-box .big-icon { font-size: 30px; opacity: 0.4; margin-bottom: 8px; }
   .empty-box .title { font-weight: 600; margin-bottom: 4px; }
   .primary-btn {
-    background: #6B8A7A; color: #fff; border: none; border-radius: 10px;
+    background: #2F5F8F; color: #fff; border: none; border-radius: 10px;
     padding: 10px 18px; font-weight: 600; font-size: 13px;
   }
 
@@ -138,16 +186,16 @@
   .vehicle-chip {
     display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 11px; padding: 8px 12px;
   }
-  .vehicle-chip select { border: none; background: transparent; font-size: 11px; color: #9E9C96; }
+  .vehicle-chip select { border: none; background: transparent; font-size: 11px; color: #8A95A3; }
 
   .roster-add-btn {
     display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
-    padding: 12px; border-radius: 14px; border: 2px dashed #CFCcC4; background: #fff;
-    color: #5A5852; font-weight: 600; font-size: 14px; margin-bottom: 14px;
+    padding: 12px; border-radius: 14px; border: 2px dashed #B7C4D1; background: #fff;
+    color: #374151; font-weight: 600; font-size: 14px; margin-bottom: 14px;
   }
   .add-form { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
   .add-form input, .add-form select {
-    padding: 10px 12px; border-radius: 10px; border: 1.5px solid #EFEDE8; font-size: 15px;
+    padding: 10px 12px; border-radius: 10px; border: 1.5px solid #E8EEF6; font-size: 15px;
   }
   .add-form-row { display: flex; gap: 8px; }
   .add-form-row select { flex: 1; }
@@ -156,14 +204,14 @@
     border-radius: 12px; padding: 12px 14px; margin-bottom: 8px;
   }
   .roster-item .name { font-weight: 700; font-size: 18px; }
-  .roster-item .meta { font-size: 13px; color: #7A7872; margin-top: 3px; font-weight: 600; }
-  .del-btn { background: none; border: none; color: #C98D74; padding: 8px; font-size: 18px; }
+  .roster-item .meta { font-size: 13px; color: #667085; margin-top: 3px; font-weight: 600; }
+  .del-btn { background: none; border: none; color: #D94A5A; padding: 8px; font-size: 18px; }
 
-  .slide-card { background: #fff; border-radius: 20px; border: 2px solid #ECEAE5; padding: 26px 22px; min-height: 420px; }
-  .slide-date { font-size: 13px; color: #9E9C96; font-weight: 700; margin-bottom: 4px; }
-  .slide-title { font-size: 20px; font-weight: 800; color: #343432; margin-bottom: 24px; }
+  .slide-card { background: #fff; border-radius: 20px; border: 2px solid #D9E2EC; padding: 26px 22px; min-height: 420px; }
+  .slide-date { font-size: 13px; color: #8A95A3; font-weight: 700; margin-bottom: 4px; }
+  .slide-title { font-size: 20px; font-weight: 800; color: #1F2937; margin-bottom: 24px; }
   .total-circle {
-    width: 140px; height: 140px; border-radius: 50%; background: #6B8A7A; display: flex;
+    width: 140px; height: 140px; border-radius: 50%; background: #2F5F8F; display: flex;
     flex-direction: column; align-items: center; justify-content: center; color: #fff; margin: 0 auto 26px;
   }
   .total-circle .num { font-size: 42px; font-weight: 800; line-height: 1; }
@@ -173,33 +221,49 @@
     padding: 12px 16px; margin-bottom: 10px; border-width: 2px; border-style: solid;
   }
   .meal-summary-row { display: flex; gap: 10px; }
-  .meal-summary-box { flex: 1; background: #F6F1E4; border: 2px solid #E3D6B0; border-radius: 14px; padding: 12px 14px; text-align: center; }
+  .meal-summary-box { flex: 1; background: #F8FAFC; border: 2px solid #D0D7E2; border-radius: 14px; padding: 11px 10px; text-align: center; }
+  .meal-summary-box.editable {
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+  }
+  .meal-summary-box.editable:active {
+    transform: scale(0.98);
+    border-color: #8FA2BA;
+    background: #F1F5F9;
+  }
+  .summary-line {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    color: #475569; font-weight: 800; white-space: nowrap;
+  }
+  .summary-line .emoji { font-size: 21px; line-height: 1; }
+  .summary-line .label { font-size: 12px; }
+  .summary-line .num { font-size: 20px; color: #334155; }
 
   .slide-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
   .slide-nav-btn {
     display: flex; align-items: center; gap: 4px; padding: 10px 16px; border-radius: 12px;
-    border: 2px solid #DEDBD3; background: #fff; color: #6B8A7A; font-weight: 700; font-size: 14px;
+    border: 2px solid #C8D3DF; background: #fff; color: #2F5F8F; font-weight: 700; font-size: 14px;
   }
-  .slide-nav-btn:disabled { color: #CFCcC4; }
+  .slide-nav-btn:disabled { color: #B7C4D1; }
   .dots { display: flex; gap: 8px; }
-  .dot { height: 8px; border-radius: 4px; background: #DEDBD3; cursor: pointer; }
-  .dot.active { width: 22px; background: #6B8A7A; }
+  .dot { height: 8px; border-radius: 4px; background: #C8D3DF; cursor: pointer; }
+  .dot.active { width: 22px; background: #2F5F8F; }
   .dot:not(.active) { width: 8px; }
 
   .export-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 14px;
-    padding: 13px; border-radius: 13px; border: none; background: #6B8A7A; color: #fff; font-weight: 700; font-size: 14px;
+    padding: 13px; border-radius: 13px; border: none; background: #2F5F8F; color: #fff; font-weight: 700; font-size: 14px;
   }
 
   .save-indicator {
     position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
-    font-size: 11px; color: #9E9C96; background: #F8F7F4; padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; color: #8A95A3; background: #F7F9FC; padding: 4px 10px; border-radius: 20px;
     opacity: 0; transition: opacity 0.3s;
   }
   .save-indicator.show { opacity: 1; }
   .save-indicator.error { color: #B85C4A; }
 
-  .floor-empty { text-align: center; padding: 36px 20px; color: #9E9C96; background: #fff; border-radius: 16px; font-size: 13px; }
+  .floor-empty { text-align: center; padding: 36px 20px; color: #8A95A3; background: #fff; border-radius: 16px; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -208,7 +272,8 @@
 
 <script>
 /* ---------- Storage (localStorage 직접 사용) ---------- */
-const STORAGE_PREFIX = "centerCare_";
+const STORAGE_PREFIX = "centerCare_20260913_roster_";
+const ROSTER_VERSION_LABEL = "명단 2026-09-13";
 function lsGet(key){
   return localStorage.getItem(STORAGE_PREFIX + key);
 }
@@ -221,11 +286,11 @@ const FLOORS = ["2층", "3층"];
 const VEHICLES = ["스타렉스 9255", "스타렉스 5384", "카니발 8296", "레이 2410", "레이 6943", "도보"];
 const NIGHT_VEHICLE_ORDER = ["레이 2410", "스타렉스 9255", "스타렉스 5384", "레이 6943", "도보", "카니발 8296"];
 const VEHICLE_COLORS = {
-  "스타렉스 9255": { bg: "#EDF3EF", border: "#7C9885", text: "#6B8A7A" },
-  "스타렉스 5384": { bg: "#F3EEE6", border: "#C9A66B", text: "#7A6238" },
-  "카니발 8296": { bg: "#F0EAEF", border: "#9B7CA3", text: "#5C4463" },
+  "스타렉스 9255": { bg: "#F8FAFC", border: "#7C9885", text: "#2F5F8F" },
+  "스타렉스 5384": { bg: "#F3EEE6", border: "#C9A66B", text: "#9A5B00" },
+  "카니발 8296": { bg: "#F4ECF7", border: "#9B7CA3", text: "#5B4B7A" },
   "레이 2410": { bg: "#EAEFF3", border: "#6B8FA3", text: "#3A5266" },
-  "레이 6943": { bg: "#F5EBE8", border: "#C98D74", text: "#7A4D3A" },
+  "레이 6943": { bg: "#F5EBE8", border: "#D94A5A", text: "#7A4D3A" },
   "도보": { bg: "#F1F0EC", border: "#9A9488", text: "#5A5548" },
 };
 const OLD_VEHICLE_MAP = {
@@ -236,77 +301,78 @@ const OLD_VEHICLE_MAP = {
   "5호차": "레이 6943",
 };
 const STATUS = {
-  present:  { label: "출석",   color: "#7A9B8A", bg: "#EDF2EE", icon: "✓" },
-  absent:   { label: "결석",   color: "#D39282", bg: "#F7ECE8", icon: "✕" },
-  expected: { label: "등원예정", color: "#D3B36A", bg: "#F7F1E3", icon: "🕐" },
+  present:  { label: "출석",   color: "#2F80ED", bg: "#EAF3FF", icon: "✓" },
+  absent:   { label: "결석",   color: "#E05263", bg: "#FFF0F2", icon: "✕" },
+  expected: { label: "등원예정", color: "#B7791F", bg: "#FFF8EC", icon: "🕐" },
 };
 const DEFAULT_RESIDENTS = [
-  { id: "r2_01", name: "이금도", floor: "2층", vehicle: "스타렉스 9255", night: true },
-  { id: "r2_02", name: "김계화", floor: "2층", vehicle: "스타렉스 5384", night: true },
-  { id: "r2_03", name: "김복영", floor: "2층", vehicle: "도보" },
-  { id: "r2_04", name: "김무웅", floor: "2층", vehicle: "스타렉스 9255" },
-  { id: "r2_05", name: "정인석", floor: "2층", vehicle: "스타렉스 9255" },
-  { id: "r2_06", name: "전청자", floor: "2층", vehicle: "레이 2410", night: true },
-  { id: "r2_07", name: "김분주", floor: "2층", vehicle: "스타렉스 5384", night: true },
-  { id: "r2_08", name: "김분선", floor: "2층", vehicle: "스타렉스 5384", night: true },
-  { id: "r2_09", name: "제갈순례", floor: "2층", vehicle: "스타렉스 5384", night: true },
-  { id: "r2_10", name: "김타연", floor: "2층", vehicle: "스타렉스 9255", night: true },
-  { id: "r2_11", name: "김태석", floor: "2층", vehicle: "스타렉스 9255", night: true },
-  { id: "r2_12", name: "추석철", floor: "2층", vehicle: "스타렉스 5384", night: true },
-  { id: "r2_13", name: "김말연", floor: "2층", vehicle: "스타렉스 5384", night: true },
-  { id: "r2_14", name: "강정순", floor: "2층", vehicle: "스타렉스 9255" },
-  { id: "r2_15", name: "김두진", floor: "2층", vehicle: "레이 6943", night: true },
-  { id: "r2_16", name: "윤창근", floor: "2층", vehicle: "스타렉스 9255", night: true },
-  { id: "r2_17", name: "이용대", floor: "2층", vehicle: "스타렉스 5384" },
-  { id: "r2_18", name: "장명자", floor: "2층", vehicle: "레이 2410" },
-  { id: "r2_19", name: "전동순", floor: "2층", vehicle: "스타렉스 5384", night: true },
-  { id: "r2_20", name: "김기선", floor: "2층", vehicle: "스타렉스 9255" },
-  { id: "r2_21", name: "권무생", floor: "2층", vehicle: "레이 2410", night: true },
-  { id: "r2_22", name: "김숙자", floor: "2층", vehicle: "카니발 8296" },
-  { id: "r2_23", name: "정도흥", floor: "2층", vehicle: "레이 2410", night: true },
-  { id: "r2_24", name: "정병남", floor: "2층", vehicle: "레이 6943", night: true },
-  { id: "r2_25", name: "이정옥", floor: "2층", vehicle: "스타렉스 5384", night: true },
-  { id: "r2_26", name: "차헌", floor: "2층", vehicle: "레이 6943", night: true },
-  { id: "r2_27", name: "이옥수", floor: "2층", vehicle: "스타렉스 9255", night: true },
-  { id: "r2_28", name: "김금자", floor: "2층", vehicle: "스타렉스 9255", night: true },
-  { id: "r2_29", name: "문화자", floor: "2층", vehicle: "레이 6943" },
-  { id: "r2_30", name: "강귀화", floor: "2층", vehicle: "카니발 8296" },
-  { id: "r3_01", name: "김금옥1", floor: "3층", vehicle: "스타렉스 5384" },
-  { id: "r3_02", name: "김순련", floor: "3층", vehicle: "레이 6943" },
-  { id: "r3_03", name: "김대식", floor: "3층", vehicle: "스타렉스 5384" },
-  { id: "r3_04", name: "김덕이", floor: "3층", vehicle: "스타렉스 9255" },
-  { id: "r3_05", name: "임춘자1", floor: "3층", vehicle: "스타렉스 9255" },
-  { id: "r3_06", name: "조영관", floor: "3층", vehicle: "레이 2410", night: true },
-  { id: "r3_07", name: "하금자", floor: "3층", vehicle: "도보" },
-  { id: "r3_08", name: "김옥조", floor: "3층", vehicle: "스타렉스 5384", night: true },
-  { id: "r3_09", name: "김태동", floor: "3층", vehicle: "스타렉스 9255" },
-  { id: "r3_10", name: "예해옥", floor: "3층", vehicle: "카니발 8296" },
-  { id: "r3_11", name: "오차남", floor: "3층", vehicle: "스타렉스 5384" },
-  { id: "r3_12", name: "김상태", floor: "3층", vehicle: "스타렉스 9255", night: true },
-  { id: "r3_13", name: "김의규", floor: "3층", vehicle: "스타렉스 9255", night: true },
-  { id: "r3_14", name: "김홍두", floor: "3층", vehicle: "도보", night: true },
-  { id: "r3_15", name: "조차남", floor: "3층", vehicle: "레이 6943", night: true },
-  { id: "r3_16", name: "소진여", floor: "3층", vehicle: "스타렉스 5384" },
-  { id: "r3_17", name: "박윤실", floor: "3층", vehicle: "스타렉스 9255" },
-  { id: "r3_18", name: "윤정자", floor: "3층", vehicle: "카니발 8296" },
-  { id: "r3_19", name: "이제순", floor: "3층", vehicle: "카니발 8296" },
-  { id: "r3_20", name: "김석곤", floor: "3층", vehicle: "레이 6943" },
-  { id: "r3_21", name: "김금옥2", floor: "3층", vehicle: "레이 6943", night: true },
-  { id: "r3_22", name: "장규송", floor: "3층", vehicle: "스타렉스 5384" },
-  { id: "r3_23", name: "임춘자2", floor: "3층", vehicle: "스타렉스 9255" },
-  { id: "r3_24", name: "김상순", floor: "3층", vehicle: "스타렉스 5384" },
-  { id: "r3_25", name: "이숙조", floor: "3층", vehicle: "스타렉스 9255" },
-  { id: "r3_26", name: "정숙자", floor: "3층", vehicle: "스타렉스 5384" },
-  { id: "r3_27", name: "김태영", floor: "3층", vehicle: "카니발 8296" },
-  { id: "r3_28", name: "백석남", floor: "3층", vehicle: "스타렉스 9255" },
-  { id: "r3_29", name: "강정자", floor: "3층", vehicle: "레이 2410" },
-  { id: "r3_30", name: "박숙희", floor: "3층", vehicle: "스타렉스 5384" },
-  { id: "r3_31", name: "홍귀양", floor: "3층", vehicle: "레이 2410" },
-  { id: "r3_32", name: "김병갑", floor: "3층", vehicle: "카니발 8296" },
-  { id: "r2_31", name: "곽충근", floor: "2층", vehicle: "도보" },
-  { id: "r2_32", name: "김상용", floor: "2층", vehicle: "도보" },
-  { id: "r2_33", name: "김순애", floor: "2층", vehicle: "도보" },
-  { id: "r3_33", name: "박금순", floor: "3층", vehicle: "도보" },
+  { id: "r001", name: "이금도", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r002", name: "김계화", floor: "2층", vehicle: "스타렉스 5384" },
+  { id: "r003", name: "김복영", floor: "2층", vehicle: "도보" },
+  { id: "r004", name: "김무웅", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r005", name: "정인석", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r006", name: "전청자", floor: "2층", vehicle: "레이 2410" },
+  { id: "r007", name: "김분주", floor: "2층", vehicle: "스타렉스 5384" },
+  { id: "r008", name: "제갈순례", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r009", name: "김타연", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r010", name: "김태석", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r011", name: "김말연", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r012", name: "강정순", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r013", name: "김두진", floor: "2층", vehicle: "레이 6943" },
+  { id: "r014", name: "윤창근", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r015", name: "이용대", floor: "2층", vehicle: "스타렉스 5384" },
+  { id: "r016", name: "장명자", floor: "2층", vehicle: "레이 2410" },
+  { id: "r017", name: "전동순", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r018", name: "김기선", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r019", name: "권무생", floor: "2층", vehicle: "레이 2410" },
+  { id: "r020", name: "김숙자", floor: "2층", vehicle: "카니발 8296" },
+  { id: "r021", name: "정병남", floor: "2층", vehicle: "레이 6943" },
+  { id: "r022", name: "이정옥", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r023", name: "차헌", floor: "2층", vehicle: "레이 6943" },
+  { id: "r024", name: "이옥수", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r025", name: "김금자", floor: "2층", vehicle: "스타렉스 9255" },
+  { id: "r026", name: "문화자", floor: "2층", vehicle: "레이 6943" },
+  { id: "r027", name: "강귀화", floor: "2층", vehicle: "카니발 8296" },
+  { id: "r028", name: "김순련", floor: "3층", vehicle: "레이 6943" },
+  { id: "r029", name: "김대식", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r030", name: "김덕이", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r031", name: "임춘자1", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r032", name: "조영관", floor: "3층", vehicle: "레이 2410" },
+  { id: "r033", name: "하금자", floor: "3층", vehicle: "도보" },
+  { id: "r034", name: "김옥조", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r035", name: "김태동", floor: "3층", vehicle: "레이 6943" },
+  { id: "r036", name: "예해옥", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r037", name: "오차남", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r038", name: "김의규", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r039", name: "김홍두", floor: "3층", vehicle: "도보" },
+  { id: "r040", name: "조차남", floor: "2층", vehicle: "레이 6943" },
+  { id: "r041", name: "소진여", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r042", name: "박윤실", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r043", name: "윤정자", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r044", name: "이제순", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r045", name: "김석곤", floor: "3층", vehicle: "레이 6943" },
+  { id: "r046", name: "임춘자2", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r047", name: "김상순", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r048", name: "이숙조", floor: "3층", vehicle: "스타렉스 9255" },
+  { id: "r049", name: "정숙자", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r050", name: "김태영", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r051", name: "백석남", floor: "3층", vehicle: "도보" },
+  { id: "r052", name: "강정자", floor: "3층", vehicle: "레이 2410" },
+  { id: "r053", name: "박숙희", floor: "3층", vehicle: "스타렉스 5384" },
+  { id: "r054", name: "홍귀양", floor: "3층", vehicle: "레이 2410" },
+  { id: "r055", name: "김병갑", floor: "3층", vehicle: "카니발 8296" },
+  { id: "r056", name: "곽충근", floor: "2층", vehicle: "도보" },
+  { id: "r057", name: "김순애", floor: "2층", vehicle: "도보" },
+  { id: "r058", name: "박금순", floor: "2층", vehicle: "카니발 8296" },
+  { id: "r059", name: "김연이", floor: "2층", vehicle: "스타렉스 5384" },
+  { id: "r060", name: "이윤엽", floor: "2층", vehicle: "스타렉스 5384" },
+  { id: "r061", name: "김정화", floor: "2층", vehicle: "레이 2410" },
+  { id: "r062", name: "허태연", floor: "3층", vehicle: "도보" },
+  { id: "r063", name: "김창길", floor: "2층", vehicle: "도보" },
+  { id: "r064", name: "김금옥", floor: "2층", vehicle: "레이 6943" },
+  { id: "r065", name: "김성용", floor: "2층", vehicle: "레이 2410" },
+  { id: "r066", name: "김영희", floor: "3층", vehicle: "레이 2410" },
+  { id: "r067", name: "오혜주", floor: "2층", vehicle: "도보" },
 ];
 
 /* ---------- Date helpers ---------- */
@@ -322,6 +388,18 @@ function formatDateLabel(key){
 }
 function shiftDateKey(key, delta){ const d = keyToDate(key); d.setDate(d.getDate()+delta); return dateToKey(d); }
 function sortByName(arr){ return [...arr].sort((a,b) => a.name.localeCompare(b.name, "ko")); }
+function residentMemo(r){ return (r.memo || "").trim(); }
+function renderMemoBadge(r){
+  return residentMemo(r) ? `<span class="memo-badge">메모</span>` : "";
+}
+function renderMemoText(r){
+  const memo = residentMemo(r);
+  return memo ? `<div class="resident-memo">${esc(memo)}</div>` : "";
+}
+function currentTimeLabel(){
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
 
 const WEEKDAYS = ["월","화","수","목","금","토","일"];
 function getWeekdayKorean(key){
@@ -381,6 +459,7 @@ const S = {
   selectedDate: todayKey(),
   residents: [],
   attendance: {},
+  attendanceTimes: {},
   absentReasons: {},
   expectedReasons: {},
   meals: {},
@@ -399,6 +478,7 @@ const S = {
   showCalendar: false,
   showStats: false,
   longAbsent: null,
+  counterEditor: null,
   calMonth: null,
   _searchFocused: false,
 };
@@ -439,6 +519,10 @@ function loadAll(){
     if (a) S.attendance = JSON.parse(a);
   } catch(e) {}
   try {
+    const at = lsGet("attendanceTimes");
+    if (at) S.attendanceTimes = JSON.parse(at);
+  } catch(e) {}
+  try {
     const ar = lsGet("absentReasons");
     if (ar) S.absentReasons = JSON.parse(ar);
   } catch(e) {}
@@ -465,6 +549,7 @@ function loadAll(){
 
 function saveResidents(){ debouncedPersist("residents", S.residents); }
 function saveAttendance(){ debouncedPersist("attendance", S.attendance); }
+function saveAttendanceTimes(){ debouncedPersist("attendanceTimes", S.attendanceTimes); }
 function saveAbsentReasons(){ debouncedPersist("absentReasons", S.absentReasons); }
 function saveExpectedReasons(){ debouncedPersist("expectedReasons", S.expectedReasons); }
 function saveMeals(){ debouncedPersist("meals", S.meals); }
@@ -544,19 +629,36 @@ function computeMonthStats(){
 
 function setStatus(id, status){
   const day = { ...(S.attendance[S.selectedDate] || {}) };
-  day[id] = day[id] === status ? undefined : status;
+  const timeDay = { ...(S.attendanceTimes[S.selectedDate] || {}) };
+  const nextStatus = day[id] === status ? undefined : status;
+  if (nextStatus) day[id] = nextStatus;
+  else delete day[id];
+  if (nextStatus === "present") timeDay[id] = timeDay[id] || currentTimeLabel();
+  else delete timeDay[id];
   S.attendance = { ...S.attendance, [S.selectedDate]: day };
+  S.attendanceTimes = { ...S.attendanceTimes, [S.selectedDate]: timeDay };
   saveAttendance();
+  saveAttendanceTimes();
   render();
 }
 function setFloorAll(floor, status){
   const day = { ...(S.attendance[S.selectedDate] || {}) };
+  const timeDay = { ...(S.attendanceTimes[S.selectedDate] || {}) };
+  const now = currentTimeLabel();
   S.residents.filter(r => r.floor === floor).forEach(r => {
-    if (status === null) delete day[r.id];
-    else day[r.id] = status;
+    if (status === null) {
+      delete day[r.id];
+      delete timeDay[r.id];
+    } else {
+      if (status === "present" && (day[r.id] !== "present" || !timeDay[r.id])) timeDay[r.id] = now;
+      if (status !== "present") delete timeDay[r.id];
+      day[r.id] = status;
+    }
   });
   S.attendance = { ...S.attendance, [S.selectedDate]: day };
+  S.attendanceTimes = { ...S.attendanceTimes, [S.selectedDate]: timeDay };
   saveAttendance();
+  saveAttendanceTimes();
   render();
 }
 const ABSENT_REASONS = ["병원", "개인사정", "건강상 이유", "이용일X"];
@@ -591,6 +693,48 @@ function setStaffCount(floor, count){
   saveStaff();
   render();
 }
+function openCounterEditor(kind, floor){
+  const source = kind === "meal" ? S.meals : S.staff;
+  const current = ((source[S.selectedDate] || {})[floor] || 0);
+  S.counterEditor = { kind, floor, value: current };
+  render();
+}
+function closeCounterEditor(){
+  S.counterEditor = null;
+  render();
+}
+function setCounterEditorValue(value){
+  if (!S.counterEditor) return;
+  const n = Math.max(0, parseInt(value, 10) || 0);
+  S.counterEditor = { ...S.counterEditor, value: n };
+  render();
+}
+function adjustCounterEditor(delta){
+  if (!S.counterEditor) return;
+  const current = Math.max(0, parseInt(S.counterEditor.value, 10) || 0);
+  S.counterEditor = { ...S.counterEditor, value: Math.max(0, current + delta) };
+  render();
+}
+function saveCounterEditor(){
+  if (!S.counterEditor) return;
+  const input = document.getElementById("counterEditorInput");
+  const typedValue = input ? input.value : S.counterEditor.value;
+  const { kind, floor } = S.counterEditor;
+  const value = Math.max(0, parseInt(typedValue, 10) || 0);
+  if (kind === "meal") {
+    const day = { ...(S.meals[S.selectedDate] || {}) };
+    day[floor] = value;
+    S.meals = { ...S.meals, [S.selectedDate]: day };
+    saveMeals();
+  } else {
+    const day = { ...(S.staff[S.selectedDate] || {}) };
+    day[floor] = value;
+    S.staff = { ...S.staff, [S.selectedDate]: day };
+    saveStaff();
+  }
+  S.counterEditor = null;
+  render();
+}
 function setNote(value){
   // 재렌더하면 입력 커서가 튀므로, 상태만 갱신하고 저장만 함 (화면 갱신 X)
   S.notes = { ...S.notes, [S.selectedDate]: value };
@@ -605,6 +749,10 @@ function setFloor(id, floor){
   S.residents = S.residents.map(r => r.id === id ? { ...r, floor } : r);
   saveResidents();
   render();
+}
+function setResidentMemo(id, memo){
+  S.residents = S.residents.map(r => r.id === id ? { ...r, memo } : r);
+  saveResidents();
 }
 function removeResident(id){
   S.residents = S.residents.filter(r => r.id !== id);
@@ -695,7 +843,7 @@ function longAbsentDates(){
 }
 function longAbsentPreviewText(){
   const dates = longAbsentDates();
-  if (dates.length === 0) return `<span style="color:#C98D74;">시작일이 종료일보다 늦어요</span>`;
+  if (dates.length === 0) return `<span style="color:#D94A5A;">시작일이 종료일보다 늦어요</span>`;
   return `일요일 빼고 <b>${dates.length}일</b>이 결석으로 지정돼요`;
 }
 function applyLongAbsent(){
@@ -713,10 +861,14 @@ function applyLongAbsent(){
 
   const newAttendance = { ...S.attendance };
   const newAbsentReasons = { ...S.absentReasons };
+  const newAttendanceTimes = { ...S.attendanceTimes };
   dates.forEach(dateKey => {
     const day = { ...(newAttendance[dateKey] || {}) };
     day[id] = "absent";
     newAttendance[dateKey] = day;
+    const timeDay = { ...(newAttendanceTimes[dateKey] || {}) };
+    delete timeDay[id];
+    newAttendanceTimes[dateKey] = timeDay;
     if (rsn) {
       const dayReason = { ...(newAbsentReasons[dateKey] || {}) };
       dayReason[id] = rsn;
@@ -725,8 +877,10 @@ function applyLongAbsent(){
   });
   S.attendance = newAttendance;
   S.absentReasons = newAbsentReasons;
+  S.attendanceTimes = newAttendanceTimes;
   saveAttendance();
   saveAbsentReasons();
+  saveAttendanceTimes();
   const name = S.longAbsent.name;
   S.longAbsent = null;
   render();
@@ -756,7 +910,7 @@ function resyncRoster(){
     const def = defByName[r.name];
     if (!def) return r; // 기본 명단에 없는 사람(직접 추가한 분)은 그대로 둠
     seen[r.name] = true;
-    return { ...r, floor: def.floor, vehicle: def.vehicle, night: def.night };
+    return { ...r, floor: def.floor, vehicle: def.vehicle, night: def.night, memo: r.memo || "" };
   });
 
   // 2) 기본 명단엔 있는데 현재 명단에서 빠진 어르신은 다시 추가
@@ -768,6 +922,7 @@ function resyncRoster(){
         floor: d.floor,
         vehicle: OLD_VEHICLE_MAP[d.vehicle] || d.vehicle,
         night: !!d.night,
+        memo: d.memo || "",
       });
     }
   });
@@ -775,11 +930,15 @@ function resyncRoster(){
   S.residents = migrateVehicleNames(applyScheduleOverrides(merged));
   saveResidents();
   render();
-  alert("명단을 기본값 기준으로 다시 맞췄어요. 하원관리 탭에서 주간/야간 구분을 확인해보세요.");
+  alert("명단을 기본값 기준으로 다시 맞췄어요. 개인별 메모는 유지돼요.");
 }
 function updateSearch(v){
   S.search = v;
-  const searchable = (S.tab === "slides" || S.tab === "floor2" || S.tab === "floor3" || S.tab === "vehicle");
+  if (S.tab === "roster") {
+    render();
+    return;
+  }
+  const searchable = (S.tab === "slides" || S.tab === "floor2" || S.tab === "floor3");
   const container = document.getElementById("searchResults");
   // 검색 결과 영역만 갱신 (전체 render를 안 해서 한글 조합이 깨지지 않음)
   if (searchable && container) {
@@ -803,6 +962,9 @@ function doResetDay(){
   const newAttendance = { ...S.attendance };
   delete newAttendance[S.selectedDate];
   S.attendance = newAttendance;
+  const newAttendanceTimes = { ...S.attendanceTimes };
+  delete newAttendanceTimes[S.selectedDate];
+  S.attendanceTimes = newAttendanceTimes;
   const newMeals = { ...S.meals };
   delete newMeals[S.selectedDate];
   S.meals = newMeals;
@@ -816,6 +978,7 @@ function doResetDay(){
   delete newStaff[S.selectedDate];
   S.staff = newStaff;
   saveAttendance();
+  saveAttendanceTimes();
   saveMeals();
   saveAbsentReasons();
   saveExpectedReasons();
@@ -911,18 +1074,21 @@ function exportAsCSV(dateKey, dateLabel, todayAttendance, todayMeals, counts, ab
   const dayNote = (S.notes[dateKey] || "").trim();
   if (dayNote) { rows.push([]); rows.push(["오늘의 메모", dayNote]); }
   rows.push([]);
-  rows.push(["이름", "층", "상태", "사유", "하원차량"]);
+  const presentTimes = S.attendanceTimes[dateKey] || {};
+  rows.push(["이름", "층", "상태", "사유", "출석체크시간", "개인메모"]);
   S.residents.forEach(r => {
     const saved = todayAttendance[r.id];
     const st = saved || (isAutoExpectedDay(r, dateKey) ? "expected" : undefined);
     const reasonCell = saved === "absent" ? (reasons[r.id] || "")
                      : saved === "expected" ? (expReasons[r.id] || "") : "";
+    const presentTime = st === "present" ? (presentTimes[r.id] || "") : "";
     rows.push([
       r.name,
       r.floor,
       st ? STATUS[st].label : "미체크",
       reasonCell,
-      r.vehicle,
+      presentTime,
+      residentMemo(r),
     ]);
   });
 
@@ -978,8 +1144,8 @@ function renderReasonBox(id, kind){
   const store = isAbsent ? S.absentReasons : S.expectedReasons;
   const setter = isAbsent ? "setAbsentReason" : "setExpectedReason";
   const theme = isAbsent
-    ? { active: "#D39282", chipBorder: "#E3D5D0", chipText: "#B08575", boxBg: "#FBF3F0", boxBorder: "#F0DED8", label: "#B08575" }
-    : { active: "#C9A94E", chipBorder: "#E6DCC0", chipText: "#9A8442", boxBg: "#FBF7EC", boxBorder: "#EDE3C8", label: "#9A8442" };
+    ? { active: "#E05263", chipBorder: "#E3D5D0", chipText: "#B08575", boxBg: "#FBF3F0", boxBorder: "#F0DED8", label: "#B08575" }
+    : { active: "#B7791F", chipBorder: "#E7D4B8", chipText: "#7A4F18", boxBg: "#FFF8EC", boxBorder: "#E7D4B8", label: "#7A4F18" };
   const reasons = store[S.selectedDate] || {};
   const current = reasons[id] || "";
   const chips = reasonList.map(rs => {
@@ -996,7 +1162,7 @@ function renderReasonBox(id, kind){
       </div>
       <input value="${esc(customVal)}" placeholder="직접 입력 (선택)"
         onchange="${setter}('${id}', this.value)"
-        style="width:100%;margin-top:7px;padding:7px 10px;border-radius:8px;border:1.5px solid ${theme.boxBorder};font-size:13px;background:#fff;color:#5A5852;outline:none;box-sizing:border-box;" />
+        style="width:100%;margin-top:7px;padding:7px 10px;border-radius:8px;border:1.5px solid ${theme.boxBorder};font-size:13px;background:#fff;color:#374151;outline:none;box-sizing:border-box;" />
     </div>
   `;
 }
@@ -1016,12 +1182,13 @@ function renderHeader(){
         <button class="nav-btn" onclick="shiftDate(1)">›</button>
       </div>
       <div class="center-name">서구케어재가노인주간보호센터</div>
+      <div style="margin-top:6px;font-size:12px;font-weight:800;color:#2F5F8F;">${ROSTER_VERSION_LABEL} · 전체 ${S.residents.length}명</div>
       <div class="stats-row" style="align-items:flex-start;gap:18px;">
         <div onclick="openStatusList('present')" style="cursor:pointer;"><div class="stat-num">${counts.present}</div><div class="stat-label">출석 ›</div></div>
         <div onclick="openStatusList('absent')" style="cursor:pointer;"><div class="stat-num">${counts.absent}</div><div class="stat-label">결석 ›</div></div>
         <div onclick="openStatusList('expected')" style="cursor:pointer;"><div class="stat-num">${counts.expected}</div><div class="stat-label">등원예정 ›</div></div>
-        <div onclick="openStatusList('unchecked')" style="cursor:pointer;"><div class="stat-num" style="color:#9E9C96;">${counts.unchecked}</div><div class="stat-label">미체크 ›</div></div>
-        <button onclick="resetDay()" style="margin-left:auto;background:#EFEDE8;border:none;border-radius:10px;color:#8C8A84;font-size:11px;font-weight:700;padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px;">
+        <div onclick="openStatusList('unchecked')" style="cursor:pointer;"><div class="stat-num" style="color:#8A95A3;">${counts.unchecked}</div><div class="stat-label">미체크 ›</div></div>
+        <button onclick="resetDay()" style="margin-left:auto;background:#E8EEF6;border:none;border-radius:10px;color:#8C8A84;font-size:11px;font-weight:700;padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:56px;">
           <span style="font-size:15px;">↺</span>
           <span>초기화</span>
         </button>
@@ -1035,7 +1202,6 @@ function renderTabs(){
     { key: "slides", label: "현황판", icon: "📊" },
     { key: "floor2", label: "2층", icon: "✓" },
     { key: "floor3", label: "3층", icon: "✓" },
-    { key: "vehicle", label: "하원관리", icon: "🚌" },
     { key: "roster", label: "명단관리", icon: "👥" },
   ];
   return `
@@ -1056,24 +1222,26 @@ function renderMealCounter(floor){
   const todayStaff = S.staff[S.selectedDate] || {};
   const sc = todayStaff[floor] || 0;
   return `
-    <div class="meal-counter">
-      <div class="meal-left"><span>🍽️</span><span>${floor} 조식</span></div>
-      <div class="meal-right">
-        <button class="meal-btn" onclick="setMealCount('${floor}', ${Math.max(0,c-1)})">−</button>
-        <input class="meal-count count-input" type="number" inputmode="numeric" pattern="[0-9]*" value="${c}"
-          onfocus="this.select()"
-          onchange="setMealCount('${floor}', Math.max(0, parseInt(this.value)||0))" />
-        <button class="meal-btn" onclick="setMealCount('${floor}', ${c+1})">+</button>
+    <div class="meal-counter-row">
+      <div class="meal-counter breakfast-counter">
+        <div class="meal-left"><span class="meal-icon">🍽️</span><span>조식</span></div>
+        <div class="meal-right">
+          <button class="meal-btn" onclick="setMealCount('${floor}', ${Math.max(0,c-1)})">−</button>
+          <input class="meal-count count-input" type="number" inputmode="numeric" pattern="[0-9]*" value="${c}"
+            onfocus="this.select()"
+            onchange="setMealCount('${floor}', Math.max(0, parseInt(this.value)||0))" />
+          <button class="meal-btn" onclick="setMealCount('${floor}', ${c+1})">+</button>
+        </div>
       </div>
-    </div>
-    <div class="meal-counter" style="border-color:#C7DBCC;">
-      <div class="meal-left"><span>👥</span><span>${floor} 직원</span></div>
-      <div class="meal-right">
-        <button class="meal-btn" style="color:#4E7360;" onclick="setStaffCount('${floor}', ${Math.max(0,sc-1)})">−</button>
-        <input class="meal-count count-input" type="number" inputmode="numeric" pattern="[0-9]*" value="${sc}"
-          onfocus="this.select()"
-          onchange="setStaffCount('${floor}', Math.max(0, parseInt(this.value)||0))" />
-        <button class="meal-btn" style="color:#4E7360;" onclick="setStaffCount('${floor}', ${sc+1})">+</button>
+      <div class="meal-counter staff-counter">
+        <div class="meal-left"><span class="meal-icon">👥</span><span>직원</span></div>
+        <div class="meal-right">
+          <button class="meal-btn" onclick="setStaffCount('${floor}', ${Math.max(0,sc-1)})">−</button>
+          <input class="meal-count count-input" type="number" inputmode="numeric" pattern="[0-9]*" value="${sc}"
+            onfocus="this.select()"
+            onchange="setStaffCount('${floor}', Math.max(0, parseInt(this.value)||0))" />
+          <button class="meal-btn" onclick="setStaffCount('${floor}', ${sc+1})">+</button>
+        </div>
       </div>
     </div>
   `;
@@ -1100,8 +1268,9 @@ function renderFloorTab(floor){
     rows = list.map(r => {
       const saved = todayAttendance[r.id];
       const current = effectiveStatus(r, S.selectedDate);
+      const presentTime = current === "present" ? ((S.attendanceTimes[S.selectedDate] || {})[r.id] || "") : "";
       const isAuto = !saved && current === "expected"; // 자동 등원예정 (아직 저장 안 됨)
-      const borderColor = current ? STATUS[current].color : "#ECEAE5";
+      const borderColor = current ? STATUS[current].color : "#D9E2EC";
       const bg = current ? STATUS[current].bg : "#fff";
       const schedule = r.schedule || [];
       const isCustom = schedule.length > 0;
@@ -1109,7 +1278,7 @@ function renderFloorTab(floor){
       const btns = Object.entries(STATUS).map(([key, s]) => {
         const active = current === key;
         return `
-          <button class="status-btn" style="border-color:${active ? s.color : "#DEDBD3"};background:${active ? s.color : "#fff"};color:${active ? "#fff" : "#5A5852"};" onclick="setStatus('${r.id}','${key}')">
+          <button class="status-btn" style="border-color:${active ? s.color : "#C8D3DF"};background:${active ? s.color : "#fff"};color:${active ? "#fff" : "#374151"};" onclick="setStatus('${r.id}','${key}')">
             <span>${s.icon}</span><span>${s.label}</span>
           </button>
         `;
@@ -1120,7 +1289,10 @@ function renderFloorTab(floor){
         </div>
       ` : "";
       const autoBadge = isAuto ? `
-        <div style="font-size:10px;font-weight:800;color:#C9A94E;margin-top:1px;">🕐 자동 등원예정${(r.autoExpectedReason ? ` · ${esc(r.autoExpectedReason)}` : "")}</div>
+        <div style="font-size:10px;font-weight:800;color:#B7791F;margin-top:1px;">🕐 자동 등원예정${(r.autoExpectedReason ? ` · ${esc(r.autoExpectedReason)}` : "")}</div>
+      ` : "";
+      const timeBadge = presentTime ? `
+        <div style="font-size:10px;font-weight:800;color:#2F80ED;margin-top:1px;">체크 ${esc(presentTime)}</div>
       ` : "";
       const reasonBox = saved === "absent" ? renderReasonBox(r.id, "absent")
                       : saved === "expected" ? renderReasonBox(r.id, "expected") : "";
@@ -1128,9 +1300,11 @@ function renderFloorTab(floor){
         <div style="margin-bottom:6px;">
           <div class="resident-row" style="border-color:${borderColor};background:${bg};${isCustom && !scheduledToday ? "opacity:0.6;" : ""}margin-bottom:0;">
             <div style="flex-shrink:0;min-width:52px;">
-              <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
+              <div class="resident-name" style="margin:0;">${esc(r.name)}${renderMemoBadge(r)}</div>
               ${scheduleBadge}
               ${autoBadge}
+              ${timeBadge}
+              ${renderMemoText(r)}
             </div>
             <div class="status-group">${btns}</div>
           </div>
@@ -1140,12 +1314,11 @@ function renderFloorTab(floor){
     }).join("");
   }
   return `
-    ${renderMealCounter(floor)}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-left:4px;">
       <div class="floor-title" style="margin:0;">${floor} · ${list.length}명</div>
       <div style="display:flex;gap:6px;">
-        <button onclick="setFloorAll('${floor}','present')" style="padding:7px 12px;border-radius:9px;border:none;background:#6B8A7A;color:#fff;font-size:12px;font-weight:800;">전체 출석</button>
-        <button onclick="setFloorAll('${floor}',null)" style="padding:7px 12px;border-radius:9px;border:1.5px solid #DEDBD3;background:#fff;color:#8C8A84;font-size:12px;font-weight:700;">전체 해제</button>
+        <button onclick="setFloorAll('${floor}','present')" style="padding:7px 12px;border-radius:9px;border:none;background:#2F5F8F;color:#fff;font-size:12px;font-weight:800;">전체 출석</button>
+        <button onclick="setFloorAll('${floor}',null)" style="padding:7px 12px;border-radius:9px;border:1.5px solid #C8D3DF;background:#fff;color:#8C8A84;font-size:12px;font-weight:700;">전체 해제</button>
       </div>
     </div>
     ${rows}
@@ -1204,7 +1377,7 @@ function renderVehicleTab(){
           <span style="font-size:13px;opacity:0.9;">${shiftTime}</span>
           <span style="font-size:13px;opacity:0.9;margin-left:auto;">${people.length}명</span>
         </div>
-        ${people.length > 0 ? vehicleBlocks : `<div style="font-size:12px;color:#9E9C96;padding:8px 4px;">해당 인원 없음</div>`}
+        ${people.length > 0 ? vehicleBlocks : `<div style="font-size:12px;color:#8A95A3;padding:8px 4px;">해당 인원 없음</div>`}
       </div>
     `;
   }
@@ -1212,14 +1385,17 @@ function renderVehicleTab(){
   const dayPeople = present.filter(r => !r.night);
   const nightPeople = present.filter(r => r.night);
 
-  let html = renderShift("주간반", "4시 하원", dayPeople, "#6B8A7A", VEHICLES);
+  let html = renderShift("주간반", "4시 하원", dayPeople, "#2F5F8F", VEHICLES);
   if (nightPeople.length > 0) {
-    html += renderShift("야간반", "5시 하원", nightPeople, "#5C4463", NIGHT_VEHICLE_ORDER);
+    html += renderShift("야간반", "5시 하원", nightPeople, "#5B4B7A", NIGHT_VEHICLE_ORDER);
   }
   return html;
 }
 
 function renderRosterTab(){
+  const f2Count = S.residents.filter(r => r.floor === "2층").length;
+  const f3Count = S.residents.filter(r => r.floor === "3층").length;
+  const q = S.search.trim();
   const addForm = S.showAdd ? `
     <div class="add-form">
       <input id="newNameInput" placeholder="이름" value="${esc(S.newName)}" oninput="updateNewName(this.value)" />
@@ -1227,74 +1403,77 @@ function renderRosterTab(){
         <select onchange="updateNewFloor(this.value)">
           ${FLOORS.map(f => `<option value="${f}" ${f===S.newFloor?"selected":""}>${f}</option>`).join("")}
         </select>
-        <select onchange="updateNewVehicle(this.value)">
-          ${VEHICLES.map(v => `<option value="${v}" ${v===S.newVehicle?"selected":""}>${v}</option>`).join("")}
-        </select>
       </div>
       <button class="primary-btn" style="padding:11px;" onclick="addResident()">등록하기</button>
     </div>
   ` : "";
 
-  const sortedResidents = [...S.residents].sort((a, b) => {
+  const sortedResidents = S.residents.filter(r => !q || r.name.includes(q)).sort((a, b) => {
     if (a.floor !== b.floor) return a.floor.localeCompare(b.floor, "ko");
     return a.name.localeCompare(b.name, "ko");
   });
-  const items = sortedResidents.map(r => {
+  const items = sortedResidents.length === 0 ? `
+    <div class="floor-empty">"${esc(q)}" 검색 결과가 없어요</div>
+  ` : sortedResidents.map(r => {
     const schedule = r.schedule || [];
     const isDaily = schedule.length === 0;
     const autoExp = r.autoExpected || [];
     const dayChips = WEEKDAYS.map(day => {
       const active = schedule.includes(day);
       return `
-        <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#B0995B" : "#DEDBD3"};background:${active ? "#B0995B" : "#fff"};color:${active ? "#fff" : "#9E9C96"};font-size:12px;font-weight:700;" onclick="toggleScheduleDay('${r.id}','${day}')">${day}</button>
+        <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#B0995B" : "#C8D3DF"};background:${active ? "#B0995B" : "#fff"};color:${active ? "#fff" : "#8A95A3"};font-size:12px;font-weight:700;" onclick="toggleScheduleDay('${r.id}','${day}')">${day}</button>
       `;
     }).join("");
     const autoExpChips = WEEKDAYS.map(day => {
       const active = autoExp.includes(day);
       return `
-        <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#C9A94E" : "#DEDBD3"};background:${active ? "#C9A94E" : "#fff"};color:${active ? "#fff" : "#9E9C96"};font-size:12px;font-weight:700;" onclick="toggleAutoExpected('${r.id}','${day}')">${day}</button>
+        <button style="width:30px;height:28px;border-radius:8px;border:1.5px solid ${active ? "#B7791F" : "#C8D3DF"};background:${active ? "#B7791F" : "#fff"};color:${active ? "#fff" : "#8A95A3"};font-size:12px;font-weight:700;" onclick="toggleAutoExpected('${r.id}','${day}')">${day}</button>
       `;
     }).join("");
     return `
       <div class="roster-item" style="flex-direction:column;align-items:stretch;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
           <div>
-            <div class="name">${esc(r.name)}${r.night ? ` <span style="font-size:12px;font-weight:800;color:#5C4463;background:#F0EAEF;padding:2px 8px;border-radius:8px;">야간</span>` : ""}</div>
+            <div class="name">${esc(r.name)}${r.night ? ` <span style="font-size:12px;font-weight:800;color:#5B4B7A;background:#F4ECF7;padding:2px 8px;border-radius:8px;">야간</span>` : ""}</div>
             <div class="meta" style="display:flex;align-items:center;gap:6px;">
-              <select onchange="setFloor('${r.id}', this.value)" style="border:1px solid #DEDBD3;border-radius:6px;padding:2px 6px;font-size:12px;font-weight:700;color:#5A5852;background:#fff;">
+              <select onchange="setFloor('${r.id}', this.value)" style="border:1px solid #C8D3DF;border-radius:6px;padding:2px 6px;font-size:12px;font-weight:700;color:#374151;background:#fff;">
                 ${FLOORS.map(f => `<option value="${f}" ${f===r.floor?"selected":""}>${f}</option>`).join("")}
               </select>
               <span>·</span>
-              <select onchange="setVehicle('${r.id}', this.value)" style="border:1px solid #DEDBD3;border-radius:6px;padding:2px 6px;font-size:12px;font-weight:700;color:#5A5852;background:#fff;">
-                ${VEHICLES.map(v => `<option value="${v}" ${v===r.vehicle?"selected":""}>${v}</option>`).join("")}
-              </select>
+              <span style="font-size:12px;font-weight:700;color:#8A95A3;">개인 메모 관리</span>
             </div>
           </div>
           <button class="del-btn" onclick="removeResident('${r.id}')">🗑️</button>
         </div>
         <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
-          <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${r.night ? "#5C4463" : "#DEDBD3"};background:${r.night ? "#5C4463" : "#fff"};color:${r.night ? "#fff" : "#9E9C96"};font-size:11px;font-weight:700;" onclick="toggleNight('${r.id}')">${r.night ? "🌙 야간반" : "야간반 지정"}</button>
-          <span style="width:1px;height:20px;background:#ECEAE5;margin:0 2px;"></span>
-          <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${isDaily ? "#6B8A7A" : "#DEDBD3"};background:${isDaily ? "#6B8A7A" : "#fff"};color:${isDaily ? "#fff" : "#9E9C96"};font-size:11px;font-weight:700;" onclick="clearSchedule('${r.id}')">매일</button>
+          <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${r.night ? "#5B4B7A" : "#C8D3DF"};background:${r.night ? "#5B4B7A" : "#fff"};color:${r.night ? "#fff" : "#8A95A3"};font-size:11px;font-weight:700;" onclick="toggleNight('${r.id}')">${r.night ? "🌙 야간반" : "야간반 지정"}</button>
+          <span style="width:1px;height:20px;background:#D9E2EC;margin:0 2px;"></span>
+          <button style="padding:5px 10px;border-radius:8px;border:1.5px solid ${isDaily ? "#2F5F8F" : "#C8D3DF"};background:${isDaily ? "#2F5F8F" : "#fff"};color:${isDaily ? "#fff" : "#8A95A3"};font-size:11px;font-weight:700;" onclick="clearSchedule('${r.id}')">매일</button>
           ${dayChips}
         </div>
         <button style="margin-top:8px;padding:8px 10px;border-radius:8px;border:1.5px solid #E3D5D0;background:#FBF3F0;color:#B08575;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;" onclick="openLongAbsent('${r.id}')">
           <span>🗓️</span><span>기간 결석 미리 지정 (입원·여행 등)</span>
         </button>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #ECEAE5;">
-          <div style="font-size:11px;font-weight:800;color:#C9A94E;margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #D9E2EC;">
+          <div style="font-size:11px;font-weight:800;color:#2D6F9F;margin-bottom:6px;">개인별 메모 / 공지</div>
+          <textarea placeholder="예: 보호자 연락 필요, 약 챙기기, 오전 병원 후 등원 등"
+            oninput="setResidentMemo('${r.id}', this.value)"
+            style="width:100%;min-height:54px;resize:vertical;padding:9px 10px;border-radius:9px;border:1.5px solid #C9DDF2;background:#FBFDFF;color:#1F2937;font-size:13px;line-height:1.4;outline:none;box-sizing:border-box;">${esc(r.memo || "")}</textarea>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #D9E2EC;">
+          <div style="font-size:11px;font-weight:800;color:#B7791F;margin-bottom:6px;display:flex;align-items:center;gap:4px;">
             <span>🕐</span><span>자동 등원예정 요일</span>
-            ${autoExp.length > 0 ? `<span style="font-weight:700;color:#9E9C96;">(${autoExp.join("·")})</span>` : `<span style="font-weight:600;color:#B8B6AE;">없음</span>`}
+            ${autoExp.length > 0 ? `<span style="font-weight:700;color:#8A95A3;">(${autoExp.join("·")})</span>` : `<span style="font-weight:600;color:#B8B6AE;">없음</span>`}
           </div>
           <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
             ${autoExpChips}
-            ${autoExp.length > 0 ? `<button style="padding:5px 9px;border-radius:8px;border:1.5px solid #DEDBD3;background:#fff;color:#9E9C96;font-size:11px;font-weight:700;" onclick="clearAutoExpected('${r.id}')">해제</button>` : ""}
+            ${autoExp.length > 0 ? `<button style="padding:5px 9px;border-radius:8px;border:1.5px solid #C8D3DF;background:#fff;color:#8A95A3;font-size:11px;font-weight:700;" onclick="clearAutoExpected('${r.id}')">해제</button>` : ""}
           </div>
           ${autoExp.length > 0 ? `
             <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-top:8px;">
-              <span style="font-size:11px;font-weight:800;color:#9A8442;">사유</span>
-              ${["늦게 오심","오후 등원","병원 후 등원"].map(rs => `<button onclick="setAutoExpectedReason('${r.id}','${rs}')" style="padding:5px 10px;border-radius:8px;border:1.5px solid ${(r.autoExpectedReason||"")===rs ? "#C9A94E" : "#E6DCC0"};background:${(r.autoExpectedReason||"")===rs ? "#C9A94E" : "#fff"};color:${(r.autoExpectedReason||"")===rs ? "#fff" : "#9A8442"};font-size:11px;font-weight:700;">${rs}</button>`).join("")}
-              <input value="${esc(r.autoExpectedReason||"")}" placeholder="직접 입력" onchange="setAutoExpectedReason('${r.id}', this.value)" style="flex:1;min-width:90px;padding:6px 9px;border-radius:8px;border:1.5px solid #E6DCC0;font-size:12px;background:#fff;color:#5A5852;outline:none;box-sizing:border-box;" />
+              <span style="font-size:11px;font-weight:800;color:#7A4F18;">사유</span>
+              ${["늦게 오심","오후 등원","병원 후 등원"].map(rs => `<button onclick="setAutoExpectedReason('${r.id}','${rs}')" style="padding:5px 10px;border-radius:8px;border:1.5px solid ${(r.autoExpectedReason||"")===rs ? "#B7791F" : "#E7D4B8"};background:${(r.autoExpectedReason||"")===rs ? "#B7791F" : "#fff"};color:${(r.autoExpectedReason||"")===rs ? "#fff" : "#7A4F18"};font-size:11px;font-weight:700;">${rs}</button>`).join("")}
+              <input value="${esc(r.autoExpectedReason||"")}" placeholder="직접 입력" onchange="setAutoExpectedReason('${r.id}', this.value)" style="flex:1;min-width:90px;padding:6px 9px;border-radius:8px;border:1.5px solid #E7D4B8;font-size:12px;background:#fff;color:#374151;outline:none;box-sizing:border-box;" />
             </div>
           ` : ""}
         </div>
@@ -1303,6 +1482,12 @@ function renderRosterTab(){
   }).join("");
 
   return `
+    <div style="background:#F1F5F9;border:1px solid #D9E2EC;border-radius:12px;padding:12px 14px;margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:800;color:#2F5F8F;margin-bottom:4px;">${ROSTER_VERSION_LABEL}</div>
+      <div style="font-size:16px;font-weight:800;color:#1F2937;">전체 ${S.residents.length}명 <span style="font-size:13px;color:#8A95A3;">2층 ${f2Count}명 · 3층 ${f3Count}명</span></div>
+      ${q ? `<div style="font-size:12px;font-weight:800;color:#475569;margin-top:6px;">검색결과 ${sortedResidents.length}명</div>` : ""}
+    </div>
+    ${renderSearchBar()}
     <button class="roster-add-btn" onclick="toggleAddForm()"><span>➕</span><span>어르신 등록</span></button>
     ${addForm}
     ${items}
@@ -1330,9 +1515,9 @@ function renderSlides(){
       <div class="slide-title">오늘 총인원 결과</div>
 
       <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px;">
-        <span style="font-size:14px;font-weight:700;color:#9E9C96;">전체</span>
-        <span style="font-size:26px;font-weight:800;color:#343432;">${total}</span>
-        <span style="font-size:14px;font-weight:700;color:#9E9C96;">명</span>
+        <span style="font-size:14px;font-weight:700;color:#8A95A3;">전체</span>
+        <span style="font-size:26px;font-weight:800;color:#1F2937;">${total}</span>
+        <span style="font-size:14px;font-weight:700;color:#8A95A3;">명</span>
       </div>
 
       <div style="display:flex;width:100%;height:34px;border-radius:10px;overflow:hidden;background:#F0ECE4;margin-bottom:16px;">
@@ -1343,7 +1528,7 @@ function renderSlides(){
         <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 2px;margin-bottom:12px;">
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="width:16px;height:16px;border-radius:50%;background:${STATUS[k].color};display:inline-block;"></span>
-            <span style="font-size:16px;font-weight:700;color:#343432;">${STATUS[k].label}</span>
+            <span style="font-size:16px;font-weight:700;color:#1F2937;">${STATUS[k].label}</span>
           </div>
           <span style="font-size:18px;font-weight:800;color:${STATUS[k].color};">${counts[k]}명</span>
         </div>
@@ -1351,19 +1536,19 @@ function renderSlides(){
         <div style="display:flex;align-items:center;justify-content:space-between;padding:2px 2px;margin-bottom:12px;">
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="width:16px;height:16px;border-radius:50%;background:#C7C5BF;display:inline-block;"></span>
-            <span style="font-size:16px;font-weight:700;color:#9E9C96;">미체크</span>
+            <span style="font-size:16px;font-weight:700;color:#8A95A3;">미체크</span>
           </div>
-          <span style="font-size:18px;font-weight:800;color:#9E9C96;">${counts.unchecked}명</span>
+          <span style="font-size:18px;font-weight:800;color:#8A95A3;">${counts.unchecked}명</span>
         </div>
 
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;margin-bottom:14px;">
         ${FLOORS.map(f => {
           const fc = computeFloorCounts(f);
           return `
-            <div style="background:#F5F3EE;border-radius:14px;padding:12px 14px;">
+            <div style="background:#F1F5F9;border-radius:14px;padding:12px 14px;">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                <span style="font-size:15px;font-weight:800;color:#343432;">${f}</span>
-                <span style="font-size:12px;font-weight:700;color:#9E9C96;">전체 ${fc.total}명</span>
+                <span style="font-size:15px;font-weight:800;color:#1F2937;">${f}</span>
+                <span style="font-size:12px;font-weight:700;color:#8A95A3;">전체 ${fc.total}명</span>
               </div>
               <div style="display:flex;gap:6px;">
                 <div onclick="openStatusList('present','${f}')" style="flex:1;background:${STATUS.present.bg};border-radius:10px;padding:8px 4px;text-align:center;cursor:pointer;">
@@ -1386,23 +1571,21 @@ function renderSlides(){
 
       <div class="meal-summary-row" style="margin-top:6px;">
         ${FLOORS.map(f => `
-          <div class="meal-summary-box">
-            <div style="font-size:13px;font-weight:700;color:#7A6238;">${f} 조식</div>
-            <div style="font-size:22px;font-weight:800;color:#7A6238;margin-top:4px;">${todayMeals[f]||0}개</div>
+          <div class="meal-summary-box editable" onclick="openCounterEditor('meal','${f}')">
+            <div class="summary-line"><span class="emoji">🍽️</span><span class="label">${f} 조식</span><span class="num">${todayMeals[f]||0}개</span></div>
           </div>
         `).join("")}
       </div>
 
       <div class="meal-summary-row" style="margin-top:10px;">
         ${FLOORS.map(f => `
-          <div style="flex:1;background:#EDF3EF;border:2px solid #C7DBCC;border-radius:14px;padding:12px 14px;text-align:center;">
-            <div style="font-size:13px;font-weight:700;color:#4E7360;">${f} 직원</div>
-            <div style="font-size:22px;font-weight:800;color:#4E7360;margin-top:4px;">${todayStaff[f]||0}명</div>
+          <div class="meal-summary-box editable" onclick="openCounterEditor('staff','${f}')">
+            <div class="summary-line"><span class="emoji">👥</span><span class="label">${f} 직원</span><span class="num">${todayStaff[f]||0}명</span></div>
           </div>
         `).join("")}
       </div>
 
-      <button onclick="openCalendar()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;padding:13px;border-radius:13px;border:1.5px solid #DEDBD3;background:#fff;color:#6B8A7A;font-weight:800;font-size:14px;">
+      <button onclick="openCalendar()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;padding:13px;border-radius:13px;border:1.5px solid #C8D3DF;background:#fff;color:#2F5F8F;font-weight:800;font-size:14px;">
         <span>📅</span><span>월간 출석 달력 보기</span>
       </button>
     `;
@@ -1412,11 +1595,11 @@ function renderSlides(){
     inner = `
       <div class="slide-date">${floor} 어르신 현황</div>
       <div class="slide-title">총 ${list.length}명</div>
-      ${list.length === 0 ? `<div style="text-align:center;color:#9E9C96;padding:30px;font-size:13px;">등록된 어르신이 없어요</div>` :
+      ${list.length === 0 ? `<div style="text-align:center;color:#8A95A3;padding:30px;font-size:13px;">등록된 어르신이 없어요</div>` :
         list.map(r => {
           const s = effectiveStatus(r, S.selectedDate);
           return `
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;background:${s?STATUS[s].bg:"#F5F3EE"};margin-bottom:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;background:${s?STATUS[s].bg:"#F1F5F9"};margin-bottom:8px;">
               <span style="font-size:16px;font-weight:700;">${esc(r.name)}</span>
               <span style="font-size:12px;font-weight:700;color:${s?STATUS[s].color:"#B8B6AE"};">${s?STATUS[s].label:"미체크"}</span>
             </div>
@@ -1428,15 +1611,15 @@ function renderSlides(){
 
   const noteVal = S.notes[S.selectedDate] || "";
   const noteCard = S.page === 0 ? `
-    <div style="background:#fff;border-radius:20px;border:2px solid #ECEAE5;padding:16px 18px;margin-bottom:14px;">
+    <div style="background:#fff;border-radius:20px;border:2px solid #D9E2EC;padding:16px 18px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
         <span style="font-size:15px;">📝</span>
-        <span style="font-size:15px;font-weight:800;color:#343432;">오늘의 메모</span>
-        <span style="font-size:11px;font-weight:600;color:#9E9C96;">${formatDateLabel(S.selectedDate)}</span>
+        <span style="font-size:15px;font-weight:800;color:#1F2937;">오늘의 메모</span>
+        <span style="font-size:11px;font-weight:600;color:#8A95A3;">${formatDateLabel(S.selectedDate)}</span>
       </div>
       <textarea id="dayNoteInput" placeholder="오늘 있었던 일, 인계사항 등을 자유롭게 적어요&#10;(예: 김OO 보호자 연락 옴 / 3층 에어컨 수리 예정)"
         oninput="setNote(this.value)"
-        style="width:100%;min-height:70px;padding:11px 12px;border-radius:12px;border:1.5px solid #ECEAE5;font-size:14px;line-height:1.5;background:#FAFAF8;color:#343432;outline:none;resize:vertical;box-sizing:border-box;font-family:inherit;">${esc(noteVal)}</textarea>
+        style="width:100%;min-height:70px;padding:11px 12px;border-radius:12px;border:1.5px solid #D9E2EC;font-size:14px;line-height:1.5;background:#FAFAF8;color:#1F2937;outline:none;resize:vertical;box-sizing:border-box;font-family:inherit;">${esc(noteVal)}</textarea>
     </div>
   ` : "";
 
@@ -1457,14 +1640,14 @@ function renderSlides(){
 /* ---------- Main render ---------- */
 function renderSearchBar(){
   return `
-    <div style="display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #ECEAE5;border-radius:12px;padding:8px 12px;margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #D9E2EC;border-radius:12px;padding:8px 12px;margin-bottom:14px;">
       <span style="font-size:15px;">🔍</span>
       <input id="searchInput" placeholder="이름 검색" value="${esc(S.search)}"
         oninput="updateSearch(this.value)"
         onfocus="S._searchFocused=true"
         onblur="S._searchFocused=false"
-        style="flex:1;border:none;outline:none;font-size:15px;background:transparent;color:#343432;" />
-      ${S.search ? `<button onclick="clearSearch()" style="border:none;background:#EFEDE8;border-radius:50%;width:22px;height:22px;font-size:13px;color:#9E9C96;">✕</button>` : ""}
+        style="flex:1;border:none;outline:none;font-size:15px;background:transparent;color:#1F2937;" />
+      ${S.search ? `<button onclick="clearSearch()" style="border:none;background:#E8EEF6;border-radius:50%;width:22px;height:22px;font-size:13px;color:#8A95A3;">✕</button>` : ""}
     </div>
   `;
 }
@@ -1486,12 +1669,12 @@ function renderSearchResults(){
   return matches.map(r => {
     const saved = todayAttendance[r.id];
     const current = effectiveStatus(r, S.selectedDate);
-    const borderColor = current ? STATUS[current].color : "#ECEAE5";
+    const borderColor = current ? STATUS[current].color : "#D9E2EC";
     const bg = current ? STATUS[current].bg : "#fff";
     const btns = Object.entries(STATUS).map(([key, s]) => {
       const active = current === key;
       return `
-        <button class="status-btn" style="border-color:${active ? s.color : "#DEDBD3"};background:${active ? s.color : "#fff"};color:${active ? "#fff" : "#5A5852"};" onclick="setStatus('${r.id}','${key}')">
+        <button class="status-btn" style="border-color:${active ? s.color : "#C8D3DF"};background:${active ? s.color : "#fff"};color:${active ? "#fff" : "#374151"};" onclick="setStatus('${r.id}','${key}')">
           <span>${s.icon}</span><span>${s.label}</span>
         </button>
       `;
@@ -1500,8 +1683,9 @@ function renderSearchResults(){
       <div style="margin-bottom:6px;">
         <div class="resident-row" style="border-color:${borderColor};background:${bg};margin-bottom:0;">
           <div style="flex-shrink:0;min-width:64px;">
-            <div class="resident-name" style="margin:0;">${esc(r.name)}</div>
-            <div style="font-size:10px;font-weight:700;color:#9E9C96;margin-top:1px;">${r.floor}${r.night ? " · 야간" : ""}</div>
+            <div class="resident-name" style="margin:0;">${esc(r.name)}${renderMemoBadge(r)}</div>
+            <div style="font-size:10px;font-weight:700;color:#8A95A3;margin-top:1px;">${r.floor}${r.night ? " · 야간" : ""}</div>
+            ${renderMemoText(r)}
           </div>
           <div class="status-group">${btns}</div>
         </div>
@@ -1516,7 +1700,7 @@ function renderStatusModal(){
   const status = S.statusModal;
   const floorFilter = S.statusModalFloor;
   const s = status === "unchecked"
-    ? { label: "미체크", color: "#9E9C96", bg: "#F0EFEB" }
+    ? { label: "미체크", color: "#8A95A3", bg: "#EDF2F1" }
     : STATUS[status];
   const todayAttendance = S.attendance[S.selectedDate] || {};
   const dayAbsentReasons = S.absentReasons[S.selectedDate] || {};
@@ -1543,8 +1727,8 @@ function renderStatusModal(){
       return `
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1.5px solid ${s.color}44;border-radius:12px;padding:10px 14px;margin-bottom:7px;">
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:16px;font-weight:800;color:#343432;">${esc(r.name)}</span>
-            ${r.night ? `<span style="font-size:10px;font-weight:800;color:#5C4463;background:#F0EAEF;padding:1px 6px;border-radius:6px;">야간</span>` : ""}
+            <span style="font-size:16px;font-weight:800;color:#1F2937;">${esc(r.name)}${renderMemoBadge(r)}</span>
+            ${r.night ? `<span style="font-size:10px;font-weight:800;color:#5B4B7A;background:#F4ECF7;padding:1px 6px;border-radius:6px;">야간</span>` : ""}
           </div>
           ${reasonTag}
         </div>
@@ -1552,25 +1736,25 @@ function renderStatusModal(){
     }).join("");
     return `
       <div style="margin-bottom:16px;">
-        <div style="font-size:13px;font-weight:800;color:#5A5852;margin-bottom:8px;">${floor} · ${fl.length}명</div>
+        <div style="font-size:13px;font-weight:800;color:#374151;margin-bottom:8px;">${floor} · ${fl.length}명</div>
         ${rows}
       </div>
     `;
   }).join("");
 
-  const titleFloor = floorFilter ? ` <span style="font-size:15px;font-weight:700;color:#9E9C96;">${floorFilter}</span>` : "";
+  const titleFloor = floorFilter ? ` <span style="font-size:15px;font-weight:700;color:#8A95A3;">${floorFilter}</span>` : "";
 
   return `
     <div onclick="closeStatusList()" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;display:flex;align-items:flex-end;justify-content:center;">
-      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:600px;border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;max-height:75vh;overflow-y:auto;">
+      <div onclick="event.stopPropagation()" style="background:#F7F9FC;width:100%;max-width:600px;border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;max-height:75vh;overflow-y:auto;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
           <div style="display:flex;align-items:center;gap:8px;">
             <span style="font-size:20px;font-weight:800;color:${s.color};">${s.label}${titleFloor}</span>
-            <span style="font-size:16px;font-weight:700;color:#9E9C96;">${list.length}명</span>
+            <span style="font-size:16px;font-weight:700;color:#8A95A3;">${list.length}명</span>
           </div>
-          <button onclick="closeStatusList()" style="border:none;background:#EFEDE8;border-radius:50%;width:32px;height:32px;font-size:16px;color:#5A5852;">✕</button>
+          <button onclick="closeStatusList()" style="border:none;background:#E8EEF6;border-radius:50%;width:32px;height:32px;font-size:16px;color:#374151;">✕</button>
         </div>
-        ${list.length === 0 ? `<div style="text-align:center;color:#9E9C96;padding:30px;font-size:14px;">${s.label} 어르신이 없어요</div>` : byFloor}
+        ${list.length === 0 ? `<div style="text-align:center;color:#8A95A3;padding:30px;font-size:14px;">${s.label} 어르신이 없어요</div>` : byFloor}
       </div>
     </div>
   `;
@@ -1581,15 +1765,15 @@ function renderResetConfirm(){
   const label = formatDateLabel(S.selectedDate);
   return `
     <div onclick="cancelResetDay()" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;">
-      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:340px;border-radius:20px;padding:24px;text-align:center;">
+      <div onclick="event.stopPropagation()" style="background:#F7F9FC;width:100%;max-width:340px;border-radius:20px;padding:24px;text-align:center;">
         <div style="font-size:34px;margin-bottom:10px;">⚠️</div>
-        <div style="font-size:18px;font-weight:800;color:#343432;margin-bottom:8px;">기록을 초기화할까요?</div>
-        <div style="font-size:14px;color:#7A7872;line-height:1.5;margin-bottom:20px;">
+        <div style="font-size:18px;font-weight:800;color:#1F2937;margin-bottom:8px;">기록을 초기화할까요?</div>
+        <div style="font-size:14px;color:#667085;line-height:1.5;margin-bottom:20px;">
           <b>${label}</b>의 출석·조식 기록이 모두 지워져요.<br>어르신 명단과 차량 배정은 그대로 유지돼요.
         </div>
         <div style="display:flex;gap:10px;">
-          <button onclick="cancelResetDay()" style="flex:1;padding:13px;border-radius:12px;border:2px solid #DEDBD3;background:#fff;color:#5A5852;font-size:15px;font-weight:700;">취소</button>
-          <button onclick="doResetDay()" style="flex:1;padding:13px;border-radius:12px;border:none;background:#C98D74;color:#fff;font-size:15px;font-weight:700;">초기화</button>
+          <button onclick="cancelResetDay()" style="flex:1;padding:13px;border-radius:12px;border:2px solid #C8D3DF;background:#fff;color:#374151;font-size:15px;font-weight:700;">취소</button>
+          <button onclick="doResetDay()" style="flex:1;padding:13px;border-radius:12px;border:none;background:#D94A5A;color:#fff;font-size:15px;font-weight:700;">초기화</button>
         </div>
       </div>
     </div>
@@ -1614,39 +1798,39 @@ function renderCalendar(){
     const isToday = key === tKey;
     const cnt = presentCountFor(key);
     const dow = new Date(y, m-1, d).getDay();
-    const dateColor = dow === 0 ? "#C98D74" : (dow === 6 ? "#6B8FA3" : "#343432");
+    const dateColor = dow === 0 ? "#D94A5A" : (dow === 6 ? "#6B8FA3" : "#1F2937");
     cells += `
       <div onclick="pickCalDate('${key}')" style="aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:10px;cursor:pointer;
-        background:${isSel ? "#6B8A7A" : (isToday ? "#EAF0EC" : "transparent")};
-        border:1.5px solid ${isToday && !isSel ? "#6B8A7A" : "transparent"};">
+        background:${isSel ? "#2F5F8F" : (isToday ? "#EAF0EC" : "transparent")};
+        border:1.5px solid ${isToday && !isSel ? "#2F5F8F" : "transparent"};">
         <span style="font-size:14px;font-weight:700;color:${isSel ? "#fff" : dateColor};">${d}</span>
-        ${cnt > 0 ? `<span style="font-size:10px;font-weight:800;color:${isSel ? "#EAF0EC" : "#6B8A7A"};">${cnt}명</span>` : `<span style="font-size:10px;">&nbsp;</span>`}
+        ${cnt > 0 ? `<span style="font-size:10px;font-weight:800;color:${isSel ? "#EAF0EC" : "#2F5F8F"};">${cnt}명</span>` : `<span style="font-size:10px;">&nbsp;</span>`}
       </div>
     `;
   }
 
   return `
     <div onclick="closeCalendar()" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:150;display:flex;align-items:center;justify-content:center;padding:20px;">
-      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:380px;border-radius:20px;padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:#F7F9FC;width:100%;max-width:380px;border-radius:20px;padding:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <button onclick="shiftCalMonth(-1)" style="background:#EFEDE8;border:none;border-radius:10px;width:36px;height:36px;font-size:18px;color:#5A5852;">‹</button>
-          <div style="font-size:17px;font-weight:800;color:#343432;">${monthLabel}</div>
-          <button onclick="shiftCalMonth(1)" style="background:#EFEDE8;border:none;border-radius:10px;width:36px;height:36px;font-size:18px;color:#5A5852;">›</button>
+          <button onclick="shiftCalMonth(-1)" style="background:#E8EEF6;border:none;border-radius:10px;width:36px;height:36px;font-size:18px;color:#374151;">‹</button>
+          <div style="font-size:17px;font-weight:800;color:#1F2937;">${monthLabel}</div>
+          <button onclick="shiftCalMonth(1)" style="background:#E8EEF6;border:none;border-radius:10px;width:36px;height:36px;font-size:18px;color:#374151;">›</button>
         </div>
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px;">
-          ${dowNames.map((n,i) => `<div style="text-align:center;font-size:12px;font-weight:700;color:${i===0?"#C98D74":(i===6?"#6B8FA3":"#9E9C96")};">${n}</div>`).join("")}
+          ${dowNames.map((n,i) => `<div style="text-align:center;font-size:12px;font-weight:700;color:${i===0?"#D94A5A":(i===6?"#6B8FA3":"#8A95A3")};">${n}</div>`).join("")}
         </div>
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">
           ${cells}
         </div>
         <div style="display:flex;gap:8px;margin-top:16px;">
-          <button onclick="pickCalDate('${tKey}')" style="flex:1;padding:12px;border-radius:12px;border:2px solid #6B8A7A;background:#fff;color:#6B8A7A;font-size:14px;font-weight:800;">오늘로</button>
-          <button onclick="closeCalendar()" style="flex:1;padding:12px;border-radius:12px;border:none;background:#6B8A7A;color:#fff;font-size:14px;font-weight:800;">닫기</button>
+          <button onclick="pickCalDate('${tKey}')" style="flex:1;padding:12px;border-radius:12px;border:2px solid #2F5F8F;background:#fff;color:#2F5F8F;font-size:14px;font-weight:800;">오늘로</button>
+          <button onclick="closeCalendar()" style="flex:1;padding:12px;border-radius:12px;border:none;background:#2F5F8F;color:#fff;font-size:14px;font-weight:800;">닫기</button>
         </div>
-        <button onclick="openStats()" style="width:100%;margin-top:8px;padding:12px;border-radius:12px;border:none;background:#5C4463;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;">
+        <button onclick="openStats()" style="width:100%;margin-top:8px;padding:12px;border-radius:12px;border:none;background:#5B4B7A;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;">
           <span>📈</span><span>이달의 통계 (출석일수·결석사유)</span>
         </button>
-        <div style="text-align:center;font-size:11px;color:#9E9C96;margin-top:10px;">날짜 아래 숫자는 그날 출석 인원이에요</div>
+        <div style="text-align:center;font-size:11px;color:#8A95A3;margin-top:10px;">날짜 아래 숫자는 그날 출석 인원이에요</div>
       </div>
     </div>
   `;
@@ -1668,22 +1852,22 @@ function renderStats(){
     if (people.length === 0) {
       return `
         <div style="margin-bottom:14px;">
-          <div style="font-size:13px;font-weight:800;color:#6B8A7A;margin-bottom:8px;">${floor}</div>
-          <div style="font-size:12px;color:#9E9C96;padding:6px 2px;">기록 없음</div>
+          <div style="font-size:13px;font-weight:800;color:#2F5F8F;margin-bottom:8px;">${floor}</div>
+          <div style="font-size:12px;color:#8A95A3;padding:6px 2px;">기록 없음</div>
         </div>`;
     }
     const rows = people.map(r => `
-      <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border:1.5px solid #ECEAE5;border-radius:10px;padding:9px 12px;margin-bottom:6px;">
-        <span style="font-size:15px;font-weight:700;color:#343432;">${esc(r.name)}${r.night ? ` <span style="font-size:10px;font-weight:800;color:#5C4463;">야간</span>` : ""}</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#fff;border:1.5px solid #D9E2EC;border-radius:10px;padding:9px 12px;margin-bottom:6px;">
+        <span style="font-size:15px;font-weight:700;color:#1F2937;">${esc(r.name)}${r.night ? ` <span style="font-size:10px;font-weight:800;color:#5B4B7A;">야간</span>` : ""}</span>
         <span style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:15px;font-weight:800;color:#6B8A7A;">출석 ${r.stat.present}일</span>
-          ${r.stat.absent > 0 ? `<span style="font-size:12px;font-weight:700;color:#D39282;">결석 ${r.stat.absent}</span>` : ""}
+          <span style="font-size:15px;font-weight:800;color:#2F5F8F;">출석 ${r.stat.present}일</span>
+          ${r.stat.absent > 0 ? `<span style="font-size:12px;font-weight:700;color:#E05263;">결석 ${r.stat.absent}</span>` : ""}
         </span>
       </div>
     `).join("");
     return `
       <div style="margin-bottom:16px;">
-        <div style="font-size:13px;font-weight:800;color:#6B8A7A;margin-bottom:8px;">${floor} · ${people.length}명</div>
+        <div style="font-size:13px;font-weight:800;color:#2F5F8F;margin-bottom:8px;">${floor} · ${people.length}명</div>
         ${rows}
       </div>
     `;
@@ -1693,39 +1877,39 @@ function renderStats(){
   const reasonKeys = Object.keys(reasonCounts).sort((a, b) => reasonCounts[b] - reasonCounts[a]);
   const totalAbsent = reasonKeys.reduce((sum, k) => sum + reasonCounts[k], 0);
   const reasonBlocks = reasonKeys.length === 0
-    ? `<div style="font-size:13px;color:#9E9C96;padding:10px 2px;">이번 달 결석 기록이 없어요</div>`
+    ? `<div style="font-size:13px;color:#8A95A3;padding:10px 2px;">이번 달 결석 기록이 없어요</div>`
     : reasonKeys.map(reason => {
         const isNone = reason === "사유 미입력";
-        const col = isNone ? "#9E9C96" : "#D39282";
-        const bg = isNone ? "#F0EFEB" : "#F7ECE8";
+        const col = isNone ? "#8A95A3" : "#E05263";
+        const bg = isNone ? "#EDF2F1" : "#FFF0F2";
         return `
           <div style="background:${bg};border-radius:12px;padding:12px 14px;margin-bottom:8px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
               <span style="font-size:15px;font-weight:800;color:${col};">${esc(reason)}</span>
               <span style="font-size:15px;font-weight:800;color:${col};">${reasonCounts[reason]}건</span>
             </div>
-            <div style="font-size:12px;color:#7A7872;line-height:1.6;">${reasonDetails[reason].map(esc).join(", ")}</div>
+            <div style="font-size:12px;color:#667085;line-height:1.6;">${reasonDetails[reason].map(esc).join(", ")}</div>
           </div>
         `;
       }).join("");
 
   return `
     <div onclick="closeStats()" style="position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:160;display:flex;align-items:flex-end;justify-content:center;">
-      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:600px;border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;max-height:82vh;overflow-y:auto;">
+      <div onclick="event.stopPropagation()" style="background:#F7F9FC;width:100%;max-width:600px;border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;max-height:82vh;overflow-y:auto;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
           <div style="display:flex;align-items:center;gap:8px;">
-            <button onclick="shiftCalMonth(-1)" style="background:#EFEDE8;border:none;border-radius:8px;width:30px;height:30px;font-size:16px;color:#5A5852;">‹</button>
-            <span style="font-size:18px;font-weight:800;color:#343432;">${monthLabel} 통계</span>
-            <button onclick="shiftCalMonth(1)" style="background:#EFEDE8;border:none;border-radius:8px;width:30px;height:30px;font-size:16px;color:#5A5852;">›</button>
+            <button onclick="shiftCalMonth(-1)" style="background:#E8EEF6;border:none;border-radius:8px;width:30px;height:30px;font-size:16px;color:#374151;">‹</button>
+            <span style="font-size:18px;font-weight:800;color:#1F2937;">${monthLabel} 통계</span>
+            <button onclick="shiftCalMonth(1)" style="background:#E8EEF6;border:none;border-radius:8px;width:30px;height:30px;font-size:16px;color:#374151;">›</button>
           </div>
-          <button onclick="closeStats()" style="border:none;background:#EFEDE8;border-radius:50%;width:32px;height:32px;font-size:16px;color:#5A5852;">✕</button>
+          <button onclick="closeStats()" style="border:none;background:#E8EEF6;border-radius:50%;width:32px;height:32px;font-size:16px;color:#374151;">✕</button>
         </div>
-        <div style="font-size:12px;color:#9E9C96;margin-bottom:16px;">이번 달 기록이 있는 날: ${dayCount}일</div>
+        <div style="font-size:12px;color:#8A95A3;margin-bottom:16px;">이번 달 기록이 있는 날: ${dayCount}일</div>
 
-        <div style="font-size:15px;font-weight:800;color:#343432;margin-bottom:10px;">📅 개인별 출석일수</div>
+        <div style="font-size:15px;font-weight:800;color:#1F2937;margin-bottom:10px;">📅 개인별 출석일수</div>
         ${personBlocks}
 
-        <div style="font-size:15px;font-weight:800;color:#343432;margin:20px 0 10px;">🩺 결석 사유 집계 ${totalAbsent > 0 ? `<span style="font-size:13px;font-weight:700;color:#9E9C96;">(총 ${totalAbsent}건)</span>` : ""}</div>
+        <div style="font-size:15px;font-weight:800;color:#1F2937;margin:20px 0 10px;">🩺 결석 사유 집계 ${totalAbsent > 0 ? `<span style="font-size:13px;font-weight:700;color:#8A95A3;">(총 ${totalAbsent}건)</span>` : ""}</div>
         ${reasonBlocks}
       </div>
     </div>
@@ -1737,35 +1921,75 @@ function renderLongAbsent(){
   const { name, from, to, reason } = S.longAbsent;
   return `
     <div onclick="closeLongAbsent()" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:170;display:flex;align-items:center;justify-content:center;padding:20px;">
-      <div onclick="event.stopPropagation()" style="background:#F8F7F4;width:100%;max-width:360px;border-radius:20px;padding:22px;">
+      <div onclick="event.stopPropagation()" style="background:#F7F9FC;width:100%;max-width:360px;border-radius:20px;padding:22px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <div style="font-size:18px;font-weight:800;color:#343432;">기간 결석 지정</div>
-          <button onclick="closeLongAbsent()" style="border:none;background:#EFEDE8;border-radius:50%;width:30px;height:30px;font-size:15px;color:#5A5852;">✕</button>
+          <div style="font-size:18px;font-weight:800;color:#1F2937;">기간 결석 지정</div>
+          <button onclick="closeLongAbsent()" style="border:none;background:#E8EEF6;border-radius:50%;width:30px;height:30px;font-size:15px;color:#374151;">✕</button>
         </div>
         <div style="font-size:14px;font-weight:700;color:#B08575;margin-bottom:16px;">${esc(name)} 어르신</div>
 
-        <div style="font-size:12px;font-weight:800;color:#5A5852;margin-bottom:5px;">시작일</div>
+        <div style="font-size:12px;font-weight:800;color:#374151;margin-bottom:5px;">시작일</div>
         <input id="longAbsentFrom" type="date" value="${from}" onchange="updateLongAbsentField('from', this.value)"
-          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #DEDBD3;font-size:15px;background:#fff;color:#343432;margin-bottom:12px;box-sizing:border-box;" />
+          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #C8D3DF;font-size:15px;background:#fff;color:#1F2937;margin-bottom:12px;box-sizing:border-box;" />
 
-        <div style="font-size:12px;font-weight:800;color:#5A5852;margin-bottom:5px;">종료일</div>
+        <div style="font-size:12px;font-weight:800;color:#374151;margin-bottom:5px;">종료일</div>
         <input id="longAbsentTo" type="date" value="${to}" onchange="updateLongAbsentField('to', this.value)"
-          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #DEDBD3;font-size:15px;background:#fff;color:#343432;margin-bottom:12px;box-sizing:border-box;" />
+          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #C8D3DF;font-size:15px;background:#fff;color:#1F2937;margin-bottom:12px;box-sizing:border-box;" />
 
-        <div style="font-size:12px;font-weight:800;color:#5A5852;margin-bottom:5px;">사유 (선택)</div>
+        <div style="font-size:12px;font-weight:800;color:#374151;margin-bottom:5px;">사유 (선택)</div>
         <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;">
           ${["입원","병원","개인사정","여행"].map(rs => `<button onclick="document.getElementById('longAbsentReason').value='${rs}'" style="padding:6px 11px;border-radius:8px;border:1.5px solid #E3D5D0;background:#fff;color:#B08575;font-size:12px;font-weight:700;">${rs}</button>`).join("")}
         </div>
         <input id="longAbsentReason" value="${esc(reason || "")}" placeholder="예: 입원"
-          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #DEDBD3;font-size:15px;background:#fff;color:#343432;margin-bottom:12px;box-sizing:border-box;" />
+          style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid #C8D3DF;font-size:15px;background:#fff;color:#1F2937;margin-bottom:12px;box-sizing:border-box;" />
 
-        <div id="longAbsentPreview" style="font-size:13px;color:#7A6238;background:#F6F1E4;border-radius:10px;padding:10px 12px;margin-bottom:16px;text-align:center;">${longAbsentPreviewText()}</div>
+        <div id="longAbsentPreview" style="font-size:13px;color:#7A4F18;background:#FFF8EC;border-radius:10px;padding:10px 12px;margin-bottom:16px;text-align:center;">${longAbsentPreviewText()}</div>
 
         <div style="display:flex;gap:10px;">
-          <button onclick="closeLongAbsent()" style="flex:1;padding:13px;border-radius:12px;border:2px solid #DEDBD3;background:#fff;color:#5A5852;font-size:15px;font-weight:700;">취소</button>
-          <button onclick="applyLongAbsent()" style="flex:1;padding:13px;border-radius:12px;border:none;background:#D39282;color:#fff;font-size:15px;font-weight:800;">결석 지정</button>
+          <button onclick="closeLongAbsent()" style="flex:1;padding:13px;border-radius:12px;border:2px solid #C8D3DF;background:#fff;color:#374151;font-size:15px;font-weight:700;">취소</button>
+          <button onclick="applyLongAbsent()" style="flex:1;padding:13px;border-radius:12px;border:none;background:#E05263;color:#fff;font-size:15px;font-weight:800;">결석 지정</button>
         </div>
-        <div style="font-size:11px;color:#9E9C96;text-align:center;margin-top:10px;">일요일은 자동으로 빠져요</div>
+        <div style="font-size:11px;color:#8A95A3;text-align:center;margin-top:10px;">일요일은 자동으로 빠져요</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderCounterEditor(){
+  if (!S.counterEditor) return "";
+  const { kind, floor, value } = S.counterEditor;
+  const isMeal = kind === "meal";
+  const icon = isMeal ? "🍽️" : "👥";
+  const label = isMeal ? "조식" : "직원";
+  const unit = isMeal ? "개" : "명";
+  return `
+    <div onclick="closeCounterEditor()" style="position:fixed;inset:0;background:rgba(15,23,42,0.42);z-index:180;display:flex;align-items:center;justify-content:center;padding:20px;">
+      <div onclick="event.stopPropagation()" style="background:#F7F9FC;width:100%;max-width:340px;border-radius:20px;padding:22px;box-shadow:0 16px 40px rgba(15,23,42,0.18);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:9px;">
+            <span style="font-size:30px;line-height:1;">${icon}</span>
+            <div>
+              <div style="font-size:18px;font-weight:800;color:#1F2937;">${floor} ${label} 수정</div>
+              <div style="font-size:12px;font-weight:700;color:#8A95A3;margin-top:2px;">현황판과 ${floor} 탭에 같이 반영돼요</div>
+            </div>
+          </div>
+          <button onclick="closeCounterEditor()" style="border:none;background:#E8EEF6;border-radius:50%;width:30px;height:30px;font-size:15px;color:#374151;">✕</button>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:2px solid #D0D7E2;border-radius:16px;padding:16px;margin-bottom:16px;">
+          <button onclick="adjustCounterEditor(-1)" style="width:44px;height:44px;border-radius:12px;border:2px solid #D0D7E2;background:#F8FAFC;color:#475569;font-size:26px;font-weight:800;">−</button>
+          <input id="counterEditorInput" type="number" inputmode="numeric" pattern="[0-9]*" value="${value}"
+            onfocus="this.select()"
+            onchange="setCounterEditorValue(this.value)"
+            style="width:86px;text-align:center;border:none;outline:none;background:transparent;color:#1F2937;font-size:34px;font-weight:900;" />
+          <button onclick="adjustCounterEditor(1)" style="width:44px;height:44px;border-radius:12px;border:2px solid #D0D7E2;background:#F8FAFC;color:#475569;font-size:26px;font-weight:800;">+</button>
+          <span style="font-size:16px;font-weight:800;color:#8A95A3;">${unit}</span>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <button onclick="closeCounterEditor()" style="flex:1;padding:13px;border-radius:12px;border:2px solid #D0D7E2;background:#fff;color:#475569;font-size:15px;font-weight:800;">취소</button>
+          <button onclick="saveCounterEditor()" style="flex:1;padding:13px;border-radius:12px;border:none;background:#2F5F8F;color:#fff;font-size:15px;font-weight:800;">저장</button>
+        </div>
       </div>
     </div>
   `;
@@ -1779,7 +2003,7 @@ function render(){
   }
 
   const isToday = S.selectedDate === todayKey();
-  const searchable = (S.tab === "slides" || S.tab === "floor2" || S.tab === "floor3" || S.tab === "vehicle");
+  const searchable = (S.tab === "slides" || S.tab === "floor2" || S.tab === "floor3");
   let body = "";
   if (S.residents.length === 0 && S.tab !== "roster") {
     body = renderEmptyState();
@@ -1791,18 +2015,16 @@ function render(){
     body = renderSearchBar() + `<div id="searchResults"></div>` + renderFloorTab("2층");
   } else if (S.tab === "floor3") {
     body = renderSearchBar() + `<div id="searchResults"></div>` + renderFloorTab("3층");
-  } else if (S.tab === "vehicle") {
-    body = renderSearchBar() + `<div id="searchResults"></div>` + renderVehicleTab();
   } else if (S.tab === "roster") {
     body = renderRosterTab();
   }
 
   const banner = (!isToday && S.tab !== "roster") ? `<div class="date-banner">${formatDateLabel(S.selectedDate)} 기록을 보고 있어요</div>` : "";
 
-  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>` + renderStatusModal() + renderResetConfirm() + renderCalendar() + renderStats() + renderLongAbsent();
+  app.innerHTML = renderHeader() + renderTabs() + `<div class="content">${banner}${body}</div>` + renderStatusModal() + renderResetConfirm() + renderCalendar() + renderStats() + renderLongAbsent() + renderCounterEditor();
 
   const nameInput = document.getElementById("newNameInput");
-  if (nameInput) {
+  if (nameInput && !S._searchFocused) {
     nameInput.focus();
     const val = nameInput.value;
     nameInput.value = "";
